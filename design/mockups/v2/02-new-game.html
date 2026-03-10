@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chess AI — New Game</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body { background: #0f172a; }
+    .time-btn.active { @apply ring-2 ring-blue-500 bg-slate-700; }
+  </style>
+</head>
+<body class="min-h-screen text-white">
+  <!-- Desktop Navigation -->
+  <nav class="hidden lg:flex items-center justify-between px-6 py-4 bg-slate-900 border-b border-slate-800 sticky top-0 z-40">
+    <div class="flex items-center gap-8">
+      <a href="01-home.html" class="flex items-center gap-2 text-xl font-bold">
+        <span class="text-2xl">♞</span>
+        <span>Chess AI</span>
+      </a>
+      <div class="flex items-center gap-6 text-slate-300">
+        <a href="01-home.html" class="flex items-center gap-2 hover:text-white transition">
+          <i data-lucide="home" class="w-4 h-4"></i>
+          Home
+        </a>
+        <a href="#" class="flex items-center gap-2 text-white font-medium">
+          <i data-lucide="plus" class="w-4 h-4"></i>
+          New Game
+        </a>
+        <a href="05-library.html" class="flex items-center gap-2 hover:text-white transition">
+          <i data-lucide="folder" class="w-4 h-4"></i>
+          Library
+        </a>
+        <a href="07-history.html" class="flex items-center gap-2 hover:text-white transition">
+          <i data-lucide="scroll-text" class="w-4 h-4"></i>
+          History
+        </a>
+        <a href="08-settings.html" class="flex items-center gap-2 hover:text-white transition">
+          <i data-lucide="settings" class="w-4 h-4"></i>
+          Settings
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Header -->
+  <header class="lg:hidden flex items-center justify-between px-4 py-4 bg-slate-900 border-b border-slate-800">
+    <a href="01-home.html" class="flex items-center gap-2 text-slate-400">
+      <i data-lucide="arrow-left" class="w-5 h-5"></i>
+    </a>
+    <h1 class="text-lg font-semibold">New Game</h1>
+    <div class="w-5"></div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-2xl mx-auto px-4 py-8 pb-24 lg:pb-8">
+    <h1 class="text-3xl font-bold mb-8 text-center hidden lg:block">Start a New Game</h1>
+
+    <!-- Game Mode Selection -->
+    <section class="mb-8">
+      <h2 class="text-sm font-medium text-slate-400 uppercase tracking-wide mb-3 flex items-center gap-2">
+        <i data-lucide="gamepad-2" class="w-4 h-4"></i>
+        Game Mode
+      </h2>
+      <div class="grid grid-cols-3 gap-3">
+        <button class="group bg-blue-600 border border-blue-500 rounded-xl p-4 text-center transition" id="mode-hva">
+          <div class="flex items-center justify-center gap-2 mb-2">
+            <i data-lucide="user" class="w-5 h-5"></i>
+            <span class="text-slate-400">vs</span>
+            <i data-lucide="bot" class="w-5 h-5"></i>
+          </div>
+          <p class="font-medium text-sm">Human vs AI</p>
+        </button>
+        <button class="group bg-slate-800 hover:bg-slate-750 border border-slate-700 rounded-xl p-4 text-center transition hover:border-green-500/50" id="mode-hvh">
+          <div class="flex items-center justify-center gap-2 mb-2 text-slate-400 group-hover:text-green-400">
+            <i data-lucide="user" class="w-5 h-5"></i>
+            <span>vs</span>
+            <i data-lucide="user" class="w-5 h-5"></i>
+          </div>
+          <p class="font-medium text-sm text-slate-300">Local 2P</p>
+        </button>
+        <button class="group bg-slate-800 hover:bg-slate-750 border border-slate-700 rounded-xl p-4 text-center transition hover:border-purple-500/50" id="mode-ava">
+          <div class="flex items-center justify-center gap-2 mb-2 text-slate-400 group-hover:text-purple-400">
+            <i data-lucide="bot" class="w-5 h-5"></i>
+            <span>vs</span>
+            <i data-lucide="bot" class="w-5 h-5"></i>
+          </div>
+          <p class="font-medium text-sm text-slate-300">AI vs AI</p>
+        </button>
+      </div>
+    </section>
+
+    <!-- Time Control Selection -->
+    <section class="mb-8">
+      <h2 class="text-sm font-medium text-slate-400 uppercase tracking-wide mb-3 flex items-center gap-2">
+        <i data-lucide="clock" class="w-4 h-4"></i>
+        Time Control
+      </h2>
+      
+      <!-- Bullet -->
+      <div class="mb-4">
+        <p class="text-xs text-slate-500 mb-2 font-medium">BULLET</p>
+        <div class="flex gap-2">
+          <button class="flex-1 bg-slate-800 hover:bg-slate-750 border border-slate-700 rounded-lg py-3 px-4 transition hover:border-amber-500/50">
+            <p class="font-semibold">1+0</p>
+            <p class="text-xs text-slate-500">1 min</p>
+          </button>
+          <button class="flex-1 bg-slate-800 hover:bg-slate-750 border border-slate-700 rounded-lg py-3 px-4 transition hover:border-amber-500/50">
+            <p class="font-semibold">2+1</p>
+            <p class="text-xs text-slate-500">2 min +1s</p>
+          </button>
+        </div>
+      </div>
+
+      <!-- Blitz -->
+      <div class="mb-4">
+        <p class="text-xs text-slate-500 mb-2 font-medium">BLITZ</p>
+        <div class="flex gap-2">
+          <button class="flex-1 bg-slate-700 ring-2 ring-blue-500 rounded-lg py-3 px-4">
+            <p class="font-semibold">3+2</p>
+            <p class="text-xs text-slate-400">3 min +2s</p>
+          </button>
+          <button class="flex-1 bg-slate-800 hover:bg-slate-750 border border-slate-700 rounded-lg py-3 px-4 transition hover:border-blue-500/50">
+            <p class="font-semibold">5+0</p>
+            <p class="text-xs text-slate-500">5 min</p>
+          </button>
+        </div>
+      </div>
+
+      <!-- Rapid -->
+      <div class="mb-4">
+        <p class="text-xs text-slate-500 mb-2 font-medium">RAPID</p>
+        <div class="flex gap-2">
+          <button class="flex-1 bg-slate-800 hover:bg-slate-750 border border-slate-700 rounded-lg py-3 px-4 transition hover:border-green-500/50">
+            <p class="font-semibold">10+0</p>
+            <p class="text-xs text-slate-500">10 min</p>
+          </button>
+          <button class="flex-1 bg-slate-800 hover:bg-slate-750 border border-slate-700 rounded-lg py-3 px-4 transition hover:border-green-500/50">
+            <p class="font-semibold">15+10</p>
+            <p class="text-xs text-slate-500">15 min +10s</p>
+          </button>
+        </div>
+      </div>
+
+      <!-- Classical & Correspondence -->
+      <div class="flex gap-2">
+        <button class="flex-1 bg-slate-800 hover:bg-slate-750 border border-slate-700 rounded-lg py-3 px-4 transition hover:border-purple-500/50">
+          <p class="font-semibold">30+0</p>
+          <p class="text-xs text-slate-500">Classical</p>
+        </button>
+        <button class="flex-1 bg-slate-800 hover:bg-slate-750 border border-slate-700 rounded-lg py-3 px-4 transition hover:border-slate-500/50">
+          <p class="font-semibold flex items-center gap-1 justify-center">
+            <i data-lucide="infinity" class="w-4 h-4"></i>
+          </p>
+          <p class="text-xs text-slate-500">No limit</p>
+        </button>
+      </div>
+    </section>
+
+    <!-- AI Personality Selection (shown for Human vs AI mode) -->
+    <section class="mb-8" id="ai-section">
+      <h2 class="text-sm font-medium text-slate-400 uppercase tracking-wide mb-3 flex items-center gap-2">
+        <i data-lucide="brain" class="w-4 h-4"></i>
+        AI Personality
+      </h2>
+      <div class="bg-slate-800 border border-slate-700 rounded-xl p-4">
+        <!-- Presets Grid -->
+        <div class="grid grid-cols-3 gap-2 mb-4">
+          <button class="bg-blue-600 text-white rounded-lg py-2 px-3 text-sm font-medium">
+            Classical
+          </button>
+          <button class="bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg py-2 px-3 text-sm font-medium transition">
+            Aggressive
+          </button>
+          <button class="bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg py-2 px-3 text-sm font-medium transition">
+            Defensive
+          </button>
+          <button class="bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg py-2 px-3 text-sm font-medium transition">
+            Chaotic
+          </button>
+          <button class="bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg py-2 px-3 text-sm font-medium transition">
+            Tactical
+          </button>
+          <button class="bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg py-2 px-3 text-sm font-medium transition">
+            Positional
+          </button>
+        </div>
+
+        <!-- Saved Personalities -->
+        <div class="border-t border-slate-700 pt-4">
+          <p class="text-xs text-slate-500 mb-2 font-medium flex items-center gap-1">
+            <i data-lucide="save" class="w-3 h-3"></i>
+            SAVED PERSONALITIES
+          </p>
+          <div class="flex flex-wrap gap-2">
+            <button class="bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg py-2 px-3 text-sm font-medium transition flex items-center gap-1">
+              <i data-lucide="user" class="w-3 h-3"></i>
+              Andy's Bot
+            </button>
+            <button class="bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg py-2 px-3 text-sm font-medium transition flex items-center gap-1">
+              <i data-lucide="user" class="w-3 h-3"></i>
+              Hyper Aggro
+            </button>
+            <a href="04-ai-editor.html" class="bg-slate-900 hover:bg-slate-800 text-slate-400 rounded-lg py-2 px-3 text-sm font-medium transition flex items-center gap-1 border border-dashed border-slate-600">
+              <i data-lucide="plus" class="w-3 h-3"></i>
+              Create New
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Play As Selection -->
+    <section class="mb-8">
+      <h2 class="text-sm font-medium text-slate-400 uppercase tracking-wide mb-3 flex items-center gap-2">
+        <i data-lucide="palette" class="w-4 h-4"></i>
+        Play As
+      </h2>
+      <div class="flex gap-3">
+        <button class="flex-1 bg-slate-700 ring-2 ring-blue-500 rounded-xl p-4 text-center">
+          <div class="w-10 h-10 rounded-full bg-white mx-auto mb-2"></div>
+          <p class="font-medium text-sm">White</p>
+        </button>
+        <button class="flex-1 bg-slate-800 hover:bg-slate-750 border border-slate-700 rounded-xl p-4 text-center transition">
+          <div class="w-10 h-10 rounded-full bg-slate-800 border-2 border-slate-400 mx-auto mb-2 flex items-center justify-center">
+            <i data-lucide="shuffle" class="w-5 h-5 text-slate-400"></i>
+          </div>
+          <p class="font-medium text-sm text-slate-300">Random</p>
+        </button>
+        <button class="flex-1 bg-slate-800 hover:bg-slate-750 border border-slate-700 rounded-xl p-4 text-center transition">
+          <div class="w-10 h-10 rounded-full bg-slate-900 border border-slate-600 mx-auto mb-2"></div>
+          <p class="font-medium text-sm text-slate-300">Black</p>
+        </button>
+      </div>
+    </section>
+
+    <!-- Start Game Button -->
+    <button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-6 rounded-xl transition flex items-center justify-center gap-2 text-lg">
+      <i data-lucide="play" class="w-5 h-5"></i>
+      Start Game
+    </button>
+  </main>
+
+  <!-- Mobile Bottom Navigation -->
+  <nav class="lg:hidden fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-800 px-2 py-2">
+    <div class="flex justify-around items-center">
+      <a href="01-home.html" class="flex flex-col items-center gap-1 px-3 py-2 text-slate-400">
+        <i data-lucide="home" class="w-5 h-5"></i>
+        <span class="text-xs">Home</span>
+      </a>
+      <a href="#" class="flex flex-col items-center gap-1 px-3 py-2 text-blue-400">
+        <i data-lucide="plus-circle" class="w-5 h-5"></i>
+        <span class="text-xs font-medium">Play</span>
+      </a>
+      <a href="05-library.html" class="flex flex-col items-center gap-1 px-3 py-2 text-slate-400">
+        <i data-lucide="folder" class="w-5 h-5"></i>
+        <span class="text-xs">Library</span>
+      </a>
+      <a href="07-history.html" class="flex flex-col items-center gap-1 px-3 py-2 text-slate-400">
+        <i data-lucide="scroll-text" class="w-5 h-5"></i>
+        <span class="text-xs">History</span>
+      </a>
+      <a href="08-settings.html" class="flex flex-col items-center gap-1 px-3 py-2 text-slate-400">
+        <i data-lucide="settings" class="w-5 h-5"></i>
+        <span class="text-xs">Settings</span>
+      </a>
+    </div>
+  </nav>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

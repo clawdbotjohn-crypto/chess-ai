@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chess AI — Game Board (Neon)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Inter', -apple-system, sans-serif; }
+    body { background: linear-gradient(135deg, #0c0a1d 0%, #1a0f2e 50%, #0c0a1d 100%); }
+    .card-glass {
+      background: linear-gradient(135deg, rgba(26,15,46,0.9), rgba(12,10,29,0.95));
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(139,92,246,0.2);
+    }
+    /* Neon cyberpunk board */
+    .square-light { background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%); }
+    .square-dark { background: linear-gradient(135deg, #0f0d24 0%, #1e1b4b 100%); }
+    .square-highlight { 
+      box-shadow: inset 0 0 0 2px rgba(34,211,238,0.7), 
+                  inset 0 0 15px rgba(34,211,238,0.3);
+    }
+    .board-container {
+      box-shadow: 0 0 60px rgba(139,92,246,0.4),
+                  0 0 120px rgba(139,92,246,0.2);
+      border: 2px solid rgba(139,92,246,0.4);
+    }
+    .piece { 
+      font-size: 2.5rem; 
+      cursor: grab; 
+      user-select: none;
+      filter: drop-shadow(0 0 8px rgba(255,255,255,0.3));
+    }
+    .piece-white { filter: drop-shadow(0 0 10px rgba(34,211,238,0.6)); }
+    .piece-black { filter: drop-shadow(0 0 10px rgba(244,114,182,0.6)); }
+    @media (min-width: 1024px) { .piece { font-size: 3.5rem; } }
+    .glow-cyan { text-shadow: 0 0 20px rgba(34,211,238,0.8); }
+    .glow-pink { text-shadow: 0 0 20px rgba(244,114,182,0.8); }
+    .timer-glow {
+      box-shadow: 0 0 20px rgba(34,211,238,0.4);
+      border: 1px solid rgba(34,211,238,0.4);
+    }
+  </style>
+</head>
+<body class="min-h-screen text-white">
+  <!-- Minimal Game Header -->
+  <header class="bg-gradient-to-r from-purple-900/30 via-slate-900/90 to-purple-900/30 border-b border-purple-500/20 sticky top-0 z-50 backdrop-blur-xl">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <a href="01-home.html" class="text-purple-400 hover:text-purple-300 transition">
+          <i data-lucide="arrow-left" class="w-5 h-5"></i>
+        </a>
+        <div class="flex items-center gap-2">
+          <span class="text-2xl glow-cyan">♞</span>
+          <span class="font-semibold hidden sm:inline bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">Chess AI</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button class="p-2 hover:bg-purple-800/30 rounded-lg transition text-purple-400 hover:text-purple-300" title="Game settings">
+          <i data-lucide="settings" class="w-5 h-5"></i>
+        </button>
+        <button class="p-2 hover:bg-purple-800/30 rounded-lg transition text-purple-400 hover:text-purple-300" title="Flip board">
+          <i data-lucide="flip-vertical" class="w-5 h-5"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Game Area -->
+  <main class="max-w-7xl mx-auto px-4 py-6">
+    <div class="flex flex-col lg:flex-row gap-6">
+      
+      <!-- Left: Board + Players -->
+      <div class="flex-1 flex flex-col items-center">
+        <!-- Opponent Info -->
+        <div class="w-full max-w-lg mb-3 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-500 to-rose-600 flex items-center justify-center shadow-lg shadow-pink-500/30">
+              <i data-lucide="bot" class="w-5 h-5 text-white"></i>
+            </div>
+            <div>
+              <p class="font-medium flex items-center gap-2 glow-pink">
+                Aggressive
+                <span class="text-xs bg-pink-500/30 text-pink-300 px-2 py-0.5 rounded-full border border-pink-500/30">AI</span>
+              </p>
+              <div class="flex items-center gap-1 text-sm text-slate-400">
+                <span class="text-pink-400">●</span>
+                <span>Captured:</span>
+                <span class="text-lg piece-black">♙♙♘</span>
+              </div>
+            </div>
+          </div>
+          <div class="card-glass px-4 py-2 rounded-xl font-mono text-2xl font-semibold text-pink-300 border-pink-500/30">
+            4:32
+          </div>
+        </div>
+
+        <!-- Chess Board -->
+        <div class="w-full max-w-lg aspect-square rounded-xl overflow-hidden board-container">
+          <div class="grid grid-cols-8 h-full">
+            <!-- Row 8 -->
+            <div class="square-light flex items-center justify-center"><span class="piece piece-black">♜</span></div>
+            <div class="square-dark flex items-center justify-center"><span class="piece piece-black">♞</span></div>
+            <div class="square-light flex items-center justify-center"><span class="piece piece-black">♝</span></div>
+            <div class="square-dark flex items-center justify-center"><span class="piece piece-black">♛</span></div>
+            <div class="square-light flex items-center justify-center"><span class="piece piece-black">♚</span></div>
+            <div class="square-dark flex items-center justify-center"><span class="piece piece-black">♝</span></div>
+            <div class="square-light flex items-center justify-center"><span class="piece piece-black">♞</span></div>
+            <div class="square-dark flex items-center justify-center"><span class="piece piece-black">♜</span></div>
+            <!-- Row 7 -->
+            <div class="square-dark flex items-center justify-center"><span class="piece piece-black">♟</span></div>
+            <div class="square-light flex items-center justify-center"><span class="piece piece-black">♟</span></div>
+            <div class="square-dark flex items-center justify-center"><span class="piece piece-black">♟</span></div>
+            <div class="square-light flex items-center justify-center"><span class="piece piece-black">♟</span></div>
+            <div class="square-dark flex items-center justify-center"><span class="piece piece-black">♟</span></div>
+            <div class="square-light flex items-center justify-center"><span class="piece piece-black">♟</span></div>
+            <div class="square-dark flex items-center justify-center"><span class="piece piece-black">♟</span></div>
+            <div class="square-light flex items-center justify-center"><span class="piece piece-black">♟</span></div>
+            <!-- Row 6 -->
+            <div class="square-light flex items-center justify-center"></div>
+            <div class="square-dark flex items-center justify-center"></div>
+            <div class="square-light flex items-center justify-center"></div>
+            <div class="square-dark flex items-center justify-center"></div>
+            <div class="square-light flex items-center justify-center"></div>
+            <div class="square-dark flex items-center justify-center"></div>
+            <div class="square-light flex items-center justify-center"></div>
+            <div class="square-dark flex items-center justify-center"></div>
+            <!-- Row 5 -->
+            <div class="square-dark flex items-center justify-center"></div>
+            <div class="square-light flex items-center justify-center"></div>
+            <div class="square-dark flex items-center justify-center"></div>
+            <div class="square-light flex items-center justify-center"></div>
+            <div class="square-dark square-highlight flex items-center justify-center"><span class="piece piece-white">♙</span></div>
+            <div class="square-light flex items-center justify-center"></div>
+            <div class="square-dark flex items-center justify-center"></div>
+            <div class="square-light flex items-center justify-center"></div>
+            <!-- Row 4 -->
+            <div class="square-light flex items-center justify-center"></div>
+            <div class="square-dark flex items-center justify-center"></div>
+            <div class="square-light flex items-center justify-center"></div>
+            <div class="square-dark square-highlight flex items-center justify-center"></div>
+            <div class="square-light flex items-center justify-center"></div>
+            <div class="square-dark flex items-center justify-center"></div>
+            <div class="square-light flex items-center justify-center"></div>
+            <div class="square-dark flex items-center justify-center"></div>
+            <!-- Row 3 -->
+            <div class="square-dark flex items-center justify-center"></div>
+            <div class="square-light flex items-center justify-center"></div>
+            <div class="square-dark flex items-center justify-center"><span class="piece piece-white">♘</span></div>
+            <div class="square-light flex items-center justify-center"></div>
+            <div class="square-dark flex items-center justify-center"></div>
+            <div class="square-light flex items-center justify-center"></div>
+            <div class="square-dark flex items-center justify-center"></div>
+            <div class="square-light flex items-center justify-center"></div>
+            <!-- Row 2 -->
+            <div class="square-light flex items-center justify-center"><span class="piece piece-white">♙</span></div>
+            <div class="square-dark flex items-center justify-center"><span class="piece piece-white">♙</span></div>
+            <div class="square-light flex items-center justify-center"><span class="piece piece-white">♙</span></div>
+            <div class="square-dark flex items-center justify-center"><span class="piece piece-white">♙</span></div>
+            <div class="square-light flex items-center justify-center"></div>
+            <div class="square-dark flex items-center justify-center"><span class="piece piece-white">♙</span></div>
+            <div class="square-light flex items-center justify-center"><span class="piece piece-white">♙</span></div>
+            <div class="square-dark flex items-center justify-center"><span class="piece piece-white">♙</span></div>
+            <!-- Row 1 -->
+            <div class="square-dark flex items-center justify-center"><span class="piece piece-white">♖</span></div>
+            <div class="square-light flex items-center justify-center"></div>
+            <div class="square-dark flex items-center justify-center"><span class="piece piece-white">♗</span></div>
+            <div class="square-light flex items-center justify-center"><span class="piece piece-white">♕</span></div>
+            <div class="square-dark flex items-center justify-center"><span class="piece piece-white">♔</span></div>
+            <div class="square-light flex items-center justify-center"><span class="piece piece-white">♗</span></div>
+            <div class="square-dark flex items-center justify-center"><span class="piece piece-white">♘</span></div>
+            <div class="square-light flex items-center justify-center"><span class="piece piece-white">♖</span></div>
+          </div>
+        </div>
+
+        <!-- Player Info -->
+        <div class="w-full max-w-lg mt-3 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center shadow-lg shadow-cyan-500/30">
+              <i data-lucide="user" class="w-5 h-5 text-white"></i>
+            </div>
+            <div>
+              <p class="font-medium flex items-center gap-2 glow-cyan">
+                You
+                <span class="text-xs bg-cyan-500/30 text-cyan-300 px-2 py-0.5 rounded-full border border-cyan-500/30">White</span>
+              </p>
+              <div class="flex items-center gap-1 text-sm text-slate-400">
+                <span class="text-cyan-400">●</span>
+                <span>Captured:</span>
+                <span class="text-lg piece-white">♟♟</span>
+              </div>
+            </div>
+          </div>
+          <div class="timer-glow px-4 py-2 rounded-xl font-mono text-2xl font-semibold text-cyan-300 bg-cyan-500/10">
+            4:58
+          </div>
+        </div>
+
+        <!-- Game Controls (Mobile) -->
+        <div class="flex gap-3 mt-6 lg:hidden">
+          <button class="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-purple-900/50 hover:bg-purple-800/50 transition border border-purple-500/30">
+            <i data-lucide="flag" class="w-5 h-5 text-purple-400"></i>
+            <span>Resign</span>
+          </button>
+          <button class="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-purple-900/50 hover:bg-purple-800/50 transition border border-purple-500/30">
+            <i data-lucide="handshake" class="w-5 h-5 text-purple-400"></i>
+            <span>Draw</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Right: Sidebar -->
+      <div class="w-full lg:w-80 flex flex-col gap-4">
+        <!-- Move History -->
+        <div class="card-glass rounded-xl p-4 flex-1">
+          <h3 class="font-semibold text-sm text-purple-400 mb-3 flex items-center gap-2">
+            <i data-lucide="scroll-text" class="w-4 h-4"></i>
+            Move History
+          </h3>
+          <div class="space-y-1 font-mono text-sm max-h-48 overflow-y-auto">
+            <div class="flex items-center py-1 hover:bg-purple-800/30 rounded px-2">
+              <span class="text-purple-600 w-6">1.</span>
+              <span class="flex-1 text-cyan-300">e4</span>
+              <span class="flex-1 text-pink-300">e5</span>
+            </div>
+            <div class="flex items-center py-1 hover:bg-purple-800/30 rounded px-2">
+              <span class="text-purple-600 w-6">2.</span>
+              <span class="flex-1 text-cyan-300">Nf3</span>
+              <span class="flex-1 text-pink-300">Nc6</span>
+            </div>
+            <div class="flex items-center py-1 hover:bg-purple-800/30 rounded px-2 bg-cyan-500/10 border border-cyan-500/20">
+              <span class="text-purple-600 w-6">3.</span>
+              <span class="flex-1 text-cyan-400 font-semibold">Nc3</span>
+              <span class="flex-1 text-purple-500">...</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 mt-3 pt-3 border-t border-purple-500/20">
+            <button class="flex-1 p-2 hover:bg-purple-800/30 rounded-lg transition text-purple-400 hover:text-purple-300">
+              <i data-lucide="chevrons-left" class="w-4 h-4 mx-auto"></i>
+            </button>
+            <button class="flex-1 p-2 hover:bg-purple-800/30 rounded-lg transition text-purple-400 hover:text-purple-300">
+              <i data-lucide="chevron-left" class="w-4 h-4 mx-auto"></i>
+            </button>
+            <button class="flex-1 p-2 hover:bg-purple-800/30 rounded-lg transition text-purple-400 hover:text-purple-300">
+              <i data-lucide="chevron-right" class="w-4 h-4 mx-auto"></i>
+            </button>
+            <button class="flex-1 p-2 hover:bg-purple-800/30 rounded-lg transition text-purple-400 hover:text-purple-300">
+              <i data-lucide="chevrons-right" class="w-4 h-4 mx-auto"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- AI Evaluation -->
+        <div class="card-glass rounded-xl p-4">
+          <h3 class="font-semibold text-sm text-purple-400 mb-3 flex items-center gap-2">
+            <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+            AI Evaluation
+          </h3>
+          <div class="flex items-center gap-3 mb-2">
+            <div class="flex-1 h-3 bg-purple-900/50 rounded-full overflow-hidden">
+              <div class="h-full bg-gradient-to-r from-cyan-400 to-cyan-300" style="width: 55%"></div>
+            </div>
+            <span class="font-mono text-sm font-medium text-cyan-400">+0.4</span>
+          </div>
+          <p class="text-xs text-purple-400">
+            White has a slight advantage
+          </p>
+        </div>
+
+        <!-- Opponent Personality -->
+        <div class="card-glass rounded-xl p-4">
+          <h3 class="font-semibold text-sm text-purple-400 mb-3 flex items-center gap-2">
+            <i data-lucide="brain" class="w-4 h-4"></i>
+            Opponent: Aggressive
+          </h3>
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <div class="flex items-center justify-between bg-purple-900/30 rounded-lg px-3 py-2 border border-purple-500/20">
+              <span class="text-purple-400">Attack</span>
+              <span class="font-medium text-pink-400">High</span>
+            </div>
+            <div class="flex items-center justify-between bg-purple-900/30 rounded-lg px-3 py-2 border border-purple-500/20">
+              <span class="text-purple-400">Defense</span>
+              <span class="font-medium text-slate-400">Low</span>
+            </div>
+            <div class="flex items-center justify-between bg-purple-900/30 rounded-lg px-3 py-2 border border-purple-500/20">
+              <span class="text-purple-400">Aggression</span>
+              <span class="font-medium text-orange-400">85%</span>
+            </div>
+            <div class="flex items-center justify-between bg-purple-900/30 rounded-lg px-3 py-2 border border-purple-500/20">
+              <span class="text-purple-400">Randomness</span>
+              <span class="font-medium text-cyan-400">15%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Game Controls (Desktop) -->
+        <div class="hidden lg:flex gap-3">
+          <button class="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-purple-900/50 hover:bg-purple-800/50 transition border border-purple-500/30">
+            <i data-lucide="flag" class="w-5 h-5 text-purple-400"></i>
+            <span>Resign</span>
+          </button>
+          <button class="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-purple-900/50 hover:bg-purple-800/50 transition border border-purple-500/30">
+            <i data-lucide="handshake" class="w-5 h-5 text-purple-400"></i>
+            <span>Draw</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

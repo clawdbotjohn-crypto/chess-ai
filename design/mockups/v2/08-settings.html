@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chess AI — Settings</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body { background: #0f172a; }
+    .toggle {
+      position: relative;
+      width: 44px;
+      height: 24px;
+      background: #334155;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .toggle.active {
+      background: #3b82f6;
+    }
+    .toggle::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: white;
+      border-radius: 50%;
+      top: 2px;
+      left: 2px;
+      transition: transform 0.2s;
+    }
+    .toggle.active::after {
+      transform: translateX(20px);
+    }
+  </style>
+</head>
+<body class="min-h-screen text-white">
+  <!-- Desktop Navigation -->
+  <nav class="hidden lg:flex items-center justify-between px-6 py-4 bg-slate-900 border-b border-slate-800 sticky top-0 z-40">
+    <div class="flex items-center gap-8">
+      <a href="01-home.html" class="flex items-center gap-2 text-xl font-bold">
+        <span class="text-2xl">♞</span>
+        <span>Chess AI</span>
+      </a>
+      <div class="flex items-center gap-6 text-slate-300">
+        <a href="01-home.html" class="flex items-center gap-2 hover:text-white transition">
+          <i data-lucide="home" class="w-4 h-4"></i>
+          Home
+        </a>
+        <a href="02-new-game.html" class="flex items-center gap-2 hover:text-white transition">
+          <i data-lucide="plus" class="w-4 h-4"></i>
+          New Game
+        </a>
+        <a href="05-library.html" class="flex items-center gap-2 hover:text-white transition">
+          <i data-lucide="folder" class="w-4 h-4"></i>
+          Library
+        </a>
+        <a href="07-history.html" class="flex items-center gap-2 hover:text-white transition">
+          <i data-lucide="scroll-text" class="w-4 h-4"></i>
+          History
+        </a>
+        <a href="#" class="flex items-center gap-2 text-white font-medium">
+          <i data-lucide="settings" class="w-4 h-4"></i>
+          Settings
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Header -->
+  <header class="lg:hidden flex items-center justify-center px-4 py-4 bg-slate-900 border-b border-slate-800">
+    <h1 class="text-lg font-semibold">Settings</h1>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-2xl mx-auto px-4 py-6 pb-24 lg:pb-8">
+    
+    <!-- Board Settings -->
+    <section class="mb-6">
+      <h2 class="text-sm font-medium text-slate-400 uppercase tracking-wide mb-3 flex items-center gap-2">
+        <i data-lucide="layout" class="w-4 h-4"></i>
+        Board Settings
+      </h2>
+      <div class="bg-slate-800 rounded-xl border border-slate-700 divide-y divide-slate-700">
+        <!-- Show Legal Moves -->
+        <div class="flex items-center justify-between p-4">
+          <div>
+            <p class="font-medium">Show Legal Moves</p>
+            <p class="text-sm text-slate-400">Display dots on squares where pieces can move</p>
+          </div>
+          <div class="toggle active"></div>
+        </div>
+        
+        <!-- Highlight Last Move -->
+        <div class="flex items-center justify-between p-4">
+          <div>
+            <p class="font-medium">Highlight Last Move</p>
+            <p class="text-sm text-slate-400">Show which squares the last move used</p>
+          </div>
+          <div class="toggle active"></div>
+        </div>
+
+        <!-- Show Coordinates -->
+        <div class="flex items-center justify-between p-4">
+          <div>
+            <p class="font-medium">Show Coordinates</p>
+            <p class="text-sm text-slate-400">Display a-h and 1-8 around the board</p>
+          </div>
+          <div class="toggle active"></div>
+        </div>
+
+        <!-- Piece Animation -->
+        <div class="flex items-center justify-between p-4">
+          <div>
+            <p class="font-medium">Piece Animation</p>
+            <p class="text-sm text-slate-400">Animate pieces when they move</p>
+          </div>
+          <div class="toggle active"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Theme Settings -->
+    <section class="mb-6">
+      <h2 class="text-sm font-medium text-slate-400 uppercase tracking-wide mb-3 flex items-center gap-2">
+        <i data-lucide="palette" class="w-4 h-4"></i>
+        Theme
+      </h2>
+      <div class="bg-slate-800 rounded-xl border border-slate-700 divide-y divide-slate-700">
+        <!-- Board Theme -->
+        <div class="p-4">
+          <p class="font-medium mb-3">Board Theme</p>
+          <div class="grid grid-cols-4 gap-2">
+            <button class="aspect-square rounded-lg overflow-hidden ring-2 ring-blue-500 ring-offset-2 ring-offset-slate-800">
+              <div class="w-full h-full grid grid-cols-2 grid-rows-2">
+                <div class="bg-[#f0d9b5]"></div>
+                <div class="bg-[#b58863]"></div>
+                <div class="bg-[#b58863]"></div>
+                <div class="bg-[#f0d9b5]"></div>
+              </div>
+            </button>
+            <button class="aspect-square rounded-lg overflow-hidden">
+              <div class="w-full h-full grid grid-cols-2 grid-rows-2">
+                <div class="bg-[#eeeed2]"></div>
+                <div class="bg-[#769656]"></div>
+                <div class="bg-[#769656]"></div>
+                <div class="bg-[#eeeed2]"></div>
+              </div>
+            </button>
+            <button class="aspect-square rounded-lg overflow-hidden">
+              <div class="w-full h-full grid grid-cols-2 grid-rows-2">
+                <div class="bg-[#dee3e6]"></div>
+                <div class="bg-[#8ca2ad]"></div>
+                <div class="bg-[#8ca2ad]"></div>
+                <div class="bg-[#dee3e6]"></div>
+              </div>
+            </button>
+            <button class="aspect-square rounded-lg overflow-hidden">
+              <div class="w-full h-full grid grid-cols-2 grid-rows-2">
+                <div class="bg-[#2c2c2c]"></div>
+                <div class="bg-[#1a1a1a]"></div>
+                <div class="bg-[#1a1a1a]"></div>
+                <div class="bg-[#2c2c2c]"></div>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Piece Set -->
+        <div class="p-4">
+          <p class="font-medium mb-3">Piece Set</p>
+          <select class="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2.5">
+            <option selected>Standard</option>
+            <option>Neo</option>
+            <option>Classic</option>
+            <option>Alpha</option>
+            <option>Merida</option>
+          </select>
+        </div>
+
+        <!-- App Theme -->
+        <div class="p-4">
+          <p class="font-medium mb-3">App Theme</p>
+          <div class="flex gap-2">
+            <button class="flex-1 bg-blue-600 text-white py-2 rounded-lg text-sm font-medium">
+              Dark
+            </button>
+            <button class="flex-1 bg-slate-700 text-slate-400 py-2 rounded-lg text-sm font-medium hover:text-white transition">
+              Light
+            </button>
+            <button class="flex-1 bg-slate-700 text-slate-400 py-2 rounded-lg text-sm font-medium hover:text-white transition">
+              System
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sound Settings -->
+    <section class="mb-6">
+      <h2 class="text-sm font-medium text-slate-400 uppercase tracking-wide mb-3 flex items-center gap-2">
+        <i data-lucide="volume-2" class="w-4 h-4"></i>
+        Sound
+      </h2>
+      <div class="bg-slate-800 rounded-xl border border-slate-700 divide-y divide-slate-700">
+        <!-- Sound Effects -->
+        <div class="flex items-center justify-between p-4">
+          <div>
+            <p class="font-medium">Sound Effects</p>
+            <p class="text-sm text-slate-400">Play sounds when pieces move</p>
+          </div>
+          <div class="toggle active"></div>
+        </div>
+
+        <!-- Volume -->
+        <div class="p-4">
+          <div class="flex items-center justify-between mb-2">
+            <p class="font-medium">Volume</p>
+            <span class="text-sm text-slate-400">80%</span>
+          </div>
+          <input type="range" min="0" max="100" value="80" 
+            class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-500" />
+        </div>
+      </div>
+    </section>
+
+    <!-- AI Settings -->
+    <section class="mb-6">
+      <h2 class="text-sm font-medium text-slate-400 uppercase tracking-wide mb-3 flex items-center gap-2">
+        <i data-lucide="brain" class="w-4 h-4"></i>
+        AI Settings
+      </h2>
+      <div class="bg-slate-800 rounded-xl border border-slate-700 divide-y divide-slate-700">
+        <!-- AI Search Depth -->
+        <div class="p-4">
+          <div class="flex items-center justify-between mb-2">
+            <div>
+              <p class="font-medium">Search Depth</p>
+              <p class="text-sm text-slate-400">Higher = stronger but slower AI</p>
+            </div>
+            <span class="text-sm font-mono bg-slate-700 px-2 py-1 rounded">3</span>
+          </div>
+          <input type="range" min="1" max="5" value="3" 
+            class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-500" />
+          <div class="flex justify-between text-xs text-slate-500 mt-1">
+            <span>Fast</span>
+            <span>Strong</span>
+          </div>
+        </div>
+
+        <!-- Show AI Evaluation -->
+        <div class="flex items-center justify-between p-4">
+          <div>
+            <p class="font-medium">Show Evaluation Bar</p>
+            <p class="text-sm text-slate-400">Display who's winning during the game</p>
+          </div>
+          <div class="toggle active"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Data Settings -->
+    <section class="mb-6">
+      <h2 class="text-sm font-medium text-slate-400 uppercase tracking-wide mb-3 flex items-center gap-2">
+        <i data-lucide="database" class="w-4 h-4"></i>
+        Data
+      </h2>
+      <div class="bg-slate-800 rounded-xl border border-slate-700 divide-y divide-slate-700">
+        <!-- Export Data -->
+        <button class="flex items-center justify-between p-4 w-full text-left hover:bg-slate-750 transition">
+          <div class="flex items-center gap-3">
+            <i data-lucide="download" class="w-5 h-5 text-slate-400"></i>
+            <div>
+              <p class="font-medium">Export Data</p>
+              <p class="text-sm text-slate-400">Download your games and personalities</p>
+            </div>
+          </div>
+          <i data-lucide="chevron-right" class="w-5 h-5 text-slate-600"></i>
+        </button>
+
+        <!-- Import Data -->
+        <button class="flex items-center justify-between p-4 w-full text-left hover:bg-slate-750 transition">
+          <div class="flex items-center gap-3">
+            <i data-lucide="upload" class="w-5 h-5 text-slate-400"></i>
+            <div>
+              <p class="font-medium">Import Data</p>
+              <p class="text-sm text-slate-400">Restore from a backup</p>
+            </div>
+          </div>
+          <i data-lucide="chevron-right" class="w-5 h-5 text-slate-600"></i>
+        </button>
+
+        <!-- Clear Game History -->
+        <button class="flex items-center justify-between p-4 w-full text-left hover:bg-slate-750 transition">
+          <div class="flex items-center gap-3">
+            <i data-lucide="trash-2" class="w-5 h-5 text-red-400"></i>
+            <div>
+              <p class="font-medium text-red-400">Clear Game History</p>
+              <p class="text-sm text-slate-400">Delete all saved games</p>
+            </div>
+          </div>
+          <i data-lucide="chevron-right" class="w-5 h-5 text-slate-600"></i>
+        </button>
+      </div>
+    </section>
+
+    <!-- About -->
+    <section>
+      <h2 class="text-sm font-medium text-slate-400 uppercase tracking-wide mb-3 flex items-center gap-2">
+        <i data-lucide="info" class="w-4 h-4"></i>
+        About
+      </h2>
+      <div class="bg-slate-800 rounded-xl border border-slate-700 p-4">
+        <div class="flex items-center gap-4 mb-4">
+          <div class="w-12 h-12 rounded-xl bg-slate-700 flex items-center justify-center text-2xl">
+            ♞
+          </div>
+          <div>
+            <p class="font-bold">Chess AI</p>
+            <p class="text-sm text-slate-400">Version 1.0.0</p>
+          </div>
+        </div>
+        <p class="text-sm text-slate-400 mb-4">
+          Build custom chess AI personalities by tuning evaluation weights. 
+          Experiment with different play styles and watch your creations battle.
+        </p>
+        <div class="flex gap-2">
+          <a href="#" class="text-sm text-blue-400 hover:underline flex items-center gap-1">
+            <i data-lucide="github" class="w-4 h-4"></i>
+            GitHub
+          </a>
+          <span class="text-slate-600">•</span>
+          <a href="#" class="text-sm text-blue-400 hover:underline flex items-center gap-1">
+            <i data-lucide="book-open" class="w-4 h-4"></i>
+            Documentation
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Mobile Bottom Navigation -->
+  <nav class="lg:hidden fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-800 px-2 py-2">
+    <div class="flex justify-around items-center">
+      <a href="01-home.html" class="flex flex-col items-center gap-1 px-3 py-2 text-slate-400">
+        <i data-lucide="home" class="w-5 h-5"></i>
+        <span class="text-xs">Home</span>
+      </a>
+      <a href="02-new-game.html" class="flex flex-col items-center gap-1 px-3 py-2 text-slate-400">
+        <i data-lucide="plus-circle" class="w-5 h-5"></i>
+        <span class="text-xs">Play</span>
+      </a>
+      <a href="05-library.html" class="flex flex-col items-center gap-1 px-3 py-2 text-slate-400">
+        <i data-lucide="folder" class="w-5 h-5"></i>
+        <span class="text-xs">Library</span>
+      </a>
+      <a href="07-history.html" class="flex flex-col items-center gap-1 px-3 py-2 text-slate-400">
+        <i data-lucide="scroll-text" class="w-5 h-5"></i>
+        <span class="text-xs">History</span>
+      </a>
+      <a href="#" class="flex flex-col items-center gap-1 px-3 py-2 text-blue-400">
+        <i data-lucide="settings" class="w-5 h-5"></i>
+        <span class="text-xs font-medium">Settings</span>
+      </a>
+    </div>
+  </nav>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

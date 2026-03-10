@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chess AI — Game Board (Classic)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Inter', -apple-system, sans-serif; }
+    body { background: #0f172a; }
+    .card-glass {
+      background: linear-gradient(135deg, rgba(30,41,59,0.9), rgba(15,23,42,0.95));
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    /* Classic wood board */
+    .square-light { background: #f0d9b5; }
+    .square-dark { background: #b58863; }
+    .square-highlight { box-shadow: inset 0 0 0 3px rgba(255,255,0,0.5); }
+    .square-legal { position: relative; }
+    .square-legal::after {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 30%;
+      height: 30%;
+      background: rgba(0,0,0,0.15);
+      border-radius: 50%;
+    }
+    .piece { font-size: 2.5rem; cursor: grab; user-select: none; }
+    @media (min-width: 1024px) { .piece { font-size: 3.5rem; } }
+  </style>
+</head>
+<body class="min-h-screen text-white">
+  <!-- Minimal Game Header -->
+  <header class="bg-slate-900/95 border-b border-slate-800/50 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <a href="01-home.html" class="text-slate-400 hover:text-white transition">
+          <i data-lucide="arrow-left" class="w-5 h-5"></i>
+        </a>
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">♞</span>
+          <span class="font-semibold hidden sm:inline">Chess AI</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button class="p-2 hover:bg-slate-800 rounded-lg transition text-slate-400 hover:text-white" title="Game settings">
+          <i data-lucide="settings" class="w-5 h-5"></i>
+        </button>
+        <button class="p-2 hover:bg-slate-800 rounded-lg transition text-slate-400 hover:text-white" title="Flip board">
+          <i data-lucide="flip-vertical" class="w-5 h-5"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Game Area -->
+  <main class="max-w-7xl mx-auto px-4 py-6">
+    <div class="flex flex-col lg:flex-row gap-6">
+      
+      <!-- Left: Board + Players -->
+      <div class="flex-1 flex flex-col items-center">
+        <!-- Opponent Info -->
+        <div class="w-full max-w-lg mb-3 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center">
+              <i data-lucide="bot" class="w-5 h-5 text-white"></i>
+            </div>
+            <div>
+              <p class="font-medium flex items-center gap-2">
+                Aggressive
+                <span class="text-xs bg-purple-500/30 text-purple-300 px-2 py-0.5 rounded-full">AI</span>
+              </p>
+              <div class="flex items-center gap-1 text-sm text-slate-400">
+                <span>●</span>
+                <span>Captured:</span>
+                <span class="text-lg">♙♙♘</span>
+              </div>
+            </div>
+          </div>
+          <div class="card-glass px-4 py-2 rounded-xl font-mono text-2xl font-semibold">
+            4:32
+          </div>
+        </div>
+
+        <!-- Chess Board -->
+        <div class="w-full max-w-lg aspect-square rounded-xl overflow-hidden shadow-2xl shadow-black/50">
+          <div class="grid grid-cols-8 h-full">
+            <!-- Row 8 -->
+            <div class="square-light flex items-center justify-center"><span class="piece">♜</span></div>
+            <div class="square-dark flex items-center justify-center"><span class="piece">♞</span></div>
+            <div class="square-light flex items-center justify-center"><span class="piece">♝</span></div>
+            <div class="square-dark flex items-center justify-center"><span class="piece">♛</span></div>
+            <div class="square-light flex items-center justify-center"><span class="piece">♚</span></div>
+            <div class="square-dark flex items-center justify-center"><span class="piece">♝</span></div>
+            <div class="square-light flex items-center justify-center"><span class="piece">♞</span></div>
+            <div class="square-dark flex items-center justify-center"><span class="piece">♜</span></div>
+            <!-- Row 7 -->
+            <div class="square-dark flex items-center justify-center"><span class="piece">♟</span></div>
+            <div class="square-light flex items-center justify-center"><span class="piece">♟</span></div>
+            <div class="square-dark flex items-center justify-center"><span class="piece">♟</span></div>
+            <div class="square-light flex items-center justify-center"><span class="piece">♟</span></div>
+            <div class="square-dark flex items-center justify-center"><span class="piece">♟</span></div>
+            <div class="square-light flex items-center justify-center"><span class="piece">♟</span></div>
+            <div class="square-dark flex items-center justify-center"><span class="piece">♟</span></div>
+            <div class="square-light flex items-center justify-center"><span class="piece">♟</span></div>
+            <!-- Row 6 -->
+            <div class="square-light flex items-center justify-center"></div>
+            <div class="square-dark flex items-center justify-center"></div>
+            <div class="square-light flex items-center justify-center"></div>
+            <div class="square-dark flex items-center justify-center"></div>
+            <div class="square-light flex items-center justify-center"></div>
+            <div class="square-dark flex items-center justify-center"></div>
+            <div class="square-light flex items-center justify-center"></div>
+            <div class="square-dark flex items-center justify-center"></div>
+            <!-- Row 5 -->
+            <div class="square-dark flex items-center justify-center"></div>
+            <div class="square-light flex items-center justify-center"></div>
+            <div class="square-dark flex items-center justify-center"></div>
+            <div class="square-light flex items-center justify-center"></div>
+            <div class="square-dark square-highlight flex items-center justify-center"><span class="piece">♙</span></div>
+            <div class="square-light flex items-center justify-center"></div>
+            <div class="square-dark flex items-center justify-center"></div>
+            <div class="square-light flex items-center justify-center"></div>
+            <!-- Row 4 -->
+            <div class="square-light flex items-center justify-center"></div>
+            <div class="square-dark flex items-center justify-center"></div>
+            <div class="square-light flex items-center justify-center"></div>
+            <div class="square-dark square-highlight flex items-center justify-center"></div>
+            <div class="square-light flex items-center justify-center"></div>
+            <div class="square-dark flex items-center justify-center"></div>
+            <div class="square-light flex items-center justify-center"></div>
+            <div class="square-dark flex items-center justify-center"></div>
+            <!-- Row 3 -->
+            <div class="square-dark flex items-center justify-center"></div>
+            <div class="square-light flex items-center justify-center"></div>
+            <div class="square-dark flex items-center justify-center"><span class="piece">♘</span></div>
+            <div class="square-light flex items-center justify-center"></div>
+            <div class="square-dark flex items-center justify-center"></div>
+            <div class="square-light flex items-center justify-center"></div>
+            <div class="square-dark flex items-center justify-center"></div>
+            <div class="square-light flex items-center justify-center"></div>
+            <!-- Row 2 -->
+            <div class="square-light flex items-center justify-center"><span class="piece">♙</span></div>
+            <div class="square-dark flex items-center justify-center"><span class="piece">♙</span></div>
+            <div class="square-light flex items-center justify-center"><span class="piece">♙</span></div>
+            <div class="square-dark flex items-center justify-center"><span class="piece">♙</span></div>
+            <div class="square-light flex items-center justify-center"></div>
+            <div class="square-dark flex items-center justify-center"><span class="piece">♙</span></div>
+            <div class="square-light flex items-center justify-center"><span class="piece">♙</span></div>
+            <div class="square-dark flex items-center justify-center"><span class="piece">♙</span></div>
+            <!-- Row 1 -->
+            <div class="square-dark flex items-center justify-center"><span class="piece">♖</span></div>
+            <div class="square-light flex items-center justify-center"></div>
+            <div class="square-dark flex items-center justify-center"><span class="piece">♗</span></div>
+            <div class="square-light flex items-center justify-center"><span class="piece">♕</span></div>
+            <div class="square-dark flex items-center justify-center"><span class="piece">♔</span></div>
+            <div class="square-light flex items-center justify-center"><span class="piece">♗</span></div>
+            <div class="square-dark flex items-center justify-center"><span class="piece">♘</span></div>
+            <div class="square-light flex items-center justify-center"><span class="piece">♖</span></div>
+          </div>
+        </div>
+
+        <!-- Player Info -->
+        <div class="w-full max-w-lg mt-3 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
+              <i data-lucide="user" class="w-5 h-5 text-white"></i>
+            </div>
+            <div>
+              <p class="font-medium flex items-center gap-2">
+                You
+                <span class="text-xs bg-emerald-500/30 text-emerald-300 px-2 py-0.5 rounded-full">White</span>
+              </p>
+              <div class="flex items-center gap-1 text-sm text-slate-400">
+                <span>●</span>
+                <span>Captured:</span>
+                <span class="text-lg">♟♟</span>
+              </div>
+            </div>
+          </div>
+          <div class="card-glass px-4 py-2 rounded-xl font-mono text-2xl font-semibold bg-blue-500/10 border-blue-500/30">
+            4:58
+          </div>
+        </div>
+
+        <!-- Game Controls (Mobile) -->
+        <div class="flex gap-3 mt-6 lg:hidden">
+          <button class="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 transition">
+            <i data-lucide="flag" class="w-5 h-5 text-slate-400"></i>
+            <span>Resign</span>
+          </button>
+          <button class="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 transition">
+            <i data-lucide="handshake" class="w-5 h-5 text-slate-400"></i>
+            <span>Draw</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Right: Sidebar -->
+      <div class="w-full lg:w-80 flex flex-col gap-4">
+        <!-- Move History -->
+        <div class="card-glass rounded-xl p-4 flex-1">
+          <h3 class="font-semibold text-sm text-slate-400 mb-3 flex items-center gap-2">
+            <i data-lucide="scroll-text" class="w-4 h-4"></i>
+            Move History
+          </h3>
+          <div class="space-y-1 font-mono text-sm max-h-48 overflow-y-auto">
+            <div class="flex items-center py-1 hover:bg-slate-800/50 rounded px-2">
+              <span class="text-slate-500 w-6">1.</span>
+              <span class="flex-1">e4</span>
+              <span class="flex-1">e5</span>
+            </div>
+            <div class="flex items-center py-1 hover:bg-slate-800/50 rounded px-2">
+              <span class="text-slate-500 w-6">2.</span>
+              <span class="flex-1">Nf3</span>
+              <span class="flex-1">Nc6</span>
+            </div>
+            <div class="flex items-center py-1 hover:bg-slate-800/50 rounded px-2 bg-blue-500/10">
+              <span class="text-slate-500 w-6">3.</span>
+              <span class="flex-1 text-blue-400">Nc3</span>
+              <span class="flex-1 text-slate-500">...</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 mt-3 pt-3 border-t border-slate-700/50">
+            <button class="flex-1 p-2 hover:bg-slate-800 rounded-lg transition text-slate-400 hover:text-white">
+              <i data-lucide="chevrons-left" class="w-4 h-4 mx-auto"></i>
+            </button>
+            <button class="flex-1 p-2 hover:bg-slate-800 rounded-lg transition text-slate-400 hover:text-white">
+              <i data-lucide="chevron-left" class="w-4 h-4 mx-auto"></i>
+            </button>
+            <button class="flex-1 p-2 hover:bg-slate-800 rounded-lg transition text-slate-400 hover:text-white">
+              <i data-lucide="chevron-right" class="w-4 h-4 mx-auto"></i>
+            </button>
+            <button class="flex-1 p-2 hover:bg-slate-800 rounded-lg transition text-slate-400 hover:text-white">
+              <i data-lucide="chevrons-right" class="w-4 h-4 mx-auto"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- AI Evaluation -->
+        <div class="card-glass rounded-xl p-4">
+          <h3 class="font-semibold text-sm text-slate-400 mb-3 flex items-center gap-2">
+            <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+            AI Evaluation
+          </h3>
+          <div class="flex items-center gap-3 mb-2">
+            <div class="flex-1 h-3 bg-slate-700 rounded-full overflow-hidden">
+              <div class="h-full bg-gradient-to-r from-white to-slate-300" style="width: 55%"></div>
+            </div>
+            <span class="font-mono text-sm font-medium text-emerald-400">+0.4</span>
+          </div>
+          <p class="text-xs text-slate-500">
+            White has a slight advantage
+          </p>
+        </div>
+
+        <!-- Opponent Personality -->
+        <div class="card-glass rounded-xl p-4">
+          <h3 class="font-semibold text-sm text-slate-400 mb-3 flex items-center gap-2">
+            <i data-lucide="brain" class="w-4 h-4"></i>
+            Opponent: Aggressive
+          </h3>
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <div class="flex items-center justify-between bg-slate-800/50 rounded-lg px-3 py-2">
+              <span class="text-slate-400">Attack</span>
+              <span class="font-medium text-red-400">High</span>
+            </div>
+            <div class="flex items-center justify-between bg-slate-800/50 rounded-lg px-3 py-2">
+              <span class="text-slate-400">Defense</span>
+              <span class="font-medium text-slate-300">Low</span>
+            </div>
+            <div class="flex items-center justify-between bg-slate-800/50 rounded-lg px-3 py-2">
+              <span class="text-slate-400">Aggression</span>
+              <span class="font-medium text-orange-400">85%</span>
+            </div>
+            <div class="flex items-center justify-between bg-slate-800/50 rounded-lg px-3 py-2">
+              <span class="text-slate-400">Randomness</span>
+              <span class="font-medium text-purple-400">15%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Game Controls (Desktop) -->
+        <div class="hidden lg:flex gap-3">
+          <button class="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 transition border border-slate-700">
+            <i data-lucide="flag" class="w-5 h-5 text-slate-400"></i>
+            <span>Resign</span>
+          </button>
+          <button class="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 transition border border-slate-700">
+            <i data-lucide="handshake" class="w-5 h-5 text-slate-400"></i>
+            <span>Draw</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

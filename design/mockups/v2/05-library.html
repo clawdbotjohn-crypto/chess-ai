@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chess AI — Personality Library</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body { background: #0f172a; }
+  </style>
+</head>
+<body class="min-h-screen text-white">
+  <!-- Desktop Navigation -->
+  <nav class="hidden lg:flex items-center justify-between px-6 py-4 bg-slate-900 border-b border-slate-800 sticky top-0 z-40">
+    <div class="flex items-center gap-8">
+      <a href="01-home.html" class="flex items-center gap-2 text-xl font-bold">
+        <span class="text-2xl">♞</span>
+        <span>Chess AI</span>
+      </a>
+      <div class="flex items-center gap-6 text-slate-300">
+        <a href="01-home.html" class="flex items-center gap-2 hover:text-white transition">
+          <i data-lucide="home" class="w-4 h-4"></i>
+          Home
+        </a>
+        <a href="02-new-game.html" class="flex items-center gap-2 hover:text-white transition">
+          <i data-lucide="plus" class="w-4 h-4"></i>
+          New Game
+        </a>
+        <a href="#" class="flex items-center gap-2 text-white font-medium">
+          <i data-lucide="folder" class="w-4 h-4"></i>
+          Library
+        </a>
+        <a href="07-history.html" class="flex items-center gap-2 hover:text-white transition">
+          <i data-lucide="scroll-text" class="w-4 h-4"></i>
+          History
+        </a>
+        <a href="08-settings.html" class="flex items-center gap-2 hover:text-white transition">
+          <i data-lucide="settings" class="w-4 h-4"></i>
+          Settings
+        </a>
+      </div>
+    </div>
+    <a href="04-ai-editor.html" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition flex items-center gap-2">
+      <i data-lucide="plus" class="w-4 h-4"></i>
+      Create New
+    </a>
+  </nav>
+
+  <!-- Mobile Header -->
+  <header class="lg:hidden flex items-center justify-between px-4 py-4 bg-slate-900 border-b border-slate-800">
+    <h1 class="text-lg font-semibold">My Library</h1>
+    <a href="04-ai-editor.html" class="text-blue-400">
+      <i data-lucide="plus" class="w-5 h-5"></i>
+    </a>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-6xl mx-auto px-4 py-6 pb-24 lg:pb-8">
+    <!-- Search & Filter -->
+    <div class="flex gap-3 mb-6">
+      <div class="flex-1 relative">
+        <i data-lucide="search" class="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2"></i>
+        <input type="text" placeholder="Search personalities..." 
+          class="w-full bg-slate-800 border border-slate-700 rounded-lg pl-10 pr-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+      </div>
+      <button class="bg-slate-800 border border-slate-700 rounded-lg px-4 flex items-center gap-2 text-slate-400 hover:text-white transition">
+        <i data-lucide="filter" class="w-4 h-4"></i>
+        <span class="hidden sm:inline">Filter</span>
+      </button>
+    </div>
+
+    <!-- Presets Section -->
+    <section class="mb-8">
+      <h2 class="text-sm font-medium text-slate-400 uppercase tracking-wide mb-3 flex items-center gap-2">
+        <i data-lucide="sparkles" class="w-4 h-4"></i>
+        Built-in Presets
+      </h2>
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+        <!-- Classical -->
+        <div class="bg-slate-800 border border-slate-700 rounded-xl p-4 hover:border-blue-500/50 transition cursor-pointer group">
+          <div class="w-12 h-12 rounded-lg bg-blue-600/20 flex items-center justify-center mx-auto mb-3">
+            <i data-lucide="scale" class="w-6 h-6 text-blue-400"></i>
+          </div>
+          <p class="font-medium text-center mb-1">Classical</p>
+          <p class="text-xs text-slate-500 text-center">Balanced play</p>
+          <div class="flex gap-1 mt-3 opacity-0 group-hover:opacity-100 transition">
+            <button class="flex-1 bg-blue-600/20 text-blue-400 text-xs py-1 rounded">Play</button>
+            <button class="flex-1 bg-slate-700/50 text-slate-400 text-xs py-1 rounded">Edit</button>
+          </div>
+        </div>
+        <!-- Aggressive -->
+        <div class="bg-slate-800 border border-slate-700 rounded-xl p-4 hover:border-red-500/50 transition cursor-pointer group">
+          <div class="w-12 h-12 rounded-lg bg-red-600/20 flex items-center justify-center mx-auto mb-3">
+            <i data-lucide="swords" class="w-6 h-6 text-red-400"></i>
+          </div>
+          <p class="font-medium text-center mb-1">Aggressive</p>
+          <p class="text-xs text-slate-500 text-center">Attack-focused</p>
+          <div class="flex gap-1 mt-3 opacity-0 group-hover:opacity-100 transition">
+            <button class="flex-1 bg-blue-600/20 text-blue-400 text-xs py-1 rounded">Play</button>
+            <button class="flex-1 bg-slate-700/50 text-slate-400 text-xs py-1 rounded">Edit</button>
+          </div>
+        </div>
+        <!-- Defensive -->
+        <div class="bg-slate-800 border border-slate-700 rounded-xl p-4 hover:border-green-500/50 transition cursor-pointer group">
+          <div class="w-12 h-12 rounded-lg bg-green-600/20 flex items-center justify-center mx-auto mb-3">
+            <i data-lucide="shield" class="w-6 h-6 text-green-400"></i>
+          </div>
+          <p class="font-medium text-center mb-1">Defensive</p>
+          <p class="text-xs text-slate-500 text-center">Solid & safe</p>
+          <div class="flex gap-1 mt-3 opacity-0 group-hover:opacity-100 transition">
+            <button class="flex-1 bg-blue-600/20 text-blue-400 text-xs py-1 rounded">Play</button>
+            <button class="flex-1 bg-slate-700/50 text-slate-400 text-xs py-1 rounded">Edit</button>
+          </div>
+        </div>
+        <!-- Chaotic -->
+        <div class="bg-slate-800 border border-slate-700 rounded-xl p-4 hover:border-purple-500/50 transition cursor-pointer group">
+          <div class="w-12 h-12 rounded-lg bg-purple-600/20 flex items-center justify-center mx-auto mb-3">
+            <i data-lucide="dices" class="w-6 h-6 text-purple-400"></i>
+          </div>
+          <p class="font-medium text-center mb-1">Chaotic</p>
+          <p class="text-xs text-slate-500 text-center">Unpredictable</p>
+          <div class="flex gap-1 mt-3 opacity-0 group-hover:opacity-100 transition">
+            <button class="flex-1 bg-blue-600/20 text-blue-400 text-xs py-1 rounded">Play</button>
+            <button class="flex-1 bg-slate-700/50 text-slate-400 text-xs py-1 rounded">Edit</button>
+          </div>
+        </div>
+        <!-- Tactical -->
+        <div class="bg-slate-800 border border-slate-700 rounded-xl p-4 hover:border-amber-500/50 transition cursor-pointer group">
+          <div class="w-12 h-12 rounded-lg bg-amber-600/20 flex items-center justify-center mx-auto mb-3">
+            <i data-lucide="crosshair" class="w-6 h-6 text-amber-400"></i>
+          </div>
+          <p class="font-medium text-center mb-1">Tactical</p>
+          <p class="text-xs text-slate-500 text-center">Combo hunter</p>
+          <div class="flex gap-1 mt-3 opacity-0 group-hover:opacity-100 transition">
+            <button class="flex-1 bg-blue-600/20 text-blue-400 text-xs py-1 rounded">Play</button>
+            <button class="flex-1 bg-slate-700/50 text-slate-400 text-xs py-1 rounded">Edit</button>
+          </div>
+        </div>
+        <!-- Positional -->
+        <div class="bg-slate-800 border border-slate-700 rounded-xl p-4 hover:border-cyan-500/50 transition cursor-pointer group">
+          <div class="w-12 h-12 rounded-lg bg-cyan-600/20 flex items-center justify-center mx-auto mb-3">
+            <i data-lucide="target" class="w-6 h-6 text-cyan-400"></i>
+          </div>
+          <p class="font-medium text-center mb-1">Positional</p>
+          <p class="text-xs text-slate-500 text-center">Long-term plans</p>
+          <div class="flex gap-1 mt-3 opacity-0 group-hover:opacity-100 transition">
+            <button class="flex-1 bg-blue-600/20 text-blue-400 text-xs py-1 rounded">Play</button>
+            <button class="flex-1 bg-slate-700/50 text-slate-400 text-xs py-1 rounded">Edit</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Saved Personalities Section -->
+    <section>
+      <h2 class="text-sm font-medium text-slate-400 uppercase tracking-wide mb-3 flex items-center gap-2">
+        <i data-lucide="save" class="w-4 h-4"></i>
+        My Personalities
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Saved Personality Card 1 -->
+        <div class="bg-slate-800 border border-slate-700 rounded-xl p-4 hover:border-slate-600 transition">
+          <div class="flex items-start justify-between mb-3">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-red-500 to-amber-500 flex items-center justify-center">
+                <i data-lucide="brain" class="w-5 h-5 text-white"></i>
+              </div>
+              <div>
+                <p class="font-medium">Hyper Aggro</p>
+                <p class="text-xs text-slate-500">Created Feb 25</p>
+              </div>
+            </div>
+            <button class="text-slate-500 hover:text-slate-300 transition">
+              <i data-lucide="more-vertical" class="w-4 h-4"></i>
+            </button>
+          </div>
+          <div class="flex flex-wrap gap-1.5 mb-3">
+            <span class="text-xs bg-red-600/20 text-red-400 px-2 py-0.5 rounded">High Aggression</span>
+            <span class="text-xs bg-amber-600/20 text-amber-400 px-2 py-0.5 rounded">Attack Focus</span>
+          </div>
+          <div class="flex gap-2">
+            <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm py-2 rounded-lg transition flex items-center justify-center gap-1">
+              <i data-lucide="play" class="w-3.5 h-3.5"></i>
+              Play
+            </button>
+            <button class="flex-1 bg-slate-700 hover:bg-slate-600 text-slate-300 text-sm py-2 rounded-lg transition flex items-center justify-center gap-1">
+              <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+              Edit
+            </button>
+            <button class="bg-slate-700 hover:bg-slate-600 text-slate-400 px-3 py-2 rounded-lg transition">
+              <i data-lucide="trash-2" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Saved Personality Card 2 -->
+        <div class="bg-slate-800 border border-slate-700 rounded-xl p-4 hover:border-slate-600 transition">
+          <div class="flex items-start justify-between mb-3">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-green-500 to-cyan-500 flex items-center justify-center">
+                <i data-lucide="brain" class="w-5 h-5 text-white"></i>
+              </div>
+              <div>
+                <p class="font-medium">Fortress Mode</p>
+                <p class="text-xs text-slate-500">Created Feb 24</p>
+              </div>
+            </div>
+            <button class="text-slate-500 hover:text-slate-300 transition">
+              <i data-lucide="more-vertical" class="w-4 h-4"></i>
+            </button>
+          </div>
+          <div class="flex flex-wrap gap-1.5 mb-3">
+            <span class="text-xs bg-green-600/20 text-green-400 px-2 py-0.5 rounded">Max Defense</span>
+            <span class="text-xs bg-cyan-600/20 text-cyan-400 px-2 py-0.5 rounded">King Safety</span>
+          </div>
+          <div class="flex gap-2">
+            <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm py-2 rounded-lg transition flex items-center justify-center gap-1">
+              <i data-lucide="play" class="w-3.5 h-3.5"></i>
+              Play
+            </button>
+            <button class="flex-1 bg-slate-700 hover:bg-slate-600 text-slate-300 text-sm py-2 rounded-lg transition flex items-center justify-center gap-1">
+              <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+              Edit
+            </button>
+            <button class="bg-slate-700 hover:bg-slate-600 text-slate-400 px-3 py-2 rounded-lg transition">
+              <i data-lucide="trash-2" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Saved Personality Card 3 -->
+        <div class="bg-slate-800 border border-slate-700 rounded-xl p-4 hover:border-slate-600 transition">
+          <div class="flex items-start justify-between mb-3">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+                <i data-lucide="brain" class="w-5 h-5 text-white"></i>
+              </div>
+              <div>
+                <p class="font-medium">Andy's Bot</p>
+                <p class="text-xs text-slate-500">Created Feb 20</p>
+              </div>
+            </div>
+            <button class="text-slate-500 hover:text-slate-300 transition">
+              <i data-lucide="more-vertical" class="w-4 h-4"></i>
+            </button>
+          </div>
+          <div class="flex flex-wrap gap-1.5 mb-3">
+            <span class="text-xs bg-purple-600/20 text-purple-400 px-2 py-0.5 rounded">Balanced</span>
+            <span class="text-xs bg-blue-600/20 text-blue-400 px-2 py-0.5 rounded">Randomized</span>
+          </div>
+          <div class="flex gap-2">
+            <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm py-2 rounded-lg transition flex items-center justify-center gap-1">
+              <i data-lucide="play" class="w-3.5 h-3.5"></i>
+              Play
+            </button>
+            <button class="flex-1 bg-slate-700 hover:bg-slate-600 text-slate-300 text-sm py-2 rounded-lg transition flex items-center justify-center gap-1">
+              <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+              Edit
+            </button>
+            <button class="bg-slate-700 hover:bg-slate-600 text-slate-400 px-3 py-2 rounded-lg transition">
+              <i data-lucide="trash-2" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Create New Card -->
+        <a href="04-ai-editor.html" class="bg-slate-800/50 border-2 border-dashed border-slate-700 rounded-xl p-6 hover:border-blue-500/50 hover:bg-slate-800 transition flex flex-col items-center justify-center text-center">
+          <div class="w-12 h-12 rounded-full bg-slate-700 flex items-center justify-center mb-3">
+            <i data-lucide="plus" class="w-6 h-6 text-slate-400"></i>
+          </div>
+          <p class="font-medium text-slate-400">Create New Personality</p>
+          <p class="text-xs text-slate-500 mt-1">Build a custom AI from scratch</p>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <!-- Mobile Bottom Navigation -->
+  <nav class="lg:hidden fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-800 px-2 py-2">
+    <div class="flex justify-around items-center">
+      <a href="01-home.html" class="flex flex-col items-center gap-1 px-3 py-2 text-slate-400">
+        <i data-lucide="home" class="w-5 h-5"></i>
+        <span class="text-xs">Home</span>
+      </a>
+      <a href="02-new-game.html" class="flex flex-col items-center gap-1 px-3 py-2 text-slate-400">
+        <i data-lucide="plus-circle" class="w-5 h-5"></i>
+        <span class="text-xs">Play</span>
+      </a>
+      <a href="#" class="flex flex-col items-center gap-1 px-3 py-2 text-blue-400">
+        <i data-lucide="folder" class="w-5 h-5"></i>
+        <span class="text-xs font-medium">Library</span>
+      </a>
+      <a href="07-history.html" class="flex flex-col items-center gap-1 px-3 py-2 text-slate-400">
+        <i data-lucide="scroll-text" class="w-5 h-5"></i>
+        <span class="text-xs">History</span>
+      </a>
+      <a href="08-settings.html" class="flex flex-col items-center gap-1 px-3 py-2 text-slate-400">
+        <i data-lucide="settings" class="w-5 h-5"></i>
+        <span class="text-xs">Settings</span>
+      </a>
+    </div>
+  </nav>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chess AI — Game</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body { background: #0f172a; }
+    .chessboard {
+      aspect-ratio: 1;
+      background: 
+        repeating-conic-gradient(#b58863 0% 25%, #f0d9b5 0% 50%) 
+        50% / calc(100% / 4) calc(100% / 4);
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="min-h-screen text-white">
+  <!-- Desktop Navigation (minimal during game) -->
+  <nav class="hidden lg:flex items-center justify-between px-6 py-3 bg-slate-900 border-b border-slate-800">
+    <a href="01-home.html" class="flex items-center gap-2 text-lg font-bold">
+      <span class="text-xl">♞</span>
+      <span>Chess AI</span>
+    </a>
+    <div class="flex items-center gap-4">
+      <button class="flex items-center gap-2 text-slate-400 hover:text-white transition">
+        <i data-lucide="flag" class="w-4 h-4"></i>
+        Resign
+      </button>
+      <button class="flex items-center gap-2 text-slate-400 hover:text-white transition">
+        <i data-lucide="handshake" class="w-4 h-4"></i>
+        Draw
+      </button>
+      <button class="flex items-center gap-2 text-slate-400 hover:text-white transition">
+        <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+        New Game
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile Header -->
+  <header class="lg:hidden flex items-center justify-between px-4 py-3 bg-slate-900 border-b border-slate-800">
+    <a href="01-home.html" class="text-slate-400">
+      <i data-lucide="arrow-left" class="w-5 h-5"></i>
+    </a>
+    <div class="flex items-center gap-3">
+      <button class="text-slate-400">
+        <i data-lucide="flag" class="w-5 h-5"></i>
+      </button>
+      <button class="text-slate-400">
+        <i data-lucide="rotate-ccw" class="w-5 h-5"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Game Layout -->
+  <main class="lg:flex lg:gap-6 lg:max-w-7xl lg:mx-auto lg:px-6 lg:py-6">
+    
+    <!-- Board Section -->
+    <div class="lg:flex-1 lg:max-w-[640px]">
+      <!-- Player Info - Opponent (Top) -->
+      <div class="flex items-center justify-between px-4 py-3 lg:px-0">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-purple-600/20 flex items-center justify-center">
+            <i data-lucide="bot" class="w-5 h-5 text-purple-400"></i>
+          </div>
+          <div>
+            <p class="font-medium">Classical AI</p>
+            <p class="text-xs text-slate-400">Depth 3</p>
+          </div>
+        </div>
+        <div class="bg-slate-800 rounded-lg px-3 py-2 font-mono text-lg">
+          4:32
+        </div>
+      </div>
+
+      <!-- Captured Pieces - Opponent -->
+      <div class="flex items-center gap-1 px-4 lg:px-0 mb-2 text-xl opacity-70">
+        <span>♟</span><span>♟</span><span>♞</span>
+        <span class="text-slate-500 text-sm ml-2">+3</span>
+      </div>
+
+      <!-- Chess Board -->
+      <div class="px-4 lg:px-0">
+        <div class="chessboard w-full max-w-[640px] relative">
+          <!-- Board coordinates would be rendered here -->
+          <!-- Pieces would be positioned absolutely -->
+        </div>
+      </div>
+
+      <!-- Captured Pieces - Player -->
+      <div class="flex items-center gap-1 px-4 lg:px-0 mt-2 text-xl opacity-70">
+        <span>♙</span><span>♗</span>
+        <span class="text-slate-500 text-sm ml-2">+1</span>
+      </div>
+
+      <!-- Player Info - You (Bottom) -->
+      <div class="flex items-center justify-between px-4 py-3 lg:px-0">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-blue-600/20 flex items-center justify-center">
+            <i data-lucide="user" class="w-5 h-5 text-blue-400"></i>
+          </div>
+          <div>
+            <p class="font-medium">You</p>
+            <p class="text-xs text-green-400">Your turn</p>
+          </div>
+        </div>
+        <div class="bg-slate-800 rounded-lg px-3 py-2 font-mono text-lg text-green-400">
+          2:58
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar (Desktop) -->
+    <aside class="hidden lg:block w-80 space-y-4">
+      <!-- Game Status -->
+      <div class="bg-slate-800 rounded-xl p-4 border border-slate-700">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="font-semibold flex items-center gap-2">
+            <i data-lucide="info" class="w-4 h-4 text-slate-400"></i>
+            Game Info
+          </h3>
+          <span class="text-xs bg-green-600/20 text-green-400 px-2 py-1 rounded-full">Your turn</span>
+        </div>
+        <div class="space-y-2 text-sm">
+          <div class="flex justify-between">
+            <span class="text-slate-400">Mode</span>
+            <span>Human vs AI</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-400">Time Control</span>
+            <span>5+0 Blitz</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-400">Move</span>
+            <span>14</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Move History -->
+      <div class="bg-slate-800 rounded-xl p-4 border border-slate-700">
+        <h3 class="font-semibold flex items-center gap-2 mb-3">
+          <i data-lucide="scroll-text" class="w-4 h-4 text-slate-400"></i>
+          Moves
+        </h3>
+        <div class="max-h-48 overflow-y-auto space-y-1 text-sm font-mono">
+          <div class="flex gap-2 py-1 px-2 rounded hover:bg-slate-700/50">
+            <span class="text-slate-500 w-6">1.</span>
+            <span class="flex-1">e4</span>
+            <span class="flex-1">e5</span>
+          </div>
+          <div class="flex gap-2 py-1 px-2 rounded hover:bg-slate-700/50">
+            <span class="text-slate-500 w-6">2.</span>
+            <span class="flex-1">Nf3</span>
+            <span class="flex-1">Nc6</span>
+          </div>
+          <div class="flex gap-2 py-1 px-2 rounded hover:bg-slate-700/50">
+            <span class="text-slate-500 w-6">3.</span>
+            <span class="flex-1">Bb5</span>
+            <span class="flex-1">a6</span>
+          </div>
+          <div class="flex gap-2 py-1 px-2 rounded hover:bg-slate-700/50">
+            <span class="text-slate-500 w-6">4.</span>
+            <span class="flex-1">Ba4</span>
+            <span class="flex-1">Nf6</span>
+          </div>
+          <div class="flex gap-2 py-1 px-2 rounded hover:bg-slate-700/50">
+            <span class="text-slate-500 w-6">5.</span>
+            <span class="flex-1">O-O</span>
+            <span class="flex-1">Be7</span>
+          </div>
+          <div class="flex gap-2 py-1 px-2 rounded hover:bg-slate-700/50">
+            <span class="text-slate-500 w-6">6.</span>
+            <span class="flex-1">Re1</span>
+            <span class="flex-1">b5</span>
+          </div>
+          <div class="flex gap-2 py-1 px-2 rounded bg-blue-600/20">
+            <span class="text-slate-500 w-6">7.</span>
+            <span class="flex-1">Bb3</span>
+            <span class="flex-1 text-slate-500">...</span>
+          </div>
+        </div>
+        <div class="flex gap-2 mt-3 pt-3 border-t border-slate-700">
+          <button class="flex-1 flex items-center justify-center gap-1 text-sm text-slate-400 hover:text-white py-1">
+            <i data-lucide="chevrons-left" class="w-4 h-4"></i>
+          </button>
+          <button class="flex-1 flex items-center justify-center gap-1 text-sm text-slate-400 hover:text-white py-1">
+            <i data-lucide="chevron-left" class="w-4 h-4"></i>
+          </button>
+          <button class="flex-1 flex items-center justify-center gap-1 text-sm text-slate-400 hover:text-white py-1">
+            <i data-lucide="chevron-right" class="w-4 h-4"></i>
+          </button>
+          <button class="flex-1 flex items-center justify-center gap-1 text-sm text-slate-400 hover:text-white py-1">
+            <i data-lucide="chevrons-right" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- AI Thinking Indicator (when AI's turn) -->
+      <div class="bg-slate-800 rounded-xl p-4 border border-slate-700 hidden" id="ai-thinking">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-full bg-purple-600/20 flex items-center justify-center">
+            <i data-lucide="bot" class="w-4 h-4 text-purple-400 animate-pulse"></i>
+          </div>
+          <div>
+            <p class="font-medium text-sm">AI is thinking...</p>
+            <p class="text-xs text-slate-400">Evaluating positions</p>
+          </div>
+        </div>
+        <div class="mt-3 h-1 bg-slate-700 rounded-full overflow-hidden">
+          <div class="h-full bg-purple-500 rounded-full animate-pulse" style="width: 60%"></div>
+        </div>
+      </div>
+
+      <!-- Evaluation Bar -->
+      <div class="bg-slate-800 rounded-xl p-4 border border-slate-700">
+        <h3 class="font-semibold flex items-center gap-2 mb-3">
+          <i data-lucide="bar-chart-3" class="w-4 h-4 text-slate-400"></i>
+          Evaluation
+        </h3>
+        <div class="flex items-center gap-3">
+          <div class="flex-1 h-6 bg-slate-900 rounded-full overflow-hidden flex">
+            <div class="bg-white h-full" style="width: 55%"></div>
+            <div class="bg-slate-700 h-full flex-1"></div>
+          </div>
+          <span class="text-sm font-mono w-12 text-right text-green-400">+0.4</span>
+        </div>
+        <p class="text-xs text-slate-500 mt-2">Slight advantage for White</p>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="flex gap-2">
+        <button class="flex-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg py-2 px-3 text-sm transition flex items-center justify-center gap-2">
+          <i data-lucide="undo" class="w-4 h-4"></i>
+          Takeback
+        </button>
+        <button class="flex-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg py-2 px-3 text-sm transition flex items-center justify-center gap-2">
+          <i data-lucide="lightbulb" class="w-4 h-4"></i>
+          Hint
+        </button>
+      </div>
+    </aside>
+  </main>
+
+  <!-- Mobile Bottom Panel (collapsible) -->
+  <div class="lg:hidden fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-800">
+    <!-- Move History Strip -->
+    <div class="flex items-center gap-2 px-4 py-2 overflow-x-auto text-sm font-mono">
+      <span class="text-slate-500 shrink-0">1.e4 e5</span>
+      <span class="text-slate-500 shrink-0">2.Nf3 Nc6</span>
+      <span class="text-slate-500 shrink-0">3.Bb5 a6</span>
+      <span class="text-slate-500 shrink-0">4.Ba4 Nf6</span>
+      <span class="text-slate-500 shrink-0">5.O-O Be7</span>
+      <span class="text-slate-500 shrink-0">6.Re1 b5</span>
+      <span class="text-white shrink-0">7.Bb3</span>
+    </div>
+    
+    <!-- Actions -->
+    <div class="flex gap-2 px-4 py-3 border-t border-slate-800">
+      <button class="flex-1 bg-slate-800 rounded-lg py-2 text-sm flex items-center justify-center gap-1">
+        <i data-lucide="undo" class="w-4 h-4"></i>
+        Back
+      </button>
+      <button class="flex-1 bg-slate-800 rounded-lg py-2 text-sm flex items-center justify-center gap-1">
+        <i data-lucide="lightbulb" class="w-4 h-4"></i>
+        Hint
+      </button>
+      <button class="flex-1 bg-slate-800 rounded-lg py-2 text-sm flex items-center justify-center gap-1">
+        <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+        Eval
+      </button>
+      <button class="flex-1 bg-red-600/20 text-red-400 rounded-lg py-2 text-sm flex items-center justify-center gap-1">
+        <i data-lucide="flag" class="w-4 h-4"></i>
+        Resign
+      </button>
+    </div>
+  </div>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

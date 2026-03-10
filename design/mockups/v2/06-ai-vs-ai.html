@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chess AI — AI vs AI Spectator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body { background: #0f172a; }
+    .chessboard {
+      aspect-ratio: 1;
+      background: 
+        repeating-conic-gradient(#b58863 0% 25%, #f0d9b5 0% 50%) 
+        50% / calc(100% / 4) calc(100% / 4);
+      border-radius: 4px;
+    }
+    input[type="range"] {
+      -webkit-appearance: none;
+      background: transparent;
+    }
+    input[type="range"]::-webkit-slider-track {
+      height: 6px;
+      background: #334155;
+      border-radius: 3px;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      background: #9333ea;
+      border-radius: 50%;
+      margin-top: -5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body class="min-h-screen text-white">
+  <!-- Desktop Navigation -->
+  <nav class="hidden lg:flex items-center justify-between px-6 py-3 bg-slate-900 border-b border-slate-800">
+    <a href="01-home.html" class="flex items-center gap-2 text-lg font-bold">
+      <span class="text-xl">♞</span>
+      <span>Chess AI</span>
+    </a>
+    <div class="flex items-center gap-4 text-sm">
+      <span class="text-purple-400 flex items-center gap-1.5">
+        <i data-lucide="eye" class="w-4 h-4"></i>
+        AI vs AI Mode
+      </span>
+      <a href="01-home.html" class="text-slate-400 hover:text-white transition">Exit</a>
+    </div>
+  </nav>
+
+  <!-- Mobile Header -->
+  <header class="lg:hidden flex items-center justify-between px-4 py-3 bg-slate-900 border-b border-slate-800">
+    <a href="01-home.html" class="text-slate-400">
+      <i data-lucide="arrow-left" class="w-5 h-5"></i>
+    </a>
+    <span class="text-purple-400 flex items-center gap-1.5 text-sm font-medium">
+      <i data-lucide="eye" class="w-4 h-4"></i>
+      AI vs AI
+    </span>
+    <div class="w-5"></div>
+  </header>
+
+  <!-- Main Layout -->
+  <main class="lg:flex lg:gap-6 lg:max-w-7xl lg:mx-auto lg:px-6 lg:py-6">
+    
+    <!-- Board Section -->
+    <div class="lg:flex-1 lg:max-w-[640px]">
+      <!-- White AI Info (Top) -->
+      <div class="flex items-center justify-between px-4 py-3 lg:px-0">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-blue-600/20 flex items-center justify-center border-2 border-blue-500">
+            <i data-lucide="bot" class="w-5 h-5 text-blue-400"></i>
+          </div>
+          <div>
+            <p class="font-medium flex items-center gap-2">
+              Classical
+              <span class="text-xs bg-slate-700 px-1.5 py-0.5 rounded text-slate-400">White</span>
+            </p>
+            <p class="text-xs text-slate-500">Preset • Depth 3</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <div class="bg-slate-800 rounded-lg px-3 py-2 font-mono text-sm">
+            28 moves
+          </div>
+        </div>
+      </div>
+
+      <!-- Chess Board -->
+      <div class="px-4 lg:px-0">
+        <div class="chessboard w-full max-w-[640px] relative"></div>
+      </div>
+
+      <!-- Black AI Info (Bottom) -->
+      <div class="flex items-center justify-between px-4 py-3 lg:px-0">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-red-600/20 flex items-center justify-center border-2 border-red-500">
+            <i data-lucide="bot" class="w-5 h-5 text-red-400"></i>
+          </div>
+          <div>
+            <p class="font-medium flex items-center gap-2">
+              Aggressive
+              <span class="text-xs bg-slate-700 px-1.5 py-0.5 rounded text-slate-400">Black</span>
+            </p>
+            <p class="text-xs text-slate-500">Preset • Depth 3</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 text-sm">
+          <span class="text-red-400 flex items-center gap-1">
+            <span class="w-2 h-2 bg-red-400 rounded-full animate-pulse"></span>
+            Thinking...
+          </span>
+        </div>
+      </div>
+
+      <!-- Playback Controls -->
+      <div class="px-4 lg:px-0 mt-2">
+        <div class="bg-slate-800 rounded-xl p-4 border border-slate-700">
+          <div class="flex items-center justify-center gap-3 mb-4">
+            <button class="bg-slate-700 hover:bg-slate-600 p-2 rounded-lg transition">
+              <i data-lucide="rotate-ccw" class="w-5 h-5"></i>
+            </button>
+            <button class="bg-purple-600 hover:bg-purple-700 p-3 rounded-full transition">
+              <i data-lucide="pause" class="w-6 h-6"></i>
+            </button>
+            <button class="bg-slate-700 hover:bg-slate-600 p-2 rounded-lg transition">
+              <i data-lucide="skip-forward" class="w-5 h-5"></i>
+            </button>
+          </div>
+          
+          <!-- Speed Control -->
+          <div>
+            <div class="flex justify-between text-xs text-slate-500 mb-2">
+              <span>Move Speed</span>
+              <span class="font-mono">500ms</span>
+            </div>
+            <input type="range" min="100" max="2000" value="500" step="100" class="w-full" />
+            <div class="flex justify-between text-xs text-slate-600 mt-1">
+              <span>Fast</span>
+              <span>Slow</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar (Desktop) -->
+    <aside class="hidden lg:block w-80 space-y-4">
+      <!-- Match Info -->
+      <div class="bg-slate-800 rounded-xl p-4 border border-slate-700">
+        <h3 class="font-semibold flex items-center gap-2 mb-3">
+          <i data-lucide="trophy" class="w-4 h-4 text-amber-400"></i>
+          Match Info
+        </h3>
+        <div class="space-y-2 text-sm">
+          <div class="flex justify-between">
+            <span class="text-slate-400">Status</span>
+            <span class="text-purple-400">In Progress</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-400">Moves</span>
+            <span>28</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-400">Duration</span>
+            <span>2m 14s</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Personality Selectors -->
+      <div class="bg-slate-800 rounded-xl p-4 border border-slate-700">
+        <h3 class="font-semibold mb-3 flex items-center gap-2">
+          <i data-lucide="brain" class="w-4 h-4 text-slate-400"></i>
+          Select Personalities
+        </h3>
+        
+        <!-- White Selector -->
+        <div class="mb-4 pb-4 border-b border-slate-700">
+          <div class="flex items-center gap-2 mb-2">
+            <div class="w-4 h-4 rounded-full bg-white"></div>
+            <span class="text-sm font-medium">White AI</span>
+          </div>
+          <select class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm">
+            <option selected>Classical (Preset)</option>
+            <option>Aggressive (Preset)</option>
+            <option>Defensive (Preset)</option>
+            <option>Chaotic (Preset)</option>
+            <option>Tactical (Preset)</option>
+            <option>Positional (Preset)</option>
+            <option disabled>──────────</option>
+            <option>Hyper Aggro (Saved)</option>
+            <option>Fortress Mode (Saved)</option>
+            <option>Andy's Bot (Saved)</option>
+          </select>
+        </div>
+
+        <!-- Black Selector -->
+        <div>
+          <div class="flex items-center gap-2 mb-2">
+            <div class="w-4 h-4 rounded-full bg-slate-700 border border-slate-500"></div>
+            <span class="text-sm font-medium">Black AI</span>
+          </div>
+          <select class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm">
+            <option>Classical (Preset)</option>
+            <option selected>Aggressive (Preset)</option>
+            <option>Defensive (Preset)</option>
+            <option>Chaotic (Preset)</option>
+            <option>Tactical (Preset)</option>
+            <option>Positional (Preset)</option>
+            <option disabled>──────────</option>
+            <option>Hyper Aggro (Saved)</option>
+            <option>Fortress Mode (Saved)</option>
+            <option>Andy's Bot (Saved)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Evaluation -->
+      <div class="bg-slate-800 rounded-xl p-4 border border-slate-700">
+        <h3 class="font-semibold flex items-center gap-2 mb-3">
+          <i data-lucide="bar-chart-3" class="w-4 h-4 text-slate-400"></i>
+          Evaluation
+        </h3>
+        <div class="flex items-center gap-3">
+          <div class="flex-1 h-6 bg-slate-900 rounded-full overflow-hidden flex">
+            <div class="bg-white h-full" style="width: 42%"></div>
+            <div class="bg-slate-700 h-full flex-1"></div>
+          </div>
+          <span class="text-sm font-mono w-12 text-right text-red-400">-0.8</span>
+        </div>
+        <p class="text-xs text-slate-500 mt-2">Black has a slight advantage</p>
+      </div>
+
+      <!-- Move History -->
+      <div class="bg-slate-800 rounded-xl p-4 border border-slate-700">
+        <h3 class="font-semibold flex items-center gap-2 mb-3">
+          <i data-lucide="scroll-text" class="w-4 h-4 text-slate-400"></i>
+          Move History
+        </h3>
+        <div class="max-h-40 overflow-y-auto space-y-1 text-sm font-mono">
+          <div class="flex gap-2 py-1 px-2 rounded hover:bg-slate-700/50">
+            <span class="text-slate-500 w-6">1.</span>
+            <span class="flex-1">e4</span>
+            <span class="flex-1">c5</span>
+          </div>
+          <div class="flex gap-2 py-1 px-2 rounded hover:bg-slate-700/50">
+            <span class="text-slate-500 w-6">2.</span>
+            <span class="flex-1">Nf3</span>
+            <span class="flex-1">d6</span>
+          </div>
+          <div class="flex gap-2 py-1 px-2 rounded hover:bg-slate-700/50">
+            <span class="text-slate-500 w-6">3.</span>
+            <span class="flex-1">d4</span>
+            <span class="flex-1">cxd4</span>
+          </div>
+          <div class="flex gap-2 py-1 px-2 rounded bg-purple-600/20">
+            <span class="text-slate-500 w-6">4.</span>
+            <span class="flex-1">Nxd4</span>
+            <span class="flex-1 text-slate-500">...</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <!-- Mobile Bottom Panel -->
+  <div class="lg:hidden fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-800 px-4 py-3 space-y-3">
+    <!-- Compact Move History -->
+    <div class="flex items-center gap-2 overflow-x-auto text-sm font-mono pb-1">
+      <span class="text-slate-500 shrink-0">1.e4 c5</span>
+      <span class="text-slate-500 shrink-0">2.Nf3 d6</span>
+      <span class="text-slate-500 shrink-0">3.d4 cxd4</span>
+      <span class="text-white shrink-0">4.Nxd4</span>
+    </div>
+    
+    <!-- Controls Row -->
+    <div class="flex items-center gap-3">
+      <button class="bg-slate-800 p-2 rounded-lg">
+        <i data-lucide="rotate-ccw" class="w-5 h-5"></i>
+      </button>
+      <button class="flex-1 bg-purple-600 hover:bg-purple-700 py-2.5 rounded-lg transition flex items-center justify-center gap-2">
+        <i data-lucide="pause" class="w-5 h-5"></i>
+        <span class="font-medium">Pause</span>
+      </button>
+      <button class="bg-slate-800 p-2 rounded-lg">
+        <i data-lucide="settings" class="w-5 h-5"></i>
+      </button>
+    </div>
+  </div>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

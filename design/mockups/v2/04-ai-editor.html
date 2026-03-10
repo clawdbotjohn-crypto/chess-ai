@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chess AI — AI Editor</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body { background: #0f172a; }
+    input[type="range"] {
+      -webkit-appearance: none;
+      background: transparent;
+    }
+    input[type="range"]::-webkit-slider-track {
+      height: 6px;
+      background: #334155;
+      border-radius: 3px;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      background: #3b82f6;
+      border-radius: 50%;
+      margin-top: -5px;
+      cursor: pointer;
+    }
+    .tooltip { display: none; }
+    .tooltip-trigger:hover + .tooltip { display: block; }
+  </style>
+</head>
+<body class="min-h-screen text-white">
+  <!-- Desktop Navigation -->
+  <nav class="hidden lg:flex items-center justify-between px-6 py-4 bg-slate-900 border-b border-slate-800 sticky top-0 z-40">
+    <div class="flex items-center gap-8">
+      <a href="01-home.html" class="flex items-center gap-2 text-xl font-bold">
+        <span class="text-2xl">♞</span>
+        <span>Chess AI</span>
+      </a>
+      <div class="flex items-center gap-6 text-slate-300">
+        <a href="01-home.html" class="flex items-center gap-2 hover:text-white transition">
+          <i data-lucide="home" class="w-4 h-4"></i>
+          Home
+        </a>
+        <a href="02-new-game.html" class="flex items-center gap-2 hover:text-white transition">
+          <i data-lucide="plus" class="w-4 h-4"></i>
+          New Game
+        </a>
+        <a href="05-library.html" class="flex items-center gap-2 hover:text-white transition">
+          <i data-lucide="folder" class="w-4 h-4"></i>
+          Library
+        </a>
+      </div>
+    </div>
+    <div class="flex items-center gap-3">
+      <button class="bg-slate-700 hover:bg-slate-600 text-slate-300 px-4 py-2 rounded-lg transition flex items-center gap-2">
+        <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+        Reset
+      </button>
+      <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition flex items-center gap-2">
+        <i data-lucide="save" class="w-4 h-4"></i>
+        Save Personality
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile Header -->
+  <header class="lg:hidden flex items-center justify-between px-4 py-4 bg-slate-900 border-b border-slate-800">
+    <a href="05-library.html" class="flex items-center gap-2 text-slate-400">
+      <i data-lucide="arrow-left" class="w-5 h-5"></i>
+    </a>
+    <h1 class="text-lg font-semibold">AI Editor</h1>
+    <button class="text-blue-400">
+      <i data-lucide="save" class="w-5 h-5"></i>
+    </button>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-4xl mx-auto px-4 py-6 pb-24 lg:pb-8">
+    <!-- Personality Name -->
+    <div class="mb-6">
+      <label class="text-sm text-slate-400 mb-2 block">Personality Name</label>
+      <input type="text" value="My Custom AI" placeholder="Name your AI..."
+        class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-lg font-medium focus:outline-none focus:ring-2 focus:ring-blue-500" />
+    </div>
+
+    <!-- Presets Quick Select -->
+    <div class="mb-6">
+      <p class="text-sm text-slate-400 mb-2">Start from a preset</p>
+      <div class="flex flex-wrap gap-2">
+        <button class="bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded-lg text-sm transition">Classical</button>
+        <button class="bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded-lg text-sm transition">Aggressive</button>
+        <button class="bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded-lg text-sm transition">Defensive</button>
+        <button class="bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded-lg text-sm transition">Chaotic</button>
+        <button class="bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded-lg text-sm transition">Tactical</button>
+        <button class="bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded-lg text-sm transition">Positional</button>
+      </div>
+    </div>
+
+    <!-- Piece Values Section -->
+    <section class="bg-slate-800 rounded-xl p-5 border border-slate-700 mb-4">
+      <h2 class="font-semibold flex items-center gap-2 mb-4 text-lg">
+        <i data-lucide="crown" class="w-5 h-5 text-amber-400"></i>
+        Piece Values
+        <span class="relative tooltip-trigger cursor-help">
+          <i data-lucide="info" class="w-4 h-4 text-slate-500"></i>
+        </span>
+        <div class="tooltip absolute z-50 w-72 p-3 bg-slate-700 rounded-lg shadow-lg text-sm text-slate-200 left-0 top-6">
+          How much the AI values each piece type. Higher values mean the AI will prioritize keeping/capturing that piece.
+        </div>
+      </h2>
+      <div class="space-y-4">
+        <!-- Pawn -->
+        <div class="flex items-center gap-4">
+          <span class="w-20 text-sm text-slate-400">Pawn</span>
+          <input type="range" min="50" max="150" value="100" class="flex-1" />
+          <span class="w-12 text-right font-mono text-sm">100</span>
+        </div>
+        <!-- Knight -->
+        <div class="flex items-center gap-4">
+          <span class="w-20 text-sm text-slate-400">Knight</span>
+          <input type="range" min="200" max="400" value="320" class="flex-1" />
+          <span class="w-12 text-right font-mono text-sm">320</span>
+        </div>
+        <!-- Bishop -->
+        <div class="flex items-center gap-4">
+          <span class="w-20 text-sm text-slate-400">Bishop</span>
+          <input type="range" min="200" max="400" value="330" class="flex-1" />
+          <span class="w-12 text-right font-mono text-sm">330</span>
+        </div>
+        <!-- Rook -->
+        <div class="flex items-center gap-4">
+          <span class="w-20 text-sm text-slate-400">Rook</span>
+          <input type="range" min="400" max="600" value="500" class="flex-1" />
+          <span class="w-12 text-right font-mono text-sm">500</span>
+        </div>
+        <!-- Queen -->
+        <div class="flex items-center gap-4">
+          <span class="w-20 text-sm text-slate-400">Queen</span>
+          <input type="range" min="700" max="1200" value="900" class="flex-1" />
+          <span class="w-12 text-right font-mono text-sm">900</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Positional Section -->
+    <section class="bg-slate-800 rounded-xl p-5 border border-slate-700 mb-4">
+      <h2 class="font-semibold flex items-center gap-2 mb-4 text-lg">
+        <i data-lucide="crosshair" class="w-5 h-5 text-cyan-400"></i>
+        Positional Factors
+      </h2>
+      <div class="space-y-4">
+        <!-- Center Control -->
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-sm text-slate-400 flex items-center gap-1">
+              Center Control
+              <span class="relative group">
+                <i data-lucide="info" class="w-3.5 h-3.5 text-slate-500 cursor-help"></i>
+                <div class="invisible group-hover:visible absolute z-50 w-64 p-3 bg-slate-700 rounded-lg shadow-lg text-sm text-slate-200 bottom-full left-1/2 -translate-x-1/2 mb-2">
+                  <p>Bonus for controlling the central squares (d4, d5, e4, e5). Strong center control leads to better piece mobility.</p>
+                  <div class="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-slate-700"></div>
+                </div>
+              </span>
+            </span>
+            <span class="font-mono text-sm">75</span>
+          </div>
+          <input type="range" min="0" max="100" value="75" class="w-full" />
+        </div>
+        <!-- Pawn Advancement -->
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-sm text-slate-400 flex items-center gap-1">
+              Pawn Advancement
+              <span class="relative group">
+                <i data-lucide="info" class="w-3.5 h-3.5 text-slate-500 cursor-help"></i>
+                <div class="invisible group-hover:visible absolute z-50 w-64 p-3 bg-slate-700 rounded-lg shadow-lg text-sm text-slate-200 bottom-full left-1/2 -translate-x-1/2 mb-2">
+                  <p>Reward for pushing pawns forward. Higher values encourage aggressive pawn play but may weaken structure.</p>
+                  <div class="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-slate-700"></div>
+                </div>
+              </span>
+            </span>
+            <span class="font-mono text-sm">50</span>
+          </div>
+          <input type="range" min="0" max="100" value="50" class="w-full" />
+        </div>
+        <!-- Piece Mobility -->
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-sm text-slate-400 flex items-center gap-1">
+              Piece Mobility
+              <span class="relative group">
+                <i data-lucide="info" class="w-3.5 h-3.5 text-slate-500 cursor-help"></i>
+                <div class="invisible group-hover:visible absolute z-50 w-64 p-3 bg-slate-700 rounded-lg shadow-lg text-sm text-slate-200 bottom-full left-1/2 -translate-x-1/2 mb-2">
+                  <p>Bonus for pieces that have many legal moves available. A bishop on an open diagonal is worth more than a blocked bishop.</p>
+                  <div class="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-slate-700"></div>
+                </div>
+              </span>
+            </span>
+            <span class="font-mono text-sm">60</span>
+          </div>
+          <input type="range" min="0" max="100" value="60" class="w-full" />
+        </div>
+      </div>
+    </section>
+
+    <!-- King Safety Section -->
+    <section class="bg-slate-800 rounded-xl p-5 border border-slate-700 mb-4">
+      <h2 class="font-semibold flex items-center gap-2 mb-4 text-lg">
+        <i data-lucide="shield" class="w-5 h-5 text-green-400"></i>
+        King Safety
+      </h2>
+      <div class="space-y-4">
+        <!-- Castle Bonus -->
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-sm text-slate-400 flex items-center gap-1">
+              Castling Bonus
+              <span class="relative group">
+                <i data-lucide="info" class="w-3.5 h-3.5 text-slate-500 cursor-help"></i>
+                <div class="invisible group-hover:visible absolute z-50 w-64 p-3 bg-slate-700 rounded-lg shadow-lg text-sm text-slate-200 bottom-full left-1/2 -translate-x-1/2 mb-2">
+                  <p>Reward for castling to safety. Higher values make the AI prioritize castling early.</p>
+                  <div class="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-slate-700"></div>
+                </div>
+              </span>
+            </span>
+            <span class="font-mono text-sm">80</span>
+          </div>
+          <input type="range" min="0" max="100" value="80" class="w-full" />
+        </div>
+        <!-- Pawn Shield -->
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-sm text-slate-400 flex items-center gap-1">
+              Pawn Shield
+              <span class="relative group">
+                <i data-lucide="info" class="w-3.5 h-3.5 text-slate-500 cursor-help"></i>
+                <div class="invisible group-hover:visible absolute z-50 w-64 p-3 bg-slate-700 rounded-lg shadow-lg text-sm text-slate-200 bottom-full left-1/2 -translate-x-1/2 mb-2">
+                  <p>Bonus for keeping pawns in front of the castled king. Losing these pawns makes the king vulnerable.</p>
+                  <div class="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-slate-700"></div>
+                </div>
+              </span>
+            </span>
+            <span class="font-mono text-sm">70</span>
+          </div>
+          <input type="range" min="0" max="100" value="70" class="w-full" />
+        </div>
+        <!-- King Exposure Penalty -->
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-sm text-slate-400 flex items-center gap-1">
+              Exposure Penalty
+              <span class="relative group">
+                <i data-lucide="info" class="w-3.5 h-3.5 text-slate-500 cursor-help"></i>
+                <div class="invisible group-hover:visible absolute z-50 w-64 p-3 bg-slate-700 rounded-lg shadow-lg text-sm text-slate-200 bottom-full left-1/2 -translate-x-1/2 mb-2">
+                  <p>Penalty for having enemy pieces near the king. Higher values make the AI more defensive.</p>
+                  <div class="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-slate-700"></div>
+                </div>
+              </span>
+            </span>
+            <span class="font-mono text-sm">65</span>
+          </div>
+          <input type="range" min="0" max="100" value="65" class="w-full" />
+        </div>
+      </div>
+    </section>
+
+    <!-- Tactical Section -->
+    <section class="bg-slate-800 rounded-xl p-5 border border-slate-700 mb-4">
+      <h2 class="font-semibold flex items-center gap-2 mb-4 text-lg">
+        <i data-lucide="swords" class="w-5 h-5 text-red-400"></i>
+        Tactical Style
+      </h2>
+      <div class="space-y-4">
+        <!-- Aggression -->
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-sm text-slate-400 flex items-center gap-1">
+              Aggression
+              <span class="relative group">
+                <i data-lucide="info" class="w-3.5 h-3.5 text-slate-500 cursor-help"></i>
+                <div class="invisible group-hover:visible absolute z-50 w-64 p-3 bg-slate-700 rounded-lg shadow-lg text-sm text-slate-200 bottom-full left-1/2 -translate-x-1/2 mb-2">
+                  <p>How much the AI prefers attacking moves over defensive ones. High aggression = more sacrifices and attacks on the king.</p>
+                  <div class="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-slate-700"></div>
+                </div>
+              </span>
+            </span>
+            <span class="font-mono text-sm">50</span>
+          </div>
+          <input type="range" min="0" max="100" value="50" class="w-full" />
+          <div class="flex justify-between text-xs text-slate-600 mt-1">
+            <span>Defensive</span>
+            <span>Aggressive</span>
+          </div>
+        </div>
+        <!-- Attack Weight -->
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-sm text-slate-400 flex items-center gap-1">
+              Attack Weight
+              <span class="relative group">
+                <i data-lucide="info" class="w-3.5 h-3.5 text-slate-500 cursor-help"></i>
+                <div class="invisible group-hover:visible absolute z-50 w-64 p-3 bg-slate-700 rounded-lg shadow-lg text-sm text-slate-200 bottom-full left-1/2 -translate-x-1/2 mb-2">
+                  <p>Bonus for attacking enemy pieces. Higher values make the AI constantly apply pressure.</p>
+                  <div class="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-slate-700"></div>
+                </div>
+              </span>
+            </span>
+            <span class="font-mono text-sm">40</span>
+          </div>
+          <input type="range" min="0" max="100" value="40" class="w-full" />
+        </div>
+        <!-- Defense Weight -->
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-sm text-slate-400 flex items-center gap-1">
+              Defense Weight
+              <span class="relative group">
+                <i data-lucide="info" class="w-3.5 h-3.5 text-slate-500 cursor-help"></i>
+                <div class="invisible group-hover:visible absolute z-50 w-64 p-3 bg-slate-700 rounded-lg shadow-lg text-sm text-slate-200 bottom-full left-1/2 -translate-x-1/2 mb-2">
+                  <p>Bonus for defending your own pieces. Higher values make the AI more careful and protective.</p>
+                  <div class="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-slate-700"></div>
+                </div>
+              </span>
+            </span>
+            <span class="font-mono text-sm">40</span>
+          </div>
+          <input type="range" min="0" max="100" value="40" class="w-full" />
+        </div>
+      </div>
+    </section>
+
+    <!-- Randomness Section -->
+    <section class="bg-slate-800 rounded-xl p-5 border border-slate-700 mb-4">
+      <h2 class="font-semibold flex items-center gap-2 mb-4 text-lg">
+        <i data-lucide="dices" class="w-5 h-5 text-purple-400"></i>
+        Randomness
+      </h2>
+      <div>
+        <div class="flex items-center justify-between mb-1">
+          <span class="text-sm text-slate-400 flex items-center gap-1">
+            Move Variety
+            <span class="relative group">
+              <i data-lucide="info" class="w-3.5 h-3.5 text-slate-500 cursor-help"></i>
+              <div class="invisible group-hover:visible absolute z-50 w-64 p-3 bg-slate-700 rounded-lg shadow-lg text-sm text-slate-200 bottom-full left-1/2 -translate-x-1/2 mb-2">
+                <p>How much randomness in move selection. 0 = always plays the "best" move. Higher = picks randomly among top moves (more unpredictable but potentially weaker).</p>
+                <div class="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-slate-700"></div>
+              </div>
+            </span>
+          </span>
+          <span class="font-mono text-sm">15</span>
+        </div>
+        <input type="range" min="0" max="100" value="15" class="w-full" />
+        <div class="flex justify-between text-xs text-slate-600 mt-1">
+          <span>Deterministic</span>
+          <span>Chaotic</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Test Play Button -->
+    <button class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-4 px-6 rounded-xl transition flex items-center justify-center gap-2 text-lg mb-4">
+      <i data-lucide="play" class="w-5 h-5"></i>
+      Test This Personality
+    </button>
+  </main>
+
+  <!-- Mobile Bottom Navigation -->
+  <nav class="lg:hidden fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-800 px-2 py-2">
+    <div class="flex justify-around items-center">
+      <a href="01-home.html" class="flex flex-col items-center gap-1 px-3 py-2 text-slate-400">
+        <i data-lucide="home" class="w-5 h-5"></i>
+        <span class="text-xs">Home</span>
+      </a>
+      <a href="02-new-game.html" class="flex flex-col items-center gap-1 px-3 py-2 text-slate-400">
+        <i data-lucide="plus-circle" class="w-5 h-5"></i>
+        <span class="text-xs">Play</span>
+      </a>
+      <a href="05-library.html" class="flex flex-col items-center gap-1 px-3 py-2 text-slate-400">
+        <i data-lucide="folder" class="w-5 h-5"></i>
+        <span class="text-xs">Library</span>
+      </a>
+      <a href="07-history.html" class="flex flex-col items-center gap-1 px-3 py-2 text-slate-400">
+        <i data-lucide="scroll-text" class="w-5 h-5"></i>
+        <span class="text-xs">History</span>
+      </a>
+      <a href="08-settings.html" class="flex flex-col items-center gap-1 px-3 py-2 text-slate-400">
+        <i data-lucide="settings" class="w-5 h-5"></i>
+        <span class="text-xs">Settings</span>
+      </a>
+    </div>
+  </nav>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

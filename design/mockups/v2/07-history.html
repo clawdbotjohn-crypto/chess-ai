@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chess AI — Game History</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body { background: #0f172a; }
+  </style>
+</head>
+<body class="min-h-screen text-white">
+  <!-- Desktop Navigation -->
+  <nav class="hidden lg:flex items-center justify-between px-6 py-4 bg-slate-900 border-b border-slate-800 sticky top-0 z-40">
+    <div class="flex items-center gap-8">
+      <a href="01-home.html" class="flex items-center gap-2 text-xl font-bold">
+        <span class="text-2xl">♞</span>
+        <span>Chess AI</span>
+      </a>
+      <div class="flex items-center gap-6 text-slate-300">
+        <a href="01-home.html" class="flex items-center gap-2 hover:text-white transition">
+          <i data-lucide="home" class="w-4 h-4"></i>
+          Home
+        </a>
+        <a href="02-new-game.html" class="flex items-center gap-2 hover:text-white transition">
+          <i data-lucide="plus" class="w-4 h-4"></i>
+          New Game
+        </a>
+        <a href="05-library.html" class="flex items-center gap-2 hover:text-white transition">
+          <i data-lucide="folder" class="w-4 h-4"></i>
+          Library
+        </a>
+        <a href="#" class="flex items-center gap-2 text-white font-medium">
+          <i data-lucide="scroll-text" class="w-4 h-4"></i>
+          History
+        </a>
+        <a href="08-settings.html" class="flex items-center gap-2 hover:text-white transition">
+          <i data-lucide="settings" class="w-4 h-4"></i>
+          Settings
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Header -->
+  <header class="lg:hidden flex items-center justify-between px-4 py-4 bg-slate-900 border-b border-slate-800">
+    <h1 class="text-lg font-semibold">Game History</h1>
+    <button class="text-slate-400">
+      <i data-lucide="filter" class="w-5 h-5"></i>
+    </button>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-4xl mx-auto px-4 py-6 pb-24 lg:pb-8">
+    <!-- Stats Summary -->
+    <div class="grid grid-cols-3 gap-3 mb-6">
+      <div class="bg-slate-800 rounded-xl p-4 text-center border border-slate-700">
+        <p class="text-2xl font-bold text-green-400">12</p>
+        <p class="text-xs text-slate-500">Wins</p>
+      </div>
+      <div class="bg-slate-800 rounded-xl p-4 text-center border border-slate-700">
+        <p class="text-2xl font-bold text-slate-400">3</p>
+        <p class="text-xs text-slate-500">Draws</p>
+      </div>
+      <div class="bg-slate-800 rounded-xl p-4 text-center border border-slate-700">
+        <p class="text-2xl font-bold text-red-400">8</p>
+        <p class="text-xs text-slate-500">Losses</p>
+      </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="flex gap-2 mb-4 overflow-x-auto pb-2">
+      <button class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium shrink-0">
+        All Games
+      </button>
+      <button class="bg-slate-800 text-slate-400 hover:text-white px-4 py-2 rounded-lg text-sm font-medium shrink-0 transition">
+        vs AI
+      </button>
+      <button class="bg-slate-800 text-slate-400 hover:text-white px-4 py-2 rounded-lg text-sm font-medium shrink-0 transition">
+        Local 2P
+      </button>
+      <button class="bg-slate-800 text-slate-400 hover:text-white px-4 py-2 rounded-lg text-sm font-medium shrink-0 transition">
+        AI vs AI
+      </button>
+      <button class="bg-slate-800 text-slate-400 hover:text-white px-4 py-2 rounded-lg text-sm font-medium shrink-0 transition">
+        Wins
+      </button>
+      <button class="bg-slate-800 text-slate-400 hover:text-white px-4 py-2 rounded-lg text-sm font-medium shrink-0 transition">
+        Losses
+      </button>
+    </div>
+
+    <!-- Games List -->
+    <div class="space-y-3">
+      <!-- Game 1 - Win -->
+      <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden hover:border-slate-600 transition cursor-pointer">
+        <div class="flex items-center p-4">
+          <div class="w-12 h-12 rounded-lg bg-green-600/20 flex items-center justify-center shrink-0">
+            <i data-lucide="trophy" class="w-6 h-6 text-green-400"></i>
+          </div>
+          <div class="ml-4 flex-1 min-w-0">
+            <div class="flex items-center gap-2">
+              <p class="font-medium">You vs Aggressive AI</p>
+              <span class="text-xs bg-green-600/20 text-green-400 px-2 py-0.5 rounded-full">Win</span>
+            </div>
+            <p class="text-sm text-slate-400">Checkmate in 42 moves</p>
+          </div>
+          <div class="text-right shrink-0 ml-4">
+            <p class="text-sm text-slate-400">10 min ago</p>
+            <p class="text-xs text-slate-500">Blitz 5+0</p>
+          </div>
+          <i data-lucide="chevron-right" class="w-5 h-5 text-slate-600 ml-2"></i>
+        </div>
+      </div>
+
+      <!-- Game 2 - Loss -->
+      <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden hover:border-slate-600 transition cursor-pointer">
+        <div class="flex items-center p-4">
+          <div class="w-12 h-12 rounded-lg bg-red-600/20 flex items-center justify-center shrink-0">
+            <i data-lucide="x" class="w-6 h-6 text-red-400"></i>
+          </div>
+          <div class="ml-4 flex-1 min-w-0">
+            <div class="flex items-center gap-2">
+              <p class="font-medium">You vs Classical AI</p>
+              <span class="text-xs bg-red-600/20 text-red-400 px-2 py-0.5 rounded-full">Loss</span>
+            </div>
+            <p class="text-sm text-slate-400">Resignation after 38 moves</p>
+          </div>
+          <div class="text-right shrink-0 ml-4">
+            <p class="text-sm text-slate-400">2 hours ago</p>
+            <p class="text-xs text-slate-500">Rapid 10+0</p>
+          </div>
+          <i data-lucide="chevron-right" class="w-5 h-5 text-slate-600 ml-2"></i>
+        </div>
+      </div>
+
+      <!-- Game 3 - AI vs AI (Spectated) -->
+      <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden hover:border-slate-600 transition cursor-pointer">
+        <div class="flex items-center p-4">
+          <div class="w-12 h-12 rounded-lg bg-purple-600/20 flex items-center justify-center shrink-0">
+            <i data-lucide="eye" class="w-6 h-6 text-purple-400"></i>
+          </div>
+          <div class="ml-4 flex-1 min-w-0">
+            <div class="flex items-center gap-2">
+              <p class="font-medium">Classical vs Defensive</p>
+              <span class="text-xs bg-purple-600/20 text-purple-400 px-2 py-0.5 rounded-full">AI vs AI</span>
+            </div>
+            <p class="text-sm text-slate-400">Draw by repetition • 67 moves</p>
+          </div>
+          <div class="text-right shrink-0 ml-4">
+            <p class="text-sm text-slate-400">Yesterday</p>
+            <p class="text-xs text-slate-500">Spectated</p>
+          </div>
+          <i data-lucide="chevron-right" class="w-5 h-5 text-slate-600 ml-2"></i>
+        </div>
+      </div>
+
+      <!-- Game 4 - Win -->
+      <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden hover:border-slate-600 transition cursor-pointer">
+        <div class="flex items-center p-4">
+          <div class="w-12 h-12 rounded-lg bg-green-600/20 flex items-center justify-center shrink-0">
+            <i data-lucide="trophy" class="w-6 h-6 text-green-400"></i>
+          </div>
+          <div class="ml-4 flex-1 min-w-0">
+            <div class="flex items-center gap-2">
+              <p class="font-medium">You vs Chaotic AI</p>
+              <span class="text-xs bg-green-600/20 text-green-400 px-2 py-0.5 rounded-full">Win</span>
+            </div>
+            <p class="text-sm text-slate-400">Checkmate in 29 moves</p>
+          </div>
+          <div class="text-right shrink-0 ml-4">
+            <p class="text-sm text-slate-400">2 days ago</p>
+            <p class="text-xs text-slate-500">Blitz 3+2</p>
+          </div>
+          <i data-lucide="chevron-right" class="w-5 h-5 text-slate-600 ml-2"></i>
+        </div>
+      </div>
+
+      <!-- Game 5 - Draw -->
+      <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden hover:border-slate-600 transition cursor-pointer">
+        <div class="flex items-center p-4">
+          <div class="w-12 h-12 rounded-lg bg-slate-600/20 flex items-center justify-center shrink-0">
+            <i data-lucide="minus" class="w-6 h-6 text-slate-400"></i>
+          </div>
+          <div class="ml-4 flex-1 min-w-0">
+            <div class="flex items-center gap-2">
+              <p class="font-medium">You vs Defensive AI</p>
+              <span class="text-xs bg-slate-600/20 text-slate-400 px-2 py-0.5 rounded-full">Draw</span>
+            </div>
+            <p class="text-sm text-slate-400">Stalemate after 54 moves</p>
+          </div>
+          <div class="text-right shrink-0 ml-4">
+            <p class="text-sm text-slate-400">3 days ago</p>
+            <p class="text-xs text-slate-500">Classical 30+0</p>
+          </div>
+          <i data-lucide="chevron-right" class="w-5 h-5 text-slate-600 ml-2"></i>
+        </div>
+      </div>
+
+      <!-- Game 6 - Local 2P -->
+      <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden hover:border-slate-600 transition cursor-pointer">
+        <div class="flex items-center p-4">
+          <div class="w-12 h-12 rounded-lg bg-blue-600/20 flex items-center justify-center shrink-0">
+            <i data-lucide="users" class="w-6 h-6 text-blue-400"></i>
+          </div>
+          <div class="ml-4 flex-1 min-w-0">
+            <div class="flex items-center gap-2">
+              <p class="font-medium">Local 2-Player Game</p>
+              <span class="text-xs bg-blue-600/20 text-blue-400 px-2 py-0.5 rounded-full">2P</span>
+            </div>
+            <p class="text-sm text-slate-400">White wins by checkmate • 31 moves</p>
+          </div>
+          <div class="text-right shrink-0 ml-4">
+            <p class="text-sm text-slate-400">4 days ago</p>
+            <p class="text-xs text-slate-500">Rapid 10+0</p>
+          </div>
+          <i data-lucide="chevron-right" class="w-5 h-5 text-slate-600 ml-2"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Load More -->
+    <button class="w-full mt-4 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl py-3 text-sm text-slate-400 hover:text-white transition flex items-center justify-center gap-2">
+      <i data-lucide="chevrons-down" class="w-4 h-4"></i>
+      Load More Games
+    </button>
+  </main>
+
+  <!-- Mobile Bottom Navigation -->
+  <nav class="lg:hidden fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-800 px-2 py-2">
+    <div class="flex justify-around items-center">
+      <a href="01-home.html" class="flex flex-col items-center gap-1 px-3 py-2 text-slate-400">
+        <i data-lucide="home" class="w-5 h-5"></i>
+        <span class="text-xs">Home</span>
+      </a>
+      <a href="02-new-game.html" class="flex flex-col items-center gap-1 px-3 py-2 text-slate-400">
+        <i data-lucide="plus-circle" class="w-5 h-5"></i>
+        <span class="text-xs">Play</span>
+      </a>
+      <a href="05-library.html" class="flex flex-col items-center gap-1 px-3 py-2 text-slate-400">
+        <i data-lucide="folder" class="w-5 h-5"></i>
+        <span class="text-xs">Library</span>
+      </a>
+      <a href="#" class="flex flex-col items-center gap-1 px-3 py-2 text-blue-400">
+        <i data-lucide="scroll-text" class="w-5 h-5"></i>
+        <span class="text-xs font-medium">History</span>
+      </a>
+      <a href="08-settings.html" class="flex flex-col items-center gap-1 px-3 py-2 text-slate-400">
+        <i data-lucide="settings" class="w-5 h-5"></i>
+        <span class="text-xs">Settings</span>
+      </a>
+    </div>
+  </nav>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

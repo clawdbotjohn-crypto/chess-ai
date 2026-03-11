@@ -16,6 +16,9 @@ export interface AppSettings {
 
   // Board theme
   boardTheme: 'classic' | 'green' | 'ice' | 'dark'
+
+  // Game
+  aiMoveDelay: number
 }
 
 const STORAGE_KEY = 'chess-ai-settings'
@@ -31,6 +34,7 @@ const DEFAULTS: AppSettings = {
   showEvalBar: false,
   openingBookEnabled: true,
   boardTheme: 'classic',
+  aiMoveDelay: 500,
 }
 
 export function getSettings(): AppSettings {

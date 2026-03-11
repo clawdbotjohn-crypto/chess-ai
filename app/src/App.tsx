@@ -21,14 +21,26 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
     if (this.state.hasError) {
       return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-slate-900 text-white p-6 text-center">
+          <div className="text-5xl mb-4">♞</div>
           <h1 className="text-2xl font-bold mb-3">Something went wrong</h1>
-          <p className="text-slate-400 mb-6">An unexpected error occurred. Please reload the page.</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg transition-colors"
-          >
-            Reload
-          </button>
+          <p className="text-slate-400 mb-6 max-w-md">
+            An unexpected error occurred. This might be caused by a corrupted game state.
+            Try reloading, or clear your browser data if the problem persists.
+          </p>
+          <div className="flex gap-3">
+            <button
+              onClick={() => window.location.reload()}
+              className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg transition-colors"
+            >
+              Reload
+            </button>
+            <button
+              onClick={() => { localStorage.clear(); window.location.href = '/' }}
+              className="bg-slate-700 hover:bg-slate-600 text-white font-medium py-2 px-6 rounded-lg transition-colors"
+            >
+              Clear Data &amp; Restart
+            </button>
+          </div>
         </div>
       )
     }
@@ -44,14 +56,16 @@ const SettingsPage = lazy(() => import('./pages/SettingsPage'))
 const EditorPage = lazy(() => import('./pages/EditorPage'))
 const AnalysisPage = lazy(() => import('./pages/AnalysisPage'))
 const PositionSetupPage = lazy(() => import('./pages/PositionSetupPage'))
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage'))
 
 function App() {
   return (
     <ErrorBoundary>
     <BrowserRouter basename={(import.meta.env.VITE_BASE_PATH || "/").replace(/\/$/, "") || "/"}>
       <Suspense fallback={
-        <div className="flex items-center justify-center min-h-[50vh]">
+        <div className="flex flex-col items-center justify-center min-h-[50vh] gap-3">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500" />
+          <p className="text-slate-500 text-sm">Loading...</p>
         </div>
       }>
         <Routes>
@@ -64,6 +78,7 @@ function App() {
             <Route path="/analysis/:gameId" element={<AnalysisPage />} />
             <Route path="/setup" element={<PositionSetupPage />} />
             <Route path="/settings" element={<SettingsPage />} />
+            <Route path="*" element={<NotFoundPage />} />
           </Route>
         </Routes>
       </Suspense>

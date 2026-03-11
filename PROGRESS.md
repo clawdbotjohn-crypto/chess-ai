@@ -345,6 +345,69 @@
 - [x] **Move delay slider for Human vs AI** — Added AI Move Delay slider (0-3000ms, step 250) to NewGameModal for human-vs-ai mode. Default 500ms. Value passed through NewGameSettings and applied to GamePage minMoveTime state. Desktop sidebar slider still works for live mid-game adjustment. (Mar 10)
 - [x] **Click-to-move hitbox is circular, should be square** — Added dragActivationDistance: 5 to Chessboard options. dnd-kit drag sensor now requires 5px movement before activating, so clicks (no/minimal movement) cleanly fire onSquareClick regardless of position within the square (corners, edges, center). (Mar 10)
 
+## Session: Mar 11 Morning (02:00) — Polish, PWA, A11y, Stats
+
+### Completed (8 workers)
+
+#### PWA Support ✅
+- manifest.json, service worker (sw.js), PWA icons (192/512px)
+- Apple touch icon, mobile web app meta tags
+- Service worker with cache-first strategy for offline use
+
+#### Social Sharing + SEO ✅
+- Open Graph meta tags (og:title, og:description, og:url)
+- Twitter Card meta tags
+- JSON-LD structured data (WebApplication schema)
+- robots.txt + sitemap.xml
+- 404 Not Found page (chess-themed "♞ Position Not Found")
+
+#### Accessibility Improvements ✅
+- Skip navigation link (sr-only, visible on focus)
+- Focus management on route changes
+- 50+ icon-only buttons now have aria-labels (GamePage, AnalysisPage, PositionSetupPage)
+- aria-live region for game status announcements
+- Modal accessibility: role="dialog", aria-modal, focus trapping, Escape-to-close
+- NewGameModal: click-outside-to-close added
+
+#### Keyboard Help Modal ✅
+- Global `?` key opens keyboard shortcuts overlay
+- Shortcuts grouped by context (Global, Play, Analysis)
+- Help button (CircleHelp icon) in nav bar
+- About section in Settings page
+
+#### What's New Banner ✅
+- Dismissible feature highlights on HomePage
+- Version-gated (won't reshow until version bump)
+- 4 highlighted features (PWA, Pre-moves, Position Setup, Progressive Eval)
+
+#### Performance Optimizations ✅
+- EvalBar wrapped in React.memo
+- Memoized boardOptions object in GamePage
+- Openings lookup early exit after move 20
+
+#### UX Polish ✅
+- Swipe navigation on Analysis page (mobile touch)
+- Copy FEN button on GamePage desktop sidebar
+- AI Move Delay persisted to localStorage
+- Game statistics tracking (wins/losses/draws/streaks)
+- Stats display on Settings page with reset option
+- Improved Suspense fallback + ErrorBoundary UI
+
+### Build
+- ✅ `npm run build` — 0 errors (17.5s)
+- ✅ `npx tsc --noEmit` — 0 errors
+- 9 new files, 14 modified files, +376 lines
+
+### New Files
+- `public/manifest.json`, `sw.js`, `icon-192.png`, `icon-512.png`
+- `public/robots.txt`, `public/sitemap.xml`
+- `src/components/KeyboardHelpModal.tsx`
+- `src/components/WhatsNew.tsx`
+- `src/pages/NotFoundPage.tsx`
+- `src/utils/gameStats.ts`
+
+---
+
 ## Session: Mar 10 Morning (02:00) — 12 Workers, 10 Features
 
 ### Completed

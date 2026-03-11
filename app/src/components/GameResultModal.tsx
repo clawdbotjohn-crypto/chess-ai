@@ -109,6 +109,9 @@ export function GameResultModal({
       `}</style>
       <div
         className="bg-gradient-to-b from-slate-800 to-slate-900 border border-slate-700/50 rounded-2xl p-6 sm:p-8 max-w-sm w-full mx-4 shadow-2xl text-center relative"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Game result"
         style={{ animation: 'gameOverSlideUp 0.3s ease-out' }}
       >
         {/* Dismiss button */}
@@ -116,6 +119,7 @@ export function GameResultModal({
           onClick={onDismiss}
           className="absolute top-3 right-3 text-slate-500 hover:text-slate-300 transition-colors"
           title="Dismiss"
+          aria-label="Dismiss"
         >
           <X className="w-5 h-5" />
         </button>
@@ -171,6 +175,7 @@ export function GameResultModal({
             onClick={handleCopyPGN}
             className="bg-slate-700/80 hover:bg-slate-600 text-slate-200 font-semibold py-2.5 px-3 rounded-xl transition-colors flex items-center justify-center gap-1.5 text-sm border border-slate-600/30"
             title="Copy PGN"
+            aria-label="Copy PGN"
           >
             {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
           </button>
@@ -179,6 +184,7 @@ export function GameResultModal({
               onClick={handleCopyLink}
               className="bg-slate-700/80 hover:bg-slate-600 text-slate-200 font-semibold py-2.5 px-3 rounded-xl transition-colors flex items-center justify-center gap-1.5 text-sm border border-slate-600/30"
               title="Copy analysis link"
+              aria-label="Copy analysis link"
             >
               {linkCopied ? <Check className="w-4 h-4 text-green-400" /> : <Share2 className="w-4 h-4" />}
             </button>

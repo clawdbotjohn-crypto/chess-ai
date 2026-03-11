@@ -1,0 +1,13 @@
+{
+  "name": "Chess AI — Build Your Chess Brain",
+  "short_name": "Chess AI",
+  "description": "Create custom AI chess personalities. Play against your creations or Stockfish.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

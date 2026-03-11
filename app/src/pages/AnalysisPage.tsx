@@ -105,6 +105,7 @@ export default function AnalysisPage() {
     return saved?.config ?? DEFAULT_CONFIG
   }, [analysisPreset, savedPersonalities])
   const moveListRef = useRef<HTMLDivElement>(null)
+  const touchStartRef = useRef<{ x: number; y: number } | null>(null)
 
   // Auto-fallback: if Stockfish has an error, switch back to custom engine
   useEffect(() => {
@@ -265,6 +266,22 @@ export default function AnalysisPage() {
     return () => window.removeEventListener('keydown', handler)
   }, [goPrev, goNext, goStart, goEnd])
 
+  // Touch swipe navigation for mobile
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStartRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY }
+  }, [])
+
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+    if (!touchStartRef.current) return
+    const dx = e.changedTouches[0].clientX - touchStartRef.current.x
+    const dy = e.changedTouches[0].clientY - touchStartRef.current.y
+    touchStartRef.current = null
+    if (Math.abs(dx) > 50 && Math.abs(dy) < 30) {
+      if (dx > 0) goPrev()
+      else goNext()
+    }
+  }, [goPrev, goNext])
+
   // Auto-scroll move list
   useEffect(() => {
     if (!moveListRef.current) return
@@ -323,7 +340,7 @@ export default function AnalysisPage() {
         <p className="text-slate-400 text-lg mb-4">Game not found</p>
         <button
           onClick={() => navigate('/history')}
-          className="text-blue-400 hover:text-blue-300 transition"
+          aria-label="Back to history" className="text-blue-400 hover:text-blue-300 transition"
         >
           ← Back to History
         </button>
@@ -373,7 +390,7 @@ export default function AnalysisPage() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate('/history')}
-            className="p-2 rounded-lg bg-slate-800 border border-slate-700 hover:bg-slate-700 transition flex-shrink-0"
+            aria-label="Back to history" className="p-2 rounded-lg bg-slate-800 border border-slate-700 hover:bg-slate-700 transition flex-shrink-0"
           >
             <ArrowLeft className="w-5 h-5 text-slate-300" />
           </button>
@@ -403,6 +420,7 @@ export default function AnalysisPage() {
             onClick={() => setFlipped(f => !f)}
             className="p-2 rounded-lg bg-slate-800 border border-slate-700 hover:bg-slate-700 transition flex-shrink-0"
             title="Flip board"
+            aria-label="Flip board"
           >
             <RotateCw className="w-5 h-5 text-slate-400" />
           </button>
@@ -413,6 +431,7 @@ export default function AnalysisPage() {
             onClick={copyPgn}
             className="p-2 rounded-lg bg-slate-800 border border-slate-700 hover:bg-slate-700 transition min-w-[44px] min-h-[44px] flex items-center justify-center"
             title="Copy PGN"
+            aria-label="Copy PGN"
           >
             {copied
               ? <Check className="w-5 h-5 text-green-400" />
@@ -422,7 +441,7 @@ export default function AnalysisPage() {
           <button
             onClick={copyFen}
             className="p-2 rounded-lg bg-slate-800 border border-slate-700 text-slate-400 hover:bg-slate-700 transition min-w-[44px] min-h-[44px] flex items-center justify-center"
-            title="Copy FEN"
+            title="Copy FEN" aria-label="Copy FEN"
           >
             {fenCopied
               ? <Check className="w-4 h-4 text-green-400" />
@@ -459,14 +478,14 @@ export default function AnalysisPage() {
               URL.revokeObjectURL(url)
             }}
             className="p-2 rounded-lg bg-slate-800 border border-slate-700 text-slate-400 hover:bg-slate-700 transition min-w-[44px] min-h-[44px] flex items-center justify-center"
-            title="Download PGN"
+            title="Download PGN" aria-label="Download PGN"
           >
             <Download className="w-4 h-4" />
           </button>
           <button
             onClick={copyLink}
             className="p-2 rounded-lg bg-slate-800 border border-slate-700 text-slate-400 hover:bg-slate-700 transition min-w-[44px] min-h-[44px] flex items-center justify-center"
-            title="Copy analysis link"
+            title="Copy analysis link" aria-label="Copy analysis link"
           >
             {linkCopied
               ? <Check className="w-4 h-4 text-green-400" />
@@ -489,6 +508,7 @@ export default function AnalysisPage() {
                 : 'bg-slate-800 border-slate-700 text-slate-400 hover:bg-slate-700'
             }`}
             title={stockfish.error ? 'Stockfish failed to load' : useStockfishEval ? 'Using Stockfish eval' : 'Using custom engine eval'}
+            aria-label={stockfish.error ? "Stockfish failed to load" : useStockfishEval ? "Using Stockfish eval" : "Using custom engine eval"}
           >
             <span className="text-xs font-bold">SF</span>
           </button>
@@ -504,7 +524,7 @@ export default function AnalysisPage() {
               }
             }}
             className="h-[44px] px-2 rounded-lg border text-xs font-medium transition appearance-none cursor-pointer bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700"
-            title="Select analysis engine"
+            title="Select analysis engine" aria-label="Select analysis engine"
           >
             {!stockfish.error && (
               <option value="__stockfish__">⚡ Stockfish</option>
@@ -527,7 +547,11 @@ export default function AnalysisPage() {
         {/* Board + eval bar */}
         <div className="flex gap-1 justify-center lg:justify-start">
           <EvalBar evaluation={currentEval} flipped={orientation === 'black'} />
-          <div className="w-full max-w-[480px]">
+          <div
+            className="w-full max-w-[480px]"
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+          >
             <Chessboard
               options={{
                 position: fen,

@@ -13,9 +13,14 @@ import {
   Github,
   BookOpen,
   ChevronRight,
+  Keyboard,
+  Bug,
+  BarChart3,
+  RotateCcw,
 } from 'lucide-react'
 import { getSettings, updateSettings, type AppSettings } from '../utils/settings'
 import { BOARD_THEMES } from '../utils/boardThemes'
+import { getStats, resetStats, getWinRate, type GameStats } from '../utils/gameStats'
 
 function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {
   return (
@@ -44,9 +49,11 @@ function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean
 export default function SettingsPage() {
   usePageTitle('Settings')
   const [settings, setSettings] = useState<AppSettings>(getSettings)
+  const [stats, setStats] = useState<GameStats>(getStats)
 
   useEffect(() => {
     setSettings(getSettings())
+    setStats(getStats())
   }, [])
 
   function update(partial: Partial<AppSettings>) {
@@ -107,6 +114,13 @@ export default function SettingsPage() {
     if (window.confirm('Are you sure you want to delete all saved games? This cannot be undone.')) {
       localStorage.removeItem('chess-ai-game-history')
       alert('Game history cleared.')
+    }
+  }
+
+  function handleResetStats() {
+    if (window.confirm('Reset all your game statistics? This cannot be undone.')) {
+      resetStats()
+      setStats(getStats())
     }
   }
 
@@ -325,6 +339,68 @@ export default function SettingsPage() {
         </div>
       </section>
 
+      {/* Your Stats */}
+      <section className="mb-6">
+        <h2 className="text-sm font-medium text-slate-400 uppercase tracking-wide mb-3 flex items-center gap-2">
+          <BarChart3 className="w-4 h-4" />
+          Your Stats
+        </h2>
+        <div className="bg-slate-800 rounded-xl border border-slate-700 divide-y divide-slate-700">
+          <div className="p-4">
+            <div className="grid grid-cols-3 gap-4 text-center">
+              <div>
+                <p className="text-2xl font-bold text-white">{stats.totalGames}</p>
+                <p className="text-xs text-slate-400">Games Played</p>
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-emerald-400">{getWinRate(stats)}%</p>
+                <p className="text-xs text-slate-400">Win Rate</p>
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-amber-400">{stats.longestWinStreak}</p>
+                <p className="text-xs text-slate-400">Best Streak</p>
+              </div>
+            </div>
+          </div>
+          <div className="p-4">
+            <div className="flex items-center justify-between">
+              <p className="font-medium">Record</p>
+              <div className="flex items-center gap-3 text-sm">
+                <span className="text-emerald-400">{stats.wins}W</span>
+                <span className="text-red-400">{stats.losses}L</span>
+                <span className="text-slate-400">{stats.draws}D</span>
+              </div>
+            </div>
+            {stats.winStreak > 0 && (
+              <p className="text-xs text-slate-500 mt-1">Current streak: {stats.winStreak} win{stats.winStreak !== 1 ? 's' : ''}</p>
+            )}
+          </div>
+          {stats.totalGames > 0 && (
+            <div className="p-4">
+              <p className="text-sm text-slate-400 mb-1">Games breakdown</p>
+              <div className="flex items-center gap-4 text-xs text-slate-500">
+                {stats.gamesVsAI > 0 && <span>vs AI: {stats.gamesVsAI}</span>}
+                {stats.gamesVsHuman > 0 && <span>vs Human: {stats.gamesVsHuman}</span>}
+                {stats.gamesAIvsAI > 0 && <span>AI vs AI: {stats.gamesAIvsAI}</span>}
+              </div>
+            </div>
+          )}
+          <button
+            onClick={handleResetStats}
+            className="flex items-center justify-between p-4 w-full text-left hover:bg-slate-700/50 transition"
+          >
+            <div className="flex items-center gap-3">
+              <RotateCcw className="w-5 h-5 text-red-400" />
+              <div>
+                <p className="font-medium text-red-400">Reset Stats</p>
+                <p className="text-sm text-slate-400">Clear all game statistics</p>
+              </div>
+            </div>
+            <ChevronRight className="w-5 h-5 text-slate-600" />
+          </button>
+        </div>
+      </section>
+
       {/* About */}
       <section>
         <h2 className="text-sm font-medium text-slate-400 uppercase tracking-wide mb-3 flex items-center gap-2">
@@ -341,11 +417,14 @@ export default function SettingsPage() {
               <p className="text-sm text-slate-400">Version 1.0.0</p>
             </div>
           </div>
-          <p className="text-sm text-slate-400 mb-4">
+          <p className="text-sm text-slate-400 mb-3">
             Build custom chess AI personalities by tuning evaluation weights.
             Experiment with different play styles and watch your creations battle.
           </p>
-          <div className="flex gap-2">
+          <p className="text-xs text-slate-500 mb-4">
+            Built with custom chess engine + Stockfish
+          </p>
+          <div className="flex flex-wrap gap-x-4 gap-y-2">
             <a
               href="https://github.com/clawdbotjohn-crypto/chess-ai"
               target="_blank"
@@ -365,6 +444,24 @@ export default function SettingsPage() {
               <BookOpen className="w-4 h-4" />
               Documentation
             </a>
+            <span className="text-slate-600">•</span>
+            <a
+              href="#"
+              className="text-sm text-blue-400 hover:underline flex items-center gap-1"
+            >
+              <Bug className="w-4 h-4" />
+              Report Issue
+            </a>
+            <span className="text-slate-600">•</span>
+            <button
+              onClick={() => {
+                window.dispatchEvent(new KeyboardEvent('keydown', { key: '?' }))
+              }}
+              className="text-sm text-blue-400 hover:underline flex items-center gap-1"
+            >
+              <Keyboard className="w-4 h-4" />
+              Keyboard Shortcuts
+            </button>
           </div>
         </div>
       </section>

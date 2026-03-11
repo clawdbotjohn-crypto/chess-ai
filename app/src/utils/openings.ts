@@ -40,6 +40,8 @@ export function lookupOpening(moves: string[]): OpeningInfo | null {
     key += moves[i]
     const match = openingsCache[key]
     if (match) best = match
+    // Early exit: most openings are defined within the first 20 moves
+    if (i > 20 && !best) break
   }
   return best
 }
@@ -57,6 +59,8 @@ export async function lookupOpeningAsync(moves: string[]): Promise<OpeningInfo |
     key += moves[i]
     const match = data[key]
     if (match) best = match
+    // Early exit: most openings are defined within the first 20 moves
+    if (i > 20 && !best) break
   }
   return best
 }

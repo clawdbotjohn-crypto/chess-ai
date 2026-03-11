@@ -1,3 +1,5 @@
+import { memo } from 'react'
+
 /**
  * EvalBar — Vertical evaluation bar showing who's winning
  * Displayed alongside the chessboard when enabled in settings
@@ -10,7 +12,7 @@ interface EvalBarProps {
   flipped: boolean
 }
 
-export function EvalBar({ evaluation, flipped }: EvalBarProps) {
+export const EvalBar = memo(function EvalBar({ evaluation, flipped }: EvalBarProps) {
   // Clamp eval to [-10, 10] pawns for display, then map to percentage
   const clampedEval = Math.max(-1000, Math.min(1000, evaluation))
   // Sigmoid-like mapping: ±5 pawns ≈ 90%
@@ -64,4 +66,4 @@ export function EvalBar({ evaluation, flipped }: EvalBarProps) {
       </div>
     </div>
   )
-}
+})

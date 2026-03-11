@@ -2,6 +2,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { usePageTitle } from '../hooks/usePageTitle'
 import { Bot, Users, Eye, Brain, ScrollText, Scale, Swords, Shield, Dices, Crosshair, Target, ChevronRight, Cpu, LayoutGrid, BarChart3, BookOpen } from 'lucide-react'
 import { PRESETS } from '../engine/presets'
+import WhatsNew from '../components/WhatsNew'
 
 // Static Tailwind classes — dynamic construction (bg-${color}-...) breaks JIT purging
 const colorStyles: Record<string, { iconBg: string; iconText: string; hoverBorder: string }> = {
@@ -40,6 +41,7 @@ export default function HomePage() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
+      <WhatsNew />
       {/* Hero Section */}
       <section className="text-center mb-10">
         <h1 className="text-4xl lg:text-5xl font-bold mb-3">Chess AI</h1>

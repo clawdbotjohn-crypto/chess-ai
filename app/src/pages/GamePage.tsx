@@ -8,6 +8,7 @@ import { lookupOpening } from '../utils/openings'
 import { getSettings } from '../utils/settings'
 import { playSoundForMove } from '../utils/sounds'
 import { saveGame } from '../utils/gameHistory'
+import { recordGame } from '../utils/gameStats'
 import type { GameRecord } from '../utils/gameHistory'
 import { GameResultModal } from '../components/GameResultModal'
 import { EvalBar } from '../components/EvalBar'
@@ -56,6 +57,7 @@ export default function GamePage() {
 
   // Copy PGN state
   const [copied, setCopied] = useState(false)
+  const [fenCopied, setFenCopied] = useState(false)
 
   // Min AI move time
   const [minMoveTime, setMinMoveTime] = useState(500)
@@ -197,6 +199,13 @@ export default function GamePage() {
     navigator.clipboard.writeText(game.pgn()).then(() => {
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
+    })
+  }, [game])
+
+  const handleCopyFEN = useCallback(() => {
+    navigator.clipboard.writeText(game.fen()).then(() => {
+      setFenCopied(true)
+      setTimeout(() => setFenCopied(false), 2000)
     })
   }, [game])
 
@@ -697,6 +706,11 @@ export default function GamePage() {
       }
       saveGame(record)
       savedGameIdRef.current = record.id
+
+      // Track stats for human-vs-ai games only
+      if (mode === 'human-vs-ai') {
+        recordGame(result, mode)
+      }
     }
     if (!isGameOver) {
       gameSavedRef.current = false
@@ -1270,12 +1284,35 @@ export default function GamePage() {
     return (color === 'white' && game.turn() === 'w') || (color === 'black' && game.turn() === 'b')
   }
 
-  const effectiveOrientation = flipped
+  const effectiveOrientation: 'white' | 'black' = flipped
     ? (boardOrientation === 'white' ? 'black' : 'white')
     : boardOrientation
 
   const effectiveTopColor = effectiveOrientation === 'white' ? 'black' : 'white'
   const effectiveBottomColor = effectiveOrientation === 'white' ? 'white' : 'black'
+
+  // Memoize board options to reduce unnecessary Chessboard re-renders
+  const boardOptions = useMemo(() => ({
+    id: 'chess-board',
+    dragActivationDistance: 5,
+    position: displayFen,
+    boardOrientation: effectiveOrientation,
+    onPieceDrop: onDrop,
+    onPieceClick: onPieceClick,
+    onPieceDrag: onPieceDrag,
+    onSquareClick: onSquareClick,
+    allowDragging: !isReviewing && !isGameOver && (mode === 'human-vs-human' || mode === 'human-vs-ai' || !isRunning),
+    squareStyles: customSquareStyles,
+    darkSquareStyle: { backgroundColor: BOARD_THEME_COLORS[settings.boardTheme].dark },
+    lightSquareStyle: { backgroundColor: BOARD_THEME_COLORS[settings.boardTheme].light },
+    showNotation: settings.showCoordinates,
+    showAnimations: settings.pieceAnimation,
+    boardStyle: {
+      borderRadius: '8px',
+      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5)',
+      ...(isReviewing ? { opacity: 0.85 } : {}),
+    }
+  }), [displayFen, effectiveOrientation, onDrop, onPieceClick, onPieceDrag, onSquareClick, isReviewing, isGameOver, mode, isRunning, customSquareStyles, settings.boardTheme, settings.showCoordinates, settings.pieceAnimation])
 
   const cardGlass = 'rounded-xl p-4 border border-white/[0.08]'
   const cardGlassStyle: React.CSSProperties = {
@@ -1390,27 +1427,7 @@ export default function GamePage() {
               )}
               <div className="aspect-square max-w-full max-h-full" style={{ width: 'min(100%, 100%)' }}>
                 <Chessboard
-                  options={{
-                    id: 'chess-board',
-                    dragActivationDistance: 5,
-                    position: displayFen,
-                    boardOrientation: effectiveOrientation,
-                    onPieceDrop: onDrop,
-                    onPieceClick: onPieceClick,
-                    onPieceDrag: onPieceDrag,
-                    onSquareClick: onSquareClick,
-                    allowDragging: !isReviewing && !isGameOver && (mode === 'human-vs-human' || mode === 'human-vs-ai' || !isRunning),
-                    squareStyles: customSquareStyles,
-                    darkSquareStyle: { backgroundColor: BOARD_THEME_COLORS[settings.boardTheme].dark },
-                    lightSquareStyle: { backgroundColor: BOARD_THEME_COLORS[settings.boardTheme].light },
-                    showNotation: settings.showCoordinates,
-                    showAnimations: settings.pieceAnimation,
-                    boardStyle: {
-                      borderRadius: '8px',
-                      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5)',
-                      ...(isReviewing ? { opacity: 0.85 } : {}),
-                    }
-                  }}
+                  options={boardOptions}
                 />
               </div>
             </div>
@@ -1469,6 +1486,7 @@ export default function GamePage() {
             <button
               onClick={() => setFlipped(f => !f)}
               className="flex items-center justify-center gap-1 bg-slate-700 hover:bg-slate-600 text-slate-200 font-medium py-1.5 px-2 rounded-lg transition-colors text-xs"
+              aria-label="Flip board"
             >
               <FlipVertical className="w-3.5 h-3.5" />
             </button>
@@ -1478,6 +1496,7 @@ export default function GamePage() {
                 disabled={moveHistory.length === 0 || isThinking || isGameOver}
                 className="flex items-center justify-center gap-1 bg-slate-700 hover:bg-slate-600 disabled:bg-slate-800 disabled:text-slate-600 text-slate-200 font-medium py-1.5 px-2 rounded-lg transition-colors text-xs"
                 title="Undo move"
+                aria-label="Undo move"
               >
                 <Undo2 className="w-3.5 h-3.5" />
               </button>
@@ -1488,6 +1507,7 @@ export default function GamePage() {
                 disabled={isThinking}
                 className="flex items-center justify-center gap-1 bg-red-900/40 hover:bg-red-800/50 disabled:bg-slate-800 disabled:text-slate-600 text-red-300 font-medium py-1.5 px-2 rounded-lg transition-colors text-xs border border-red-500/20"
                 title="Resign"
+                aria-label="Resign"
               >
                 <Flag className="w-3.5 h-3.5" />
               </button>
@@ -1497,12 +1517,14 @@ export default function GamePage() {
                 onClick={handleClaimDraw}
                 className="flex items-center justify-center gap-1 bg-amber-900/40 hover:bg-amber-800/50 text-amber-300 font-medium py-1.5 px-2 rounded-lg transition-colors text-xs border border-amber-500/20 animate-pulse"
                 title={drawReason ?? 'Claim draw'}
+                aria-label={drawReason ?? 'Claim draw'}
               >
                 <Handshake className="w-3.5 h-3.5" />
               </button>
             )}
             <button
               onClick={() => setShowMoveHistory(h => !h)}
+              aria-label={showMoveHistory ? 'Hide move history' : 'Show move history'}
               className={`flex items-center justify-center gap-1 font-medium py-1.5 px-2 rounded-lg transition-colors text-xs ${
                 showMoveHistory ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30' : 'bg-slate-700 hover:bg-slate-600 text-slate-200'
               }`}
@@ -1535,7 +1557,7 @@ export default function GamePage() {
                   </h3>
                   <div className="flex items-center gap-2">
                     {moveHistory.length > 0 && (
-                      <button onClick={handleCopyPGN} className="text-slate-400 hover:text-white transition-colors" title="Copy PGN">
+                      <button onClick={handleCopyPGN} className="text-slate-400 hover:text-white transition-colors" title="Copy PGN" aria-label="Copy PGN">
                         {copied ? <Check className="w-3.5 h-3.5 text-green-400" /> : <Copy className="w-3.5 h-3.5" />}
                       </button>
                     )}
@@ -1579,9 +1601,11 @@ export default function GamePage() {
         <div className="hidden lg:flex w-72 flex-col gap-3 p-3 overflow-y-auto shrink-0">
           {/* Status */}
           <div className={cardGlass} style={cardGlassStyle}>
-            <p className={`text-sm font-medium ${game.isCheck() ? 'text-red-400' : 'text-slate-300'}`}>
-              {getStatus()}
-            </p>
+            <div role="status" aria-live="polite" aria-atomic="true">
+              <p className={`text-sm font-medium ${game.isCheck() ? 'text-red-400' : 'text-slate-300'}`}>
+                {getStatus()}
+              </p>
+            </div>
             {mode === 'ai-vs-ai' && isRunning && !isPaused && (
               <p className="text-xs text-purple-400 mt-1 flex items-center gap-1"><Bot className="w-3.5 h-3.5" /> AI vs AI in progress</p>
             )}
@@ -1606,6 +1630,7 @@ export default function GamePage() {
                 onClick={() => setFlipped(f => !f)}
                 className="p-2 hover:bg-slate-700 rounded-lg transition text-slate-400 hover:text-white border border-slate-700"
                 title="Flip board (F)"
+                aria-label="Flip board"
               >
                 <FlipVertical className="w-4 h-4" />
               </button>
@@ -1613,6 +1638,7 @@ export default function GamePage() {
                 <button
                   className="p-2 hover:bg-slate-700 rounded-lg transition text-slate-400 hover:text-white border border-slate-700"
                   title="Keyboard shortcuts"
+                  aria-label="Keyboard shortcuts"
                 >
                   <HelpCircle className="w-4 h-4" />
                 </button>
@@ -1642,6 +1668,7 @@ export default function GamePage() {
                       disabled={moveHistory.length === 0 || isThinking}
                       className="flex-1 flex items-center justify-center gap-1.5 bg-slate-700 hover:bg-slate-600 disabled:bg-slate-800 disabled:text-slate-600 text-slate-200 font-medium py-1.5 px-3 rounded-lg transition-colors text-xs"
                       title="Undo move (U)"
+                      aria-label="Undo move"
                     >
                       <Undo2 className="w-3.5 h-3.5" /> Undo
                     </button>
@@ -1650,6 +1677,7 @@ export default function GamePage() {
                       disabled={isThinking}
                       className="flex items-center justify-center gap-1.5 bg-red-900/40 hover:bg-red-800/50 disabled:bg-slate-800 disabled:text-slate-600 text-red-300 font-medium py-1.5 px-3 rounded-lg transition-colors text-xs border border-red-500/20"
                       title="Resign"
+                      aria-label="Resign"
                     >
                       <Flag className="w-3.5 h-3.5" /> Resign
                     </button>
@@ -1660,6 +1688,7 @@ export default function GamePage() {
                     onClick={handleClaimDraw}
                     className="w-full flex items-center justify-center gap-1.5 bg-amber-900/40 hover:bg-amber-800/50 text-amber-300 font-medium py-1.5 px-3 rounded-lg transition-colors text-xs border border-amber-500/20 animate-pulse"
                     title={drawReason ?? 'Claim draw'}
+                    aria-label={drawReason ?? 'Claim draw'}
                   >
                     <Handshake className="w-3.5 h-3.5" /> Claim Draw
                   </button>
@@ -1700,9 +1729,14 @@ export default function GamePage() {
                 </span>
               </h3>
               {moveHistory.length > 0 && (
-                <button onClick={handleCopyPGN} className="text-slate-400 hover:text-white transition-colors" title="Copy PGN">
-                  {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
-                </button>
+                <div className="flex items-center gap-2">
+                  <button onClick={handleCopyFEN} className="text-slate-400 hover:text-white transition-colors" title="Copy FEN" aria-label="Copy FEN">
+                    {fenCopied ? <Check className="w-4 h-4 text-green-400" /> : <span className="text-[10px] font-mono font-bold">FEN</span>}
+                  </button>
+                  <button onClick={handleCopyPGN} className="text-slate-400 hover:text-white transition-colors" title="Copy PGN" aria-label="Copy PGN">
+                    {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
+                  </button>
+                </div>
               )}
             </div>
             <div className="overflow-y-auto flex-1 font-mono text-sm space-y-0.5 min-h-0">
@@ -1737,10 +1771,10 @@ export default function GamePage() {
               )}
             </div>
             <div className="flex items-center gap-2 mt-2 pt-2 border-t border-slate-700/50 shrink-0">
-              <button onClick={navToStart} disabled={isAtStart || totalHalfMoves === 0} className={`flex-1 p-1.5 rounded-lg transition ${isAtStart || totalHalfMoves === 0 ? 'text-slate-600 opacity-50 cursor-not-allowed' : 'hover:bg-slate-800 text-slate-400 hover:text-white'}`} title="First move"><ChevronsLeft className="w-4 h-4 mx-auto" /></button>
-              <button onClick={navBack} disabled={isAtStart || totalHalfMoves === 0} className={`flex-1 p-1.5 rounded-lg transition ${isAtStart || totalHalfMoves === 0 ? 'text-slate-600 opacity-50 cursor-not-allowed' : 'hover:bg-slate-800 text-slate-400 hover:text-white'}`} title="Previous move"><ChevronLeft className="w-4 h-4 mx-auto" /></button>
-              <button onClick={navForward} disabled={isLive || totalHalfMoves === 0} className={`flex-1 p-1.5 rounded-lg transition ${isLive || totalHalfMoves === 0 ? 'text-slate-600 opacity-50 cursor-not-allowed' : 'hover:bg-slate-800 text-slate-400 hover:text-white'}`} title="Next move"><ChevronRight className="w-4 h-4 mx-auto" /></button>
-              <button onClick={navToLive} disabled={isLive || totalHalfMoves === 0} className={`flex-1 p-1.5 rounded-lg transition ${isLive || totalHalfMoves === 0 ? 'text-slate-600 opacity-50 cursor-not-allowed' : 'hover:bg-slate-800 text-slate-400 hover:text-white'}`} title="Live position"><ChevronsRight className="w-4 h-4 mx-auto" /></button>
+              <button onClick={navToStart} disabled={isAtStart || totalHalfMoves === 0} className={`flex-1 p-1.5 rounded-lg transition ${isAtStart || totalHalfMoves === 0 ? 'text-slate-600 opacity-50 cursor-not-allowed' : 'hover:bg-slate-800 text-slate-400 hover:text-white'}`} title="First move" aria-label="First move"><ChevronsLeft className="w-4 h-4 mx-auto" /></button>
+              <button onClick={navBack} disabled={isAtStart || totalHalfMoves === 0} className={`flex-1 p-1.5 rounded-lg transition ${isAtStart || totalHalfMoves === 0 ? 'text-slate-600 opacity-50 cursor-not-allowed' : 'hover:bg-slate-800 text-slate-400 hover:text-white'}`} title="Previous move" aria-label="Previous move"><ChevronLeft className="w-4 h-4 mx-auto" /></button>
+              <button onClick={navForward} disabled={isLive || totalHalfMoves === 0} className={`flex-1 p-1.5 rounded-lg transition ${isLive || totalHalfMoves === 0 ? 'text-slate-600 opacity-50 cursor-not-allowed' : 'hover:bg-slate-800 text-slate-400 hover:text-white'}`} title="Next move" aria-label="Next move"><ChevronRight className="w-4 h-4 mx-auto" /></button>
+              <button onClick={navToLive} disabled={isLive || totalHalfMoves === 0} className={`flex-1 p-1.5 rounded-lg transition ${isLive || totalHalfMoves === 0 ? 'text-slate-600 opacity-50 cursor-not-allowed' : 'hover:bg-slate-800 text-slate-400 hover:text-white'}`} title="Live position" aria-label="Live position"><ChevronsRight className="w-4 h-4 mx-auto" /></button>
             </div>
           </div>
         </div>

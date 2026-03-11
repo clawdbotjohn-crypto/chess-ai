@@ -1,5 +1,7 @@
+import { useEffect, useState, useCallback } from 'react'
 import { Outlet, Link, useLocation } from 'react-router-dom'
-import { Home, PlusCircle, ScrollText, Settings, Sliders } from 'lucide-react'
+import { Home, PlusCircle, ScrollText, Settings, Sliders, CircleHelp } from 'lucide-react'
+import KeyboardHelpModal from './KeyboardHelpModal'
 
 const navLinks = [
   { to: '/', label: 'Home', icon: Home },
@@ -12,6 +14,33 @@ const navLinks = [
 export default function Layout() {
   const location = useLocation()
   const isPlayPage = location.pathname === '/play'
+  const [helpOpen, setHelpOpen] = useState(false)
+
+  const openHelp = useCallback(() => setHelpOpen(true), [])
+  const closeHelp = useCallback(() => setHelpOpen(false), [])
+
+  // Global ? key listener
+  useEffect(() => {
+    function handleKey(e: KeyboardEvent) {
+      // Don't trigger when typing in inputs/textareas or when a modal is already open
+      const tag = (e.target as HTMLElement)?.tagName
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return
+      if ((e.target as HTMLElement)?.isContentEditable) return
+
+      if (e.key === '?' && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        e.preventDefault()
+        setHelpOpen((prev) => !prev)
+      }
+    }
+    window.addEventListener('keydown', handleKey)
+    return () => window.removeEventListener('keydown', handleKey)
+  }, [])
+
+  // Focus main content on route changes for screen reader accessibility
+  useEffect(() => {
+    const main = document.getElementById('main-content')
+    if (main) main.focus({ preventScroll: true })
+  }, [location.pathname])
 
   const isActive = (to: string) => {
     if (to === '/') return location.pathname === '/'
@@ -20,6 +49,13 @@ export default function Layout() {
 
   return (
     <div className="min-h-screen bg-[#0f172a] text-white flex flex-col">
+      {/* Skip navigation link for keyboard/screen reader users */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:bg-blue-600 focus:text-white focus:px-4 focus:py-2 focus:rounded"
+      >
+        Skip to main content
+      </a>
       {/* Desktop Navigation — compact on play page */}
       <nav className={`hidden lg:flex items-center justify-between bg-slate-900 border-b border-slate-800 sticky top-0 z-40 ${isPlayPage ? 'px-4 py-2' : 'px-6 py-4'}`}>
         <div className="flex items-center gap-8">
@@ -42,20 +78,36 @@ export default function Layout() {
             ))}
           </div>
         </div>
+        <button
+          onClick={openHelp}
+          className="p-1.5 rounded-lg hover:bg-slate-800 transition text-slate-400 hover:text-white"
+          aria-label="Keyboard shortcuts"
+          title="Keyboard shortcuts (?)"
+        >
+          <CircleHelp className="w-5 h-5" />
+        </button>
       </nav>
 
       {/* Mobile Header — hidden on play page */}
       {!isPlayPage && (
-        <header className="lg:hidden flex items-center justify-center py-4 bg-slate-900 border-b border-slate-800">
+        <header className="lg:hidden flex items-center justify-between px-4 py-4 bg-slate-900 border-b border-slate-800">
           <Link to="/" className="flex items-center gap-2 text-xl font-bold">
             <span className="text-2xl">♞</span>
             <span>Chess AI</span>
           </Link>
+          <button
+            onClick={openHelp}
+            className="p-1.5 rounded-lg hover:bg-slate-800 transition text-slate-400 hover:text-white"
+            aria-label="Keyboard shortcuts"
+            title="Keyboard shortcuts (?)"
+          >
+            <CircleHelp className="w-4 h-4" />
+          </button>
         </header>
       )}
 
       {/* Main Content */}
-      <main className={`flex-1 ${isPlayPage ? 'pb-14 lg:pb-0 overflow-hidden' : 'pb-24 lg:pb-0'}`}>
+      <main id="main-content" tabIndex={-1} className={`flex-1 ${isPlayPage ? 'pb-14 lg:pb-0 overflow-hidden' : 'pb-24 lg:pb-0'}`} style={{ outline: 'none' }}>
         <Outlet />
       </main>
 
@@ -76,6 +128,9 @@ export default function Layout() {
           ))}
         </div>
       </nav>
+
+      {/* Keyboard Help Modal */}
+      <KeyboardHelpModal open={helpOpen} onClose={closeHelp} />
     </div>
   )
 }

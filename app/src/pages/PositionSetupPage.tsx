@@ -195,6 +195,7 @@ export default function PositionSetupPage() {
         <button
           onClick={() => navigate('/')}
           className="p-2 hover:bg-slate-700 rounded-lg transition"
+          aria-label="Back to home"
         >
           <ArrowLeft className="w-5 h-5" />
         </button>
@@ -240,7 +241,7 @@ export default function PositionSetupPage() {
                         ? 'bg-blue-600 border-blue-400 ring-2 ring-blue-400/50'
                         : 'bg-slate-700 border-slate-600 hover:bg-slate-600'
                     }`}
-                    title={`White ${p.type}`}
+                    title={`White ${p.type}`} aria-label={`Place white ${p.type}`}
                   >
                     {p.label}
                   </button>
@@ -256,7 +257,7 @@ export default function PositionSetupPage() {
                         ? 'bg-blue-600 border-blue-400 ring-2 ring-blue-400/50'
                         : 'bg-slate-700 border-slate-600 hover:bg-slate-600'
                     }`}
-                    title={`Black ${p.type}`}
+                    title={`Black ${p.type}`} aria-label={`Place black ${p.type}`}
                   >
                     {p.label}
                   </button>
@@ -338,7 +339,7 @@ export default function PositionSetupPage() {
               <button
                 onClick={handleCopyFen}
                 className="px-3 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition flex-shrink-0"
-                title="Copy FEN"
+                title="Copy FEN" aria-label="Copy FEN"
               >
                 {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
               </button>
@@ -355,7 +356,7 @@ export default function PositionSetupPage() {
               <button
                 onClick={handlePasteFen}
                 className="px-3 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg transition flex-shrink-0"
-                title="Load FEN"
+                title="Load FEN" aria-label="Load FEN"
               >
                 <ClipboardPaste className="w-4 h-4" />
               </button>

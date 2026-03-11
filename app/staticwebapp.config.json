@@ -1,6 +1,16 @@
 {
   "navigationFallback": {
     "rewrite": "/index.html",
-    "exclude": ["/assets/*"]
+    "exclude": ["/assets/*", "/robots.txt", "/sitemap.xml", "/manifest.json", "/sw.js", "/icon-*.png", "/favicon.svg"]
+  },
+  "globalHeaders": {
+    "X-Content-Type-Options": "nosniff",
+    "X-Frame-Options": "DENY",
+    "Referrer-Policy": "strict-origin-when-cross-origin"
+  },
+  "mimeTypes": {
+    ".json": "application/json",
+    ".xml": "application/xml",
+    ".svg": "image/svg+xml"
   }
 }

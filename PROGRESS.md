@@ -38,6 +38,33 @@
 - [x] **Piece value slider range → 0-1000** — All piece value sliders now max at 1000. (Mar 9)
 - [ ] **Export bots to Lichess/Chess.com** — Package custom AI personalities for use on external platforms (research needed on API/bot framework compatibility)
 
+### P1.5 — QA Review Findings (Mar 11)
+
+**Performance:**
+- [ ] **Add React.memo to key components** — EvalBar, GameModeControls, PersonalitySelector, GameResultModal. Zero memoization currently; entire tree re-renders on clock tick/eval update.
+- [ ] **Openings trie optimization** — openings.json is 382KB with long string keys. Convert to trie structure to deduplicate shared prefixes → ~100-150KB.
+
+**Accessibility:**
+- [ ] **Keyboard move input** — Add text input for algebraic notation (e.g. "e4", "Nf3"). Standard a11y pattern for chess apps. Board is mouse/touch only.
+- [ ] **Missing aria-labels** — Flip, undo, resign, draw, new game buttons + settings toggles/sliders + editor sliders + modal close buttons all lack aria-labels.
+
+**Error Handling:**
+- [ ] **Worker timeout in useChessAI** — No timeout on worker requests. If search hangs, UI stuck in "thinking" forever. Add 30s timeout, terminate+recreate worker.
+- [ ] **Pending promise leak in useStockfish** — getMove() overwrites pendingResolve without rejecting previous promise. Rapid calls leak promises.
+
+**Mobile:**
+- [ ] **Touch targets too small** — Action buttons use py-1.5/p-1.5 (~28-32px). WCAG minimum is 44x44px. Increase min-h/min-w on mobile.
+
+**UX:**
+- [ ] **Analysis page auto-scroll to current move** — No scrollIntoView on active move when navigating long games.
+- [ ] **ErrorBoundary "Go Home" button** — Currently only offers full page reload. Add navigate-to-home option.
+- [ ] **Settings save indicator** — No visual feedback when settings change. Add brief "Saved" toast.
+
+**Code Quality (lower priority):**
+- [ ] **GamePage decomposition** — 1773-line monolith. Extract useGameClock, useGameLogic hooks + PlayerBar, ActionButtons sub-components.
+- [ ] **Remove `as any` casts** — 6 in evaluate.ts, 9 in PositionSetupPage.tsx. Use proper keyof types.
+- [ ] **NewGameModal decomposition** — 669 lines. Extract TimeControlSelector, AIConfigSection, ModeSelector.
+
 ### P3 — Big Features (post-launch)
 - [ ] **Online multiplayer** — Play against other people online
 - [ ] **Bot vs Bot matchmaking + Elo system** — Users can pit their custom bots against others, with a rating system

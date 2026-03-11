@@ -110,6 +110,7 @@ function Section({ title, sliders, values, onChange }: SectionProps) {
                 step={s.step}
                 value={values[s.key] ?? 0}
                 onChange={(e) => onChange(s.key, Number(e.target.value))}
+                aria-label={s.label}
                 className="flex-1 h-1.5 accent-blue-500 cursor-pointer"
               />
               <span className="text-xs text-slate-400 w-8 text-right font-mono">
@@ -183,6 +184,7 @@ function PhaseSection({ title, sliders, baseValues, overrides, onOverrideChange,
                   step={s.step}
                   value={displayVal}
                   onChange={(e) => onOverrideChange(s.key, Number(e.target.value))}
+                  aria-label={s.label}
                   className={`flex-1 h-1.5 cursor-pointer ${isOverridden ? 'accent-blue-500' : 'accent-slate-500'}`}
                   disabled={isDisabled}
                 />

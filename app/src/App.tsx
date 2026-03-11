@@ -27,7 +27,7 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
             An unexpected error occurred. This might be caused by a corrupted game state.
             Try reloading, or clear your browser data if the problem persists.
           </p>
-          <div className="flex gap-3">
+          <div className="flex gap-3 flex-wrap justify-center">
             <button
               onClick={() => window.location.reload()}
               className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg transition-colors"
@@ -35,8 +35,14 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
               Reload
             </button>
             <button
-              onClick={() => { localStorage.clear(); window.location.href = '/' }}
+              onClick={() => { window.location.href = '/' }}
               className="bg-slate-700 hover:bg-slate-600 text-white font-medium py-2 px-6 rounded-lg transition-colors"
+            >
+              Go Home
+            </button>
+            <button
+              onClick={() => { localStorage.clear(); window.location.href = '/' }}
+              className="bg-red-600/20 hover:bg-red-600/30 text-red-400 font-medium py-2 px-6 rounded-lg transition-colors"
             >
               Clear Data &amp; Restart
             </button>

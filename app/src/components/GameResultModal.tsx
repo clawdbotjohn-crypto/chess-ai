@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, memo } from 'react'
 import { Trophy, Scale, Clock, Plus, BarChart3, Copy, Check, X, Share2 } from 'lucide-react'
 
 interface GameResultModalProps {
@@ -13,7 +13,7 @@ interface GameResultModalProps {
   onDismiss: () => void
 }
 
-export function GameResultModal({
+export const GameResultModal = memo(function GameResultModal({
   result,
   moveCount,
   durationMs,
@@ -117,7 +117,7 @@ export function GameResultModal({
         {/* Dismiss button */}
         <button
           onClick={onDismiss}
-          className="absolute top-3 right-3 text-slate-500 hover:text-slate-300 transition-colors"
+          className="absolute top-3 right-3 min-h-[44px] min-w-[44px] flex items-center justify-center text-slate-500 hover:text-slate-300 transition-colors"
           title="Dismiss"
           aria-label="Dismiss"
         >
@@ -193,4 +193,4 @@ export function GameResultModal({
       </div>
     </div>
   )
-}
+})

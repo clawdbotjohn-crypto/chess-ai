@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { User, Bot, Play, Pause, RotateCcw } from 'lucide-react'
 
 interface GameModeControlsProps {
@@ -14,7 +15,7 @@ interface GameModeControlsProps {
   gameOver: boolean;
 }
 
-export function GameModeControls({
+export const GameModeControls = memo(function GameModeControls({
   mode,
   onModeChange,
   isRunning,
@@ -82,6 +83,7 @@ export function GameModeControls({
               step={100}
               value={delay}
               onChange={(e) => onDelayChange(Number(e.target.value))}
+              aria-label="Move delay"
               className="w-full h-1.5 accent-purple-500 cursor-pointer"
             />
             <div className="flex justify-between text-[10px] text-slate-600">
@@ -126,4 +128,4 @@ export function GameModeControls({
       )}
     </div>
   );
-}
+})

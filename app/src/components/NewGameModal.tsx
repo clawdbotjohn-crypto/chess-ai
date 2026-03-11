@@ -280,7 +280,7 @@ export function NewGameModal({ onStart, onClose }: NewGameModalProps) {
           <h2 className="text-xl font-bold text-white">New Game</h2>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-white transition-colors p-1 rounded-lg hover:bg-slate-800"
+            className="text-slate-400 hover:text-white transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center rounded-lg hover:bg-slate-800"
             aria-label="Close"
           >
             <X className="w-5 h-5" />
@@ -423,6 +423,7 @@ export function NewGameModal({ onStart, onClose }: NewGameModalProps) {
                       max={20}
                       value={stockfishSkillLevel}
                       onChange={(e) => setStockfishSkillLevel(Number(e.target.value))}
+                      aria-label="Stockfish strength"
                       className="w-full h-1.5 accent-orange-500 cursor-pointer"
                     />
                     <div className="flex justify-between text-[10px] text-slate-600">
@@ -441,6 +442,7 @@ export function NewGameModal({ onStart, onClose }: NewGameModalProps) {
                       max={20}
                       value={stockfishDepth}
                       onChange={(e) => setStockfishDepth(Number(e.target.value))}
+                      aria-label="Stockfish search depth"
                       className="w-full h-1.5 accent-orange-500 cursor-pointer"
                     />
                     <div className="flex justify-between text-[10px] text-slate-600">
@@ -464,6 +466,7 @@ export function NewGameModal({ onStart, onClose }: NewGameModalProps) {
                   max={7}
                   value={searchDepth}
                   onChange={(e) => setSearchDepth(Number(e.target.value))}
+                  aria-label="Search depth"
                   className="w-full h-1.5 accent-blue-500 cursor-pointer"
                 />
                 <div className="flex justify-between text-[10px] text-slate-600">
@@ -481,6 +484,7 @@ export function NewGameModal({ onStart, onClose }: NewGameModalProps) {
                     {minMoveTime === 0 ? 'Off' : `${(minMoveTime / 1000).toFixed(1)}s`}
                   </span>
                 </div>
+                aria-label="AI move delay"
                 <p className="text-[10px] text-slate-500 mb-1.5">Minimum time before AI responds</p>
                 <input
                   type="range"
@@ -553,10 +557,12 @@ export function NewGameModal({ onStart, onClose }: NewGameModalProps) {
                         max={20}
                         value={whiteStockfishSkillLevel}
                         onChange={(e) => setWhiteStockfishSkillLevel(Number(e.target.value))}
+                        aria-label="White Stockfish strength"
                         className="w-full h-1.5 accent-orange-500 cursor-pointer"
                       />
                     </div>
                     <div>
+                      aria-label="White Stockfish search depth"
                       <div className="flex items-center justify-between mb-1">
                         <p className="text-sm font-medium text-slate-400">Search Depth</p>
                         <span className="text-sm text-slate-300 font-mono">{whiteStockfishDepth}</span>
@@ -613,6 +619,7 @@ export function NewGameModal({ onStart, onClose }: NewGameModalProps) {
                     <div>
                       <div className="flex items-center justify-between mb-1">
                         <p className="text-sm font-medium text-slate-400">Strength</p>
+                        aria-label="Black Stockfish strength"
                         <span className="text-sm text-slate-300 font-mono">
                           {blackStockfishSkillLevel <= 3 ? 'Beginner' : blackStockfishSkillLevel <= 8 ? 'Intermediate' : blackStockfishSkillLevel <= 14 ? 'Advanced' : blackStockfishSkillLevel <= 18 ? 'Master' : 'Maximum'}
                           {' '}({blackStockfishSkillLevel})
@@ -628,6 +635,7 @@ export function NewGameModal({ onStart, onClose }: NewGameModalProps) {
                       />
                     </div>
                     <div>
+                      aria-label="Black Stockfish search depth"
                       <div className="flex items-center justify-between mb-1">
                         <p className="text-sm font-medium text-slate-400">Search Depth</p>
                         <span className="text-sm text-slate-300 font-mono">{blackStockfishDepth}</span>
@@ -646,6 +654,7 @@ export function NewGameModal({ onStart, onClose }: NewGameModalProps) {
               </div>
               {/* Speed Slider */}
               <div>
+                aria-label="Move delay"
                 <div className="flex items-center justify-between mb-1">
                   <p className="text-sm font-medium text-slate-400">Move Delay</p>
                   <span className="text-sm text-slate-300 font-mono">{delay}ms</span>

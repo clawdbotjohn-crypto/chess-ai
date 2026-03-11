@@ -41,28 +41,28 @@
 ### P1.5 — QA Review Findings (Mar 11)
 
 **Performance:**
-- [ ] **Add React.memo to key components** — EvalBar, GameModeControls, PersonalitySelector, GameResultModal. Zero memoization currently; entire tree re-renders on clock tick/eval update.
+- [x] **Add React.memo to key components** — Wrapped GameModeControls, PersonalitySelector, GameResultModal in React.memo (EvalBar already had it). (Mar 11)
 - [ ] **Openings trie optimization** — openings.json is 382KB with long string keys. Convert to trie structure to deduplicate shared prefixes → ~100-150KB.
 
 **Accessibility:**
-- [ ] **Keyboard move input** — Add text input for algebraic notation (e.g. "e4", "Nf3"). Standard a11y pattern for chess apps. Board is mouse/touch only.
-- [ ] **Missing aria-labels** — Flip, undo, resign, draw, new game buttons + settings toggles/sliders + editor sliders + modal close buttons all lack aria-labels.
+- [x] **Keyboard move input** — Text input for algebraic notation (e4, Nf3, O-O) on GamePage. Mobile + desktop layouts, auto-focus, error feedback, smart visibility. (Mar 11)
+- [x] **Missing aria-labels** — Added 28+ new aria-labels across GamePage, SettingsPage, AIEditorPanel, NewGameModal, GameModeControls. (Mar 11)
 
 **Error Handling:**
-- [ ] **Worker timeout in useChessAI** — No timeout on worker requests. If search hangs, UI stuck in "thinking" forever. Add 30s timeout, terminate+recreate worker.
-- [ ] **Pending promise leak in useStockfish** — getMove() overwrites pendingResolve without rejecting previous promise. Rapid calls leak promises.
+- [x] **Worker timeout in useChessAI** — 30s timeout on worker requests. Terminates and recreates worker on timeout. UI recovers gracefully. (Mar 11)
+- [x] **Pending promise leak in useStockfish** — Old pendingResolve rejected before setting new one. No more promise leaks on rapid calls. (Mar 11)
 
 **Mobile:**
-- [ ] **Touch targets too small** — Action buttons use py-1.5/p-1.5 (~28-32px). WCAG minimum is 44x44px. Increase min-h/min-w on mobile.
+- [x] **Touch targets too small** — All action buttons now min-h-[44px] min-w-[44px]. GamePage, AnalysisPage, SettingsPage, modals all updated. (Mar 11)
 
 **UX:**
-- [ ] **Analysis page auto-scroll to current move** — No scrollIntoView on active move when navigating long games.
-- [ ] **ErrorBoundary "Go Home" button** — Currently only offers full page reload. Add navigate-to-home option.
-- [ ] **Settings save indicator** — No visual feedback when settings change. Add brief "Saved" toast.
+- [x] **Analysis page auto-scroll to current move** — Already implemented (useEffect on moveIndex with scrollIntoView). Verified working. (Mar 11)
+- [x] **ErrorBoundary "Go Home" button** — Added "Go Home" button using window.location.href. "Clear Data" restyled as destructive. (Mar 11)
+- [x] **Settings save indicator** — "Saved ✓" emerald toast appears for 2s on any setting change. Debounced timer. (Mar 11)
 
 **Code Quality (lower priority):**
 - [ ] **GamePage decomposition** — 1773-line monolith. Extract useGameClock, useGameLogic hooks + PlayerBar, ActionButtons sub-components.
-- [ ] **Remove `as any` casts** — 6 in evaluate.ts, 9 in PositionSetupPage.tsx. Use proper keyof types.
+- [x] **Remove `as any` casts** — Replaced 6 casts in evaluate.ts (proper keyof indexing) and 9 in PositionSetupPage.tsx (`as Square` from chess.js). (Mar 11)
 - [ ] **NewGameModal decomposition** — 669 lines. Extract TimeControlSelector, AIConfigSection, ModeSelector.
 
 ### P3 — Big Features (post-launch)

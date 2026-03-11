@@ -73,7 +73,7 @@ export default function KeyboardHelpModal({ open, onClose }: KeyboardHelpModalPr
           </div>
           <button
             onClick={onClose}
-            className="p-1 rounded-lg hover:bg-slate-700 transition text-slate-400 hover:text-white"
+            className="min-h-[44px] min-w-[44px] flex items-center justify-center rounded-lg hover:bg-slate-700 transition text-slate-400 hover:text-white"
             aria-label="Close"
           >
             <X className="w-5 h-5" />

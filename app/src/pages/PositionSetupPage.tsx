@@ -1,7 +1,7 @@
 import { useState, useCallback, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { usePageTitle } from '../hooks/usePageTitle'
-import { Chess, type Color, type PieceSymbol } from 'chess.js'
+import { Chess, type Color, type PieceSymbol, type Square } from 'chess.js'
 import { Chessboard } from 'react-chessboard'
 import {
   Play,
@@ -48,7 +48,7 @@ function buildPositionObject(chess: Chess): Record<string, { pieceType: string }
   const position: Record<string, { pieceType: string }> = {}
   for (const rank of RANKS) {
     for (const file of FILES) {
-      const sq = `${file}${rank}` as any
+      const sq = `${file}${rank}` as Square
       const piece = chess.get(sq)
       if (piece) {
         // react-chessboard expects e.g. 'wK', 'bP'
@@ -91,7 +91,7 @@ export default function PositionSetupPage() {
       const copy = new Chess(EMPTY_FEN)
       for (const rank of RANKS) {
         for (const file of FILES) {
-          const sq = `${file}${rank}` as any
+          const sq = `${file}${rank}` as Square
           if (sq === square) continue
           const piece = chess.get(sq)
           if (piece) copy.put(piece, sq)
@@ -106,22 +106,22 @@ export default function PositionSetupPage() {
       const copy = new Chess(EMPTY_FEN)
       for (const rank of RANKS) {
         for (const file of FILES) {
-          const sq = `${file}${rank}` as any
+          const sq = `${file}${rank}` as Square
           if (sq === square) continue // Clear target square first
           const piece = chess.get(sq)
           if (piece) copy.put(piece, sq)
         }
       }
-      copy.put({ type: selectedPiece.type, color: selectedPiece.color }, square as any)
+      copy.put({ type: selectedPiece.type, color: selectedPiece.color }, square as Square)
       setChess(copy)
     } else {
       // No piece selected — remove piece from square if occupied
-      const existing = chess.get(square as any)
+      const existing = chess.get(square as Square)
       if (existing) {
         const copy = new Chess(EMPTY_FEN)
         for (const rank of RANKS) {
           for (const file of FILES) {
-            const sq = `${file}${rank}` as any
+            const sq = `${file}${rank}` as Square
             if (sq === square) continue
             const piece = chess.get(sq)
             if (piece) copy.put(piece, sq)
@@ -140,13 +140,13 @@ export default function PositionSetupPage() {
     const copy = new Chess(EMPTY_FEN)
     for (const rank of RANKS) {
       for (const file of FILES) {
-        const sq = `${file}${rank}` as any
+        const sq = `${file}${rank}` as Square
         if (sq === target) continue
         const p = chess.get(sq)
         if (p) copy.put(p, sq)
       }
     }
-    copy.put({ type, color }, target as any)
+    copy.put({ type, color }, target as Square)
     setChess(copy)
     return true
   }, [chess])

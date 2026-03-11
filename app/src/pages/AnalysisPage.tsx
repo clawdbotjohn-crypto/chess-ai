@@ -390,7 +390,7 @@ export default function AnalysisPage() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate('/history')}
-            aria-label="Back to history" className="p-2 rounded-lg bg-slate-800 border border-slate-700 hover:bg-slate-700 transition flex-shrink-0"
+            aria-label="Back to history" className="min-h-[44px] min-w-[44px] p-2 rounded-lg bg-slate-800 border border-slate-700 hover:bg-slate-700 transition flex-shrink-0 flex items-center justify-center"
           >
             <ArrowLeft className="w-5 h-5 text-slate-300" />
           </button>
@@ -418,7 +418,7 @@ export default function AnalysisPage() {
           </div>
           <button
             onClick={() => setFlipped(f => !f)}
-            className="p-2 rounded-lg bg-slate-800 border border-slate-700 hover:bg-slate-700 transition flex-shrink-0"
+            className="min-h-[44px] min-w-[44px] p-2 rounded-lg bg-slate-800 border border-slate-700 hover:bg-slate-700 transition flex-shrink-0 flex items-center justify-center"
             title="Flip board"
             aria-label="Flip board"
           >
@@ -580,7 +580,7 @@ export default function AnalysisPage() {
               onClick={(e) => { e.preventDefault(); goStart() }}
               disabled={moveIndex === -1}
               aria-label="First move"
-              className="p-2 rounded-lg bg-slate-800 border border-slate-700 hover:bg-slate-700 transition disabled:opacity-30 disabled:cursor-not-allowed"
+              className="min-h-[44px] min-w-[44px] p-2 rounded-lg bg-slate-800 border border-slate-700 hover:bg-slate-700 transition disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center"
             >
               <ChevronFirst className="w-5 h-5 text-slate-300" />
             </button>
@@ -589,14 +589,14 @@ export default function AnalysisPage() {
               onClick={(e) => { e.preventDefault(); goPrev() }}
               disabled={moveIndex === -1}
               aria-label="Previous move"
-              className="p-3 rounded-lg bg-slate-800 border border-slate-700 hover:bg-slate-700 transition disabled:opacity-30 disabled:cursor-not-allowed"
+              className="min-h-[44px] min-w-[44px] p-3 rounded-lg bg-slate-800 border border-slate-700 hover:bg-slate-700 transition disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center"
             >
               <ChevronLeft className="w-5 h-5 text-slate-300" />
             </button>
             <button
               type="button"
               onClick={(e) => { e.preventDefault(); setIsPlaying(!isPlaying) }}
-              className="p-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 transition"
+              className="min-h-[44px] min-w-[44px] p-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 transition flex items-center justify-center"
               aria-label={isPlaying ? 'Pause' : 'Play through moves'}
               title={isPlaying ? 'Pause' : 'Play through moves'}
             >
@@ -607,7 +607,7 @@ export default function AnalysisPage() {
               onClick={(e) => { e.preventDefault(); goNext() }}
               disabled={moveIndex >= moves.length - 1}
               aria-label="Next move"
-              className="p-3 rounded-lg bg-slate-800 border border-slate-700 hover:bg-slate-700 transition disabled:opacity-30 disabled:cursor-not-allowed"
+              className="min-h-[44px] min-w-[44px] p-3 rounded-lg bg-slate-800 border border-slate-700 hover:bg-slate-700 transition disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center"
             >
               <ChevronRight className="w-5 h-5 text-slate-300" />
             </button>
@@ -616,7 +616,7 @@ export default function AnalysisPage() {
               onClick={(e) => { e.preventDefault(); goEnd() }}
               disabled={moveIndex >= moves.length - 1}
               aria-label="Last move"
-              className="p-2 rounded-lg bg-slate-800 border border-slate-700 hover:bg-slate-700 transition disabled:opacity-30 disabled:cursor-not-allowed"
+              className="min-h-[44px] min-w-[44px] p-2 rounded-lg bg-slate-800 border border-slate-700 hover:bg-slate-700 transition disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center"
             >
               <ChevronLast className="w-5 h-5 text-slate-300" />
             </button>
@@ -814,7 +814,7 @@ export default function AnalysisPage() {
               onClick={(e) => { e.preventDefault(); goStart() }}
               disabled={moveIndex === -1}
               aria-label="First move"
-              className="p-2 rounded-lg bg-slate-800 border border-slate-700 hover:bg-slate-700 transition disabled:opacity-30 disabled:cursor-not-allowed"
+              className="min-h-[44px] min-w-[44px] p-2 rounded-lg bg-slate-800 border border-slate-700 hover:bg-slate-700 transition disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center"
             >
               <ChevronFirst className="w-5 h-5 text-slate-300" />
             </button>
@@ -823,14 +823,14 @@ export default function AnalysisPage() {
               onClick={(e) => { e.preventDefault(); goPrev() }}
               disabled={moveIndex === -1}
               aria-label="Previous move"
-              className="p-3 rounded-lg bg-slate-800 border border-slate-700 hover:bg-slate-700 transition disabled:opacity-30 disabled:cursor-not-allowed"
+              className="min-h-[44px] min-w-[44px] p-3 rounded-lg bg-slate-800 border border-slate-700 hover:bg-slate-700 transition disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center"
             >
               <ChevronLeft className="w-5 h-5 text-slate-300" />
             </button>
             <button
               type="button"
               onClick={(e) => { e.preventDefault(); setIsPlaying(!isPlaying) }}
-              className="p-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 transition"
+              className="min-h-[44px] min-w-[44px] p-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 transition flex items-center justify-center"
               aria-label={isPlaying ? 'Pause' : 'Play through moves'}
               title={isPlaying ? 'Pause' : 'Play through moves'}
             >
@@ -841,7 +841,7 @@ export default function AnalysisPage() {
               onClick={(e) => { e.preventDefault(); goNext() }}
               disabled={moveIndex >= moves.length - 1}
               aria-label="Next move"
-              className="p-3 rounded-lg bg-slate-800 border border-slate-700 hover:bg-slate-700 transition disabled:opacity-30 disabled:cursor-not-allowed"
+              className="min-h-[44px] min-w-[44px] p-3 rounded-lg bg-slate-800 border border-slate-700 hover:bg-slate-700 transition disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center"
             >
               <ChevronRight className="w-5 h-5 text-slate-300" />
             </button>
@@ -850,7 +850,7 @@ export default function AnalysisPage() {
               onClick={(e) => { e.preventDefault(); goEnd() }}
               disabled={moveIndex >= moves.length - 1}
               aria-label="Last move"
-              className="p-2 rounded-lg bg-slate-800 border border-slate-700 hover:bg-slate-700 transition disabled:opacity-30 disabled:cursor-not-allowed"
+              className="min-h-[44px] min-w-[44px] p-2 rounded-lg bg-slate-800 border border-slate-700 hover:bg-slate-700 transition disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center"
             >
               <ChevronLast className="w-5 h-5 text-slate-300" />
             </button>

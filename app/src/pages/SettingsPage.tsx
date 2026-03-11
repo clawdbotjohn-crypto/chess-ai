@@ -22,24 +22,25 @@ import { getSettings, updateSettings, type AppSettings } from '../utils/settings
 import { BOARD_THEMES } from '../utils/boardThemes'
 import { getStats, resetStats, getWinRate, type GameStats } from '../utils/gameStats'
 
-function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {
+function Toggle({ checked, onChange, label }: { checked: boolean; onChange: (v: boolean) => void; label?: string }) {
   return (
     <button
       type="button"
       role="switch"
       aria-checked={checked}
+      aria-label={label}
       onClick={() => onChange(!checked)}
       className={
         checked
-          ? 'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full bg-blue-500 transition-colors'
-          : 'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full bg-slate-600 transition-colors'
+          ? 'relative inline-flex h-8 w-14 min-w-[44px] min-h-[44px] items-center flex-shrink-0 cursor-pointer rounded-full bg-blue-500 transition-colors'
+          : 'relative inline-flex h-8 w-14 min-w-[44px] min-h-[44px] items-center flex-shrink-0 cursor-pointer rounded-full bg-slate-600 transition-colors'
       }
     >
       <span
         className={
           checked
-            ? 'pointer-events-none inline-block h-5 w-5 translate-x-5 transform rounded-full bg-white shadow-sm transition-transform mt-0.5 ml-0.5'
-            : 'pointer-events-none inline-block h-5 w-5 translate-x-0 transform rounded-full bg-white shadow-sm transition-transform mt-0.5 ml-0.5'
+            ? 'pointer-events-none inline-block h-6 w-6 translate-x-6 transform rounded-full bg-white shadow-sm transition-transform'
+            : 'pointer-events-none inline-block h-6 w-6 translate-x-1 transform rounded-full bg-white shadow-sm transition-transform'
         }
       />
     </button>
@@ -50,6 +51,8 @@ export default function SettingsPage() {
   usePageTitle('Settings')
   const [settings, setSettings] = useState<AppSettings>(getSettings)
   const [stats, setStats] = useState<GameStats>(getStats)
+  const [showSaved, setShowSaved] = useState(false)
+  const [savedTimerId, setSavedTimerId] = useState<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
     setSettings(getSettings())
@@ -59,6 +62,11 @@ export default function SettingsPage() {
   function update(partial: Partial<AppSettings>) {
     const next = updateSettings(partial)
     setSettings(next)
+    // Show saved indicator
+    if (savedTimerId) clearTimeout(savedTimerId)
+    setShowSaved(true)
+    const id = setTimeout(() => setShowSaved(false), 2000)
+    setSavedTimerId(id)
   }
 
   function handleExportData() {
@@ -138,28 +146,28 @@ export default function SettingsPage() {
               <p className="font-medium">Show Legal Moves</p>
               <p className="text-sm text-slate-400">Display dots on squares where pieces can move</p>
             </div>
-            <Toggle checked={settings.showLegalMoves} onChange={(v) => update({ showLegalMoves: v })} />
+            <Toggle checked={settings.showLegalMoves} onChange={(v) => update({ showLegalMoves: v })} label="Show legal moves" />
           </div>
           <div className="flex items-center justify-between p-4">
             <div>
               <p className="font-medium">Highlight Last Move</p>
               <p className="text-sm text-slate-400">Show which squares the last move used</p>
             </div>
-            <Toggle checked={settings.highlightLastMove} onChange={(v) => update({ highlightLastMove: v })} />
+            <Toggle checked={settings.highlightLastMove} onChange={(v) => update({ highlightLastMove: v })} label="Highlight last move" />
           </div>
           <div className="flex items-center justify-between p-4">
             <div>
               <p className="font-medium">Show Coordinates</p>
               <p className="text-sm text-slate-400">Display a-h and 1-8 around the board</p>
             </div>
-            <Toggle checked={settings.showCoordinates} onChange={(v) => update({ showCoordinates: v })} />
+            <Toggle checked={settings.showCoordinates} onChange={(v) => update({ showCoordinates: v })} label="Show coordinates" />
           </div>
           <div className="flex items-center justify-between p-4">
             <div>
               <p className="font-medium">Piece Animation</p>
               <p className="text-sm text-slate-400">Animate pieces when they move</p>
             </div>
-            <Toggle checked={settings.pieceAnimation} onChange={(v) => update({ pieceAnimation: v })} />
+            <Toggle checked={settings.pieceAnimation} onChange={(v) => update({ pieceAnimation: v })} label="Piece animation" />
           </div>
         </div>
       </section>
@@ -224,7 +232,7 @@ export default function SettingsPage() {
               <p className="font-medium">Sound Effects</p>
               <p className="text-sm text-slate-400">Play sounds when pieces move</p>
             </div>
-            <Toggle checked={settings.soundEnabled} onChange={(v) => update({ soundEnabled: v })} />
+            <Toggle checked={settings.soundEnabled} onChange={(v) => update({ soundEnabled: v })} label="Sound effects" />
           </div>
           {settings.soundEnabled && (
             <div className="p-4">
@@ -238,6 +246,7 @@ export default function SettingsPage() {
                 max={100}
                 value={settings.volume}
                 onChange={(e) => update({ volume: Number(e.target.value) })}
+                aria-label="Volume"
                 className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
               />
             </div>
@@ -266,6 +275,7 @@ export default function SettingsPage() {
               max={7}
               value={settings.defaultSearchDepth}
               onChange={(e) => update({ defaultSearchDepth: Number(e.target.value) })}
+              aria-label="Default search depth"
               className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
             />
             <div className="flex justify-between text-xs text-slate-500 mt-1">
@@ -278,14 +288,14 @@ export default function SettingsPage() {
               <p className="font-medium">Show Evaluation Bar</p>
               <p className="text-sm text-slate-400">Display who's winning during the game</p>
             </div>
-            <Toggle checked={settings.showEvalBar} onChange={(v) => update({ showEvalBar: v })} />
+            <Toggle checked={settings.showEvalBar} onChange={(v) => update({ showEvalBar: v })} label="Show evaluation bar" />
           </div>
           <div className="flex items-center justify-between p-4">
             <div>
               <p className="font-medium">Opening Book</p>
               <p className="text-sm text-slate-400">AI uses common openings for the first 10 moves</p>
             </div>
-            <Toggle checked={settings.openingBookEnabled} onChange={(v) => update({ openingBookEnabled: v })} />
+            <Toggle checked={settings.openingBookEnabled} onChange={(v) => update({ openingBookEnabled: v })} label="Opening book" />
           </div>
         </div>
       </section>
@@ -465,6 +475,16 @@ export default function SettingsPage() {
           </div>
         </div>
       </section>
+      {/* Saved indicator toast */}
+      <div
+        className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 ${
+          showSaved ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2 pointer-events-none'
+        }`}
+      >
+        <div className="bg-emerald-600 text-white text-sm font-medium px-4 py-2 rounded-lg shadow-lg flex items-center gap-2">
+          <span>Saved ✓</span>
+        </div>
+      </div>
     </div>
   )
 }

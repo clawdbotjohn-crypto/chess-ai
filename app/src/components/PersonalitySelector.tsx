@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import type { EvaluationConfig } from '../engine/types';
 import { PRESETS, PRESET_NAMES } from '../engine/presets';
 import type { PresetName } from '../engine/presets';
@@ -33,7 +33,7 @@ interface PersonalitySelectorProps {
   onChange: (config: EvaluationConfig, name: string) => void;
 }
 
-export function PersonalitySelector({ label, color, onChange }: PersonalitySelectorProps) {
+export const PersonalitySelector = memo(function PersonalitySelector({ label, color, onChange }: PersonalitySelectorProps) {
   const [selectedName, setSelectedName] = useState<string>('Classical');
   const savedNames = getSavedNames();
 
@@ -91,4 +91,4 @@ export function PersonalitySelector({ label, color, onChange }: PersonalitySelec
       </div>
     </div>
   );
-}
+})

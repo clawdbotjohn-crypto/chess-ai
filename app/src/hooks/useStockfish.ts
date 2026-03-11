@@ -144,6 +144,13 @@ export function useStockfish() {
           return
         }
 
+        // Reject any previous pending promise to prevent leaks from rapid calls
+        if (pendingReject.current) {
+          pendingReject.current(new Error('Stockfish request cancelled: superseded by new request'))
+          pendingResolve.current = null
+          pendingReject.current = null
+        }
+
         setIsThinking(true)
         pendingResolve.current = resolve
         pendingReject.current = reject

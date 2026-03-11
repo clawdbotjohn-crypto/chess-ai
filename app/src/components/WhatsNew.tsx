@@ -41,7 +41,7 @@ export default function WhatsNew() {
     <div className="relative bg-gradient-to-r from-indigo-900/30 to-purple-900/30 border border-indigo-500/30 rounded-xl p-5 mb-6">
       <button
         onClick={handleDismiss}
-        className="absolute top-3 right-3 text-slate-400 hover:text-white transition p-1 rounded-lg hover:bg-white/10"
+        className="absolute top-3 right-3 text-slate-400 hover:text-white transition min-h-[44px] min-w-[44px] flex items-center justify-center rounded-lg hover:bg-white/10"
         aria-label="Dismiss"
       >
         <X className="w-4 h-4" />

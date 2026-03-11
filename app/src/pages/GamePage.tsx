@@ -73,6 +73,12 @@ export default function GamePage() {
   // Selected square for legal move highlighting (T-016)
   const [selectedSquare, setSelectedSquare] = useState<string | null>(null)
 
+  // Keyboard move input state
+  const [moveInput, setMoveInput] = useState('')
+  const [moveInputError, setMoveInputError] = useState(false)
+  const moveInputRef = useRef<HTMLInputElement>(null)
+  const moveInputErrorTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
   // Track game start time for duration calculation
   const gameStartTimeRef = useRef(Date.now())
 
@@ -554,6 +560,8 @@ export default function GamePage() {
     setDrawClaimed(false)
     setDrawAvailable(false)
     setDrawReason(null)
+    setMoveInput('')
+    setMoveInputError(false)
     prevMoveCountRef.current = 0
 
     setMode(settings.mode)
@@ -1212,6 +1220,65 @@ export default function GamePage() {
     setDrawClaimed(true)
   }, [isGameOver, drawAvailable])
 
+  // Handle keyboard move input submission
+  const handleMoveInputSubmit = useCallback(() => {
+    const input = moveInput.trim()
+    if (!input) return
+    if (isGameOver || viewIndex !== null) {
+      setMoveInput('')
+      return
+    }
+
+    // Check if it's the player's turn
+    if (mode === 'human-vs-ai' && game.turn() !== humanTurnChar) {
+      setMoveInput('')
+      return
+    }
+    if (mode === 'ai-vs-ai' && isRunning) {
+      setMoveInput('')
+      return
+    }
+
+    const gameCopy = new Chess()
+    gameCopy.loadPgn(game.pgn())
+    try {
+      const move = gameCopy.move(input, { strict: false })
+      if (move) {
+        setGame(gameCopy)
+        gameRef.current = gameCopy
+        setMoveHistory(prev => [...prev, move.san])
+        setLastMove({ from: move.from, to: move.to })
+        setSelectedSquare(null)
+        setViewIndex(null)
+        setPreMove(null)
+        playSoundForMove(move.san, gameCopy.isGameOver(), gameCopy.isCheck())
+        setMoveInput('')
+        setMoveInputError(false)
+        // Re-focus input for continuous play
+        setTimeout(() => moveInputRef.current?.focus(), 50)
+        return
+      }
+    } catch {
+      // Invalid move — fall through to error
+    }
+
+    // Show error feedback
+    setMoveInputError(true)
+    setMoveInput('')
+    if (moveInputErrorTimerRef.current) clearTimeout(moveInputErrorTimerRef.current)
+    moveInputErrorTimerRef.current = setTimeout(() => {
+      setMoveInputError(false)
+    }, 1500)
+  }, [moveInput, game, isGameOver, viewIndex, mode, humanTurnChar, isRunning])
+
+  // Auto-focus move input after each move for continuous play
+  useEffect(() => {
+    if (moveHistory.length > 0 && !isGameOver) {
+      // Small delay to let React re-render
+      setTimeout(() => moveInputRef.current?.focus(), 100)
+    }
+  }, [moveHistory.length, isGameOver])
+
   // Keyboard shortcuts for move navigation and game controls
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -1474,18 +1541,57 @@ export default function GamePage() {
             {renderPlayerBar('bottom')}
           </div>
 
+          {/* Keyboard move input — mobile */}
+          {!isGameOver && !isReviewing && (mode !== 'ai-vs-ai' || !isRunning) && (
+            <div className="w-full max-w-xl shrink-0 px-1 pb-1 lg:hidden">
+              <form
+                onSubmit={(e) => { e.preventDefault(); handleMoveInputSubmit(); }}
+                className="flex gap-1.5"
+              >
+                <input
+                  ref={moveInputRef}
+                  type="text"
+                  value={moveInput}
+                  onChange={(e) => { setMoveInput(e.target.value); setMoveInputError(false); }}
+                  placeholder="Type move (e.g. e4, Nf3)"
+                  aria-label="Type a chess move in algebraic notation"
+                  autoComplete="off"
+                  autoCorrect="off"
+                  autoCapitalize="off"
+                  spellCheck={false}
+                  className={`flex-1 min-w-0 bg-slate-800 border rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 outline-none transition-colors font-mono ${
+                    moveInputError
+                      ? 'border-red-500 bg-red-500/10'
+                      : 'border-slate-700 focus:border-blue-500'
+                  }`}
+                />
+                <button
+                  type="submit"
+                  className="bg-slate-700 hover:bg-slate-600 text-slate-200 font-medium px-3 rounded-lg transition-colors text-sm min-h-[44px]"
+                  aria-label="Submit move"
+                >
+                  ↵
+                </button>
+              </form>
+              {moveInputError && (
+                <p className="text-xs text-red-400 mt-0.5 px-1">Invalid move</p>
+              )}
+            </div>
+          )}
+
           {/* Mobile action row */}
           <div className="flex gap-1.5 lg:hidden w-full max-w-xl shrink-0 pb-1">
             <button
               onClick={() => setShowNewGameModal(true)}
-              className="flex items-center justify-center gap-1 flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-1.5 px-2 rounded-lg transition-colors text-xs"
+              className="flex items-center justify-center gap-1 flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium min-h-[44px] px-2 rounded-lg transition-colors text-xs"
+              aria-label="New game"
             >
               <Plus className="w-3.5 h-3.5" />
               New
             </button>
             <button
               onClick={() => setFlipped(f => !f)}
-              className="flex items-center justify-center gap-1 bg-slate-700 hover:bg-slate-600 text-slate-200 font-medium py-1.5 px-2 rounded-lg transition-colors text-xs"
+              className="flex items-center justify-center gap-1 bg-slate-700 hover:bg-slate-600 text-slate-200 font-medium min-h-[44px] min-w-[44px] px-2 rounded-lg transition-colors text-xs"
               aria-label="Flip board"
             >
               <FlipVertical className="w-3.5 h-3.5" />
@@ -1494,7 +1600,7 @@ export default function GamePage() {
               <button
                 onClick={undoLastMove}
                 disabled={moveHistory.length === 0 || isThinking || isGameOver}
-                className="flex items-center justify-center gap-1 bg-slate-700 hover:bg-slate-600 disabled:bg-slate-800 disabled:text-slate-600 text-slate-200 font-medium py-1.5 px-2 rounded-lg transition-colors text-xs"
+                className="flex items-center justify-center gap-1 bg-slate-700 hover:bg-slate-600 disabled:bg-slate-800 disabled:text-slate-600 text-slate-200 font-medium min-h-[44px] min-w-[44px] px-2 rounded-lg transition-colors text-xs"
                 title="Undo move"
                 aria-label="Undo move"
               >
@@ -1505,7 +1611,7 @@ export default function GamePage() {
               <button
                 onClick={handleResign}
                 disabled={isThinking}
-                className="flex items-center justify-center gap-1 bg-red-900/40 hover:bg-red-800/50 disabled:bg-slate-800 disabled:text-slate-600 text-red-300 font-medium py-1.5 px-2 rounded-lg transition-colors text-xs border border-red-500/20"
+                className="flex items-center justify-center gap-1 bg-red-900/40 hover:bg-red-800/50 disabled:bg-slate-800 disabled:text-slate-600 text-red-300 font-medium min-h-[44px] min-w-[44px] px-2 rounded-lg transition-colors text-xs border border-red-500/20"
                 title="Resign"
                 aria-label="Resign"
               >
@@ -1515,7 +1621,7 @@ export default function GamePage() {
             {!isGameOver && drawAvailable && (
               <button
                 onClick={handleClaimDraw}
-                className="flex items-center justify-center gap-1 bg-amber-900/40 hover:bg-amber-800/50 text-amber-300 font-medium py-1.5 px-2 rounded-lg transition-colors text-xs border border-amber-500/20 animate-pulse"
+                className="flex items-center justify-center gap-1 bg-amber-900/40 hover:bg-amber-800/50 text-amber-300 font-medium min-h-[44px] min-w-[44px] px-2 rounded-lg transition-colors text-xs border border-amber-500/20 animate-pulse"
                 title={drawReason ?? 'Claim draw'}
                 aria-label={drawReason ?? 'Claim draw'}
               >
@@ -1525,7 +1631,7 @@ export default function GamePage() {
             <button
               onClick={() => setShowMoveHistory(h => !h)}
               aria-label={showMoveHistory ? 'Hide move history' : 'Show move history'}
-              className={`flex items-center justify-center gap-1 font-medium py-1.5 px-2 rounded-lg transition-colors text-xs ${
+              className={`flex items-center justify-center gap-1 font-medium min-h-[44px] px-2 rounded-lg transition-colors text-xs ${
                 showMoveHistory ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30' : 'bg-slate-700 hover:bg-slate-600 text-slate-200'
               }`}
             >
@@ -1536,11 +1642,11 @@ export default function GamePage() {
             {mode === 'ai-vs-ai' && (
               <>
                 {!isRunning || isGameOver ? (
-                  <button onClick={startAIvsAI} disabled={isGameOver} aria-label="Start AI match" className="flex items-center justify-center bg-green-600 hover:bg-green-700 disabled:bg-slate-700 text-white font-medium py-1.5 px-3 rounded-lg text-xs">▶</button>
+                  <button onClick={startAIvsAI} disabled={isGameOver} aria-label="Start AI match" className="flex items-center justify-center bg-green-600 hover:bg-green-700 disabled:bg-slate-700 text-white font-medium min-h-[44px] min-w-[44px] px-3 rounded-lg text-xs">▶</button>
                 ) : isPaused ? (
-                  <button onClick={resumeAIvsAI} aria-label="Resume AI match" className="flex items-center justify-center bg-green-600 hover:bg-green-700 text-white font-medium py-1.5 px-3 rounded-lg text-xs">▶</button>
+                  <button onClick={resumeAIvsAI} aria-label="Resume AI match" className="flex items-center justify-center bg-green-600 hover:bg-green-700 text-white font-medium min-h-[44px] min-w-[44px] px-3 rounded-lg text-xs">▶</button>
                 ) : (
-                  <button onClick={pauseAIvsAI} aria-label="Pause AI match" className="flex items-center justify-center bg-yellow-600 hover:bg-yellow-700 text-white font-medium py-1.5 px-3 rounded-lg text-xs">⏸</button>
+                  <button onClick={pauseAIvsAI} aria-label="Pause AI match" className="flex items-center justify-center bg-yellow-600 hover:bg-yellow-700 text-white font-medium min-h-[44px] min-w-[44px] px-3 rounded-lg text-xs">⏸</button>
                 )}
               </>
             )}
@@ -1587,10 +1693,10 @@ export default function GamePage() {
                 </div>
                 {/* Move nav buttons */}
                 <div className="flex items-center gap-1 mt-2 pt-2 border-t border-slate-700/50">
-                  <button onClick={navToStart} disabled={isAtStart || totalHalfMoves === 0} aria-label="First move" className={`flex-1 p-1.5 rounded transition ${isAtStart || totalHalfMoves === 0 ? 'text-slate-600 opacity-50' : 'hover:bg-slate-800 text-slate-400'}`}><ChevronsLeft className="w-3.5 h-3.5 mx-auto" /></button>
-                  <button onClick={navBack} disabled={isAtStart || totalHalfMoves === 0} aria-label="Previous move" className={`flex-1 p-1.5 rounded transition ${isAtStart || totalHalfMoves === 0 ? 'text-slate-600 opacity-50' : 'hover:bg-slate-800 text-slate-400'}`}><ChevronLeft className="w-3.5 h-3.5 mx-auto" /></button>
-                  <button onClick={navForward} disabled={isLive || totalHalfMoves === 0} aria-label="Next move" className={`flex-1 p-1.5 rounded transition ${isLive || totalHalfMoves === 0 ? 'text-slate-600 opacity-50' : 'hover:bg-slate-800 text-slate-400'}`}><ChevronRight className="w-3.5 h-3.5 mx-auto" /></button>
-                  <button onClick={navToLive} disabled={isLive || totalHalfMoves === 0} aria-label="Live position" className={`flex-1 p-1.5 rounded transition ${isLive || totalHalfMoves === 0 ? 'text-slate-600 opacity-50' : 'hover:bg-slate-800 text-slate-400'}`}><ChevronsRight className="w-3.5 h-3.5 mx-auto" /></button>
+                  <button onClick={navToStart} disabled={isAtStart || totalHalfMoves === 0} aria-label="First move" className={`flex-1 min-h-[44px] min-w-[44px] p-1.5 rounded transition ${isAtStart || totalHalfMoves === 0 ? 'text-slate-600 opacity-50' : 'hover:bg-slate-800 text-slate-400'}`}><ChevronsLeft className="w-3.5 h-3.5 mx-auto" /></button>
+                  <button onClick={navBack} disabled={isAtStart || totalHalfMoves === 0} aria-label="Previous move" className={`flex-1 min-h-[44px] min-w-[44px] p-1.5 rounded transition ${isAtStart || totalHalfMoves === 0 ? 'text-slate-600 opacity-50' : 'hover:bg-slate-800 text-slate-400'}`}><ChevronLeft className="w-3.5 h-3.5 mx-auto" /></button>
+                  <button onClick={navForward} disabled={isLive || totalHalfMoves === 0} aria-label="Next move" className={`flex-1 min-h-[44px] min-w-[44px] p-1.5 rounded transition ${isLive || totalHalfMoves === 0 ? 'text-slate-600 opacity-50' : 'hover:bg-slate-800 text-slate-400'}`}><ChevronRight className="w-3.5 h-3.5 mx-auto" /></button>
+                  <button onClick={navToLive} disabled={isLive || totalHalfMoves === 0} aria-label="Live position" className={`flex-1 min-h-[44px] min-w-[44px] p-1.5 rounded transition ${isLive || totalHalfMoves === 0 ? 'text-slate-600 opacity-50' : 'hover:bg-slate-800 text-slate-400'}`}><ChevronsRight className="w-3.5 h-3.5 mx-auto" /></button>
                 </div>
               </div>
             </div>
@@ -1660,7 +1766,7 @@ export default function GamePage() {
                   <p className="text-xs text-slate-500">Move Delay</p>
                   <span className="text-xs text-slate-400 font-mono">{minMoveTime === 0 ? 'Off' : `${(minMoveTime / 1000).toFixed(1)}s`}</span>
                 </div>
-                <input type="range" min={0} max={2000} step={250} value={minMoveTime} onChange={(e) => { setMinMoveTime(Number(e.target.value)); minMoveTimeRef.current = Number(e.target.value); }} className="w-full h-1.5 accent-blue-500 cursor-pointer" />
+                <input type="range" min={0} max={2000} step={250} value={minMoveTime} onChange={(e) => { setMinMoveTime(Number(e.target.value)); minMoveTimeRef.current = Number(e.target.value); }} aria-label="AI move delay" className="w-full h-1.5 accent-blue-500 cursor-pointer" />
                 {!isGameOver && moveHistory.length > 0 && (
                   <div className="flex gap-2 pt-1">
                     <button
@@ -1712,11 +1818,49 @@ export default function GamePage() {
                     <p className="text-xs text-slate-500">Move Delay</p>
                     <span className="text-xs text-slate-400 font-mono">{delay}ms</span>
                   </div>
-                  <input type="range" min={100} max={2000} step={100} value={delay} onChange={(e) => setDelay(Number(e.target.value))} className="w-full h-1.5 accent-purple-500 cursor-pointer" />
+                  <input type="range" min={100} max={2000} step={100} value={delay} onChange={(e) => setDelay(Number(e.target.value))} aria-label="AI vs AI move delay" className="w-full h-1.5 accent-purple-500 cursor-pointer" />
                 </div>
               </>
             )}
           </div>
+
+          {/* Keyboard move input — desktop */}
+          {!isGameOver && !isReviewing && (mode !== 'ai-vs-ai' || !isRunning) && (
+            <div className={cardGlass} style={cardGlassStyle}>
+              <form
+                onSubmit={(e) => { e.preventDefault(); handleMoveInputSubmit(); }}
+                className="flex gap-2"
+              >
+                <input
+                  ref={moveInputRef}
+                  type="text"
+                  value={moveInput}
+                  onChange={(e) => { setMoveInput(e.target.value); setMoveInputError(false); }}
+                  placeholder="Type move (e.g. e4, Nf3)"
+                  aria-label="Type a chess move in algebraic notation"
+                  autoComplete="off"
+                  autoCorrect="off"
+                  autoCapitalize="off"
+                  spellCheck={false}
+                  className={`flex-1 min-w-0 bg-slate-800 border rounded-lg px-3 py-1.5 text-sm text-white placeholder-slate-500 outline-none transition-colors font-mono ${
+                    moveInputError
+                      ? 'border-red-500 bg-red-500/10'
+                      : 'border-slate-700 focus:border-blue-500'
+                  }`}
+                />
+                <button
+                  type="submit"
+                  className="bg-slate-700 hover:bg-slate-600 text-slate-200 font-medium px-3 py-1.5 rounded-lg transition-colors text-sm"
+                  aria-label="Submit move"
+                >
+                  ↵
+                </button>
+              </form>
+              {moveInputError && (
+                <p className="text-xs text-red-400 mt-1">Invalid move</p>
+              )}
+            </div>
+          )}
 
           {/* Move History — desktop sidebar */}
           <div className={`${cardGlass} flex-1 flex flex-col min-h-0`} style={cardGlassStyle}>

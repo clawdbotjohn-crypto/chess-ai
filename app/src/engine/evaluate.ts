@@ -277,17 +277,17 @@ function resolvePhaseConfig(config: EvaluationConfig, phase: number): Evaluation
     const op = config.phases.opening;
     if (op.positional) {
       for (const key of Object.keys(op.positional) as (keyof PositionalWeights)[]) {
-        (resolved.positional as any)[key] = blend(config.positional[key], op.positional[key], openingBlend);
+        resolved.positional[key] = blend(config.positional[key], op.positional[key], openingBlend);
       }
     }
     if (op.kingSafety) {
       for (const key of Object.keys(op.kingSafety) as (keyof KingSafetyWeights)[]) {
-        (resolved.kingSafety as any)[key] = blend(config.kingSafety[key], op.kingSafety[key], openingBlend);
+        resolved.kingSafety[key] = blend(config.kingSafety[key], op.kingSafety[key], openingBlend);
       }
     }
     if (op.tactical) {
       for (const key of Object.keys(op.tactical) as (keyof TacticalWeights)[]) {
-        (resolved.tactical as any)[key] = blend(config.tactical[key], op.tactical[key], openingBlend);
+        resolved.tactical[key] = blend(config.tactical[key], op.tactical[key], openingBlend);
       }
     }
   }
@@ -297,17 +297,17 @@ function resolvePhaseConfig(config: EvaluationConfig, phase: number): Evaluation
     const eg = config.phases.endgame;
     if (eg.positional) {
       for (const key of Object.keys(eg.positional) as (keyof PositionalWeights)[]) {
-        (resolved.positional as any)[key] = blend(resolved.positional[key], eg.positional[key], endgameBlend);
+        resolved.positional[key] = blend(resolved.positional[key], eg.positional[key], endgameBlend);
       }
     }
     if (eg.kingSafety) {
       for (const key of Object.keys(eg.kingSafety) as (keyof KingSafetyWeights)[]) {
-        (resolved.kingSafety as any)[key] = blend(resolved.kingSafety[key], eg.kingSafety[key], endgameBlend);
+        resolved.kingSafety[key] = blend(resolved.kingSafety[key], eg.kingSafety[key], endgameBlend);
       }
     }
     if (eg.tactical) {
       for (const key of Object.keys(eg.tactical) as (keyof TacticalWeights)[]) {
-        (resolved.tactical as any)[key] = blend(resolved.tactical[key], eg.tactical[key], endgameBlend);
+        resolved.tactical[key] = blend(resolved.tactical[key], eg.tactical[key], endgameBlend);
       }
     }
   }

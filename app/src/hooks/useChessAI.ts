@@ -15,6 +15,8 @@ interface AIMoveResult {
   isBookMove?: boolean;
 }
 
+const WORKER_TIMEOUT_MS = 30_000;
+
 export function useChessAI() {
   const [isThinking, setIsThinking] = useState(false);
   const [lastMoveStats, setLastMoveStats] = useState<{ nodes: number; timeMs: number; isBookMove?: boolean } | null>(null);
@@ -24,16 +26,24 @@ export function useChessAI() {
   const pendingReject = useRef<((err: Error) => void) | null>(null);
   const pendingEvalResolve = useRef<((evaluation: number) => void) | null>(null);
   const onProgressRef = useRef<((data: { evaluation: number; depth: number; maxDepth: number; move: string }) => void) | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useEffect(() => {
-    // Create worker
-    workerRef.current = new Worker(
+  const clearPendingTimeout = useCallback(() => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+  }, []);
+
+  const createWorker = useCallback(() => {
+    const worker = new Worker(
       new URL('../engine/aiWorker.ts', import.meta.url),
       { type: 'module' }
     );
 
-    workerRef.current.onmessage = (e: MessageEvent<WorkerResponse>) => {
+    worker.onmessage = (e: MessageEvent<WorkerResponse>) => {
       if (e.data.type === 'bestmove') {
+        clearPendingTimeout();
         setIsThinking(false);
         setSearchDepth(null);
         if (e.data.isBookMove) {
@@ -70,7 +80,8 @@ export function useChessAI() {
       }
     };
 
-    workerRef.current.onerror = (err) => {
+    worker.onerror = (err) => {
+      clearPendingTimeout();
       setIsThinking(false);
       if (pendingReject.current) {
         pendingReject.current(new Error(err.message));
@@ -79,12 +90,24 @@ export function useChessAI() {
       }
     };
 
+    return worker;
+  }, [clearPendingTimeout]);
+
+  const recreateWorker = useCallback(() => {
+    workerRef.current?.terminate();
+    workerRef.current = createWorker();
+  }, [createWorker]);
+
+  useEffect(() => {
+    workerRef.current = createWorker();
+
     // Cleanup on unmount
     return () => {
+      clearPendingTimeout();
       workerRef.current?.terminate();
       workerRef.current = null;
     };
-  }, []);
+  }, [createWorker, clearPendingTimeout]);
 
   const getMove = useCallback(
     (fen: string, config: EvaluationConfig, onProgress?: (data: { evaluation: number; depth: number; maxDepth: number; move: string }) => void): Promise<AIMoveResult> => {
@@ -99,6 +122,22 @@ export function useChessAI() {
         pendingResolve.current = resolve;
         pendingReject.current = reject;
         onProgressRef.current = onProgress ?? null;
+
+        // Set a timeout — if the worker doesn't respond in 30s, terminate and recreate
+        clearPendingTimeout();
+        timeoutRef.current = setTimeout(() => {
+          timeoutRef.current = null;
+          setIsThinking(false);
+          setSearchDepth(null);
+          const rejectFn = pendingReject.current;
+          pendingResolve.current = null;
+          pendingReject.current = null;
+          onProgressRef.current = null;
+          recreateWorker();
+          if (rejectFn) {
+            rejectFn(new Error('AI search timed out after 30 seconds'));
+          }
+        }, WORKER_TIMEOUT_MS);
 
         // Per-personality opening book setting takes priority; fall back to global setting
         const openingBookEnabled = config.openingBookEnabled !== undefined

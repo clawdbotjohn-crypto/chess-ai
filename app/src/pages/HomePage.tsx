@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { usePageTitle } from '../hooks/usePageTitle'
-import { Bot, Users, Eye, Brain, ScrollText, Scale, Swords, Shield, Dices, Crosshair, Target, ChevronRight, Cpu, LayoutGrid, BarChart3, BookOpen, Trophy } from 'lucide-react'
+import { Bot, Users, Eye, Brain, ScrollText, Scale, Swords, Shield, Dices, Crosshair, Target, ChevronRight, Cpu, LayoutGrid, BarChart3, BookOpen, Trophy, Globe } from 'lucide-react'
 import { PRESETS } from '../engine/presets'
 import WhatsNew from '../components/WhatsNew'
 
@@ -25,6 +25,7 @@ const quickActions = [
   { label: 'Game History', desc: 'Review past games and analyze your play', icon: ScrollText, color: 'rose', to: '/history' },
   { label: 'Position Setup', desc: 'Set up custom board positions and play or analyze from them', icon: LayoutGrid, color: 'cyan', to: '/setup' },
   { label: 'Bot Arena', desc: 'Pit bots against each other in tournaments with Elo ratings', icon: Trophy, color: 'amber', to: '/arena' },
+  { label: 'Play Online', desc: 'Challenge a friend to a real-time game over the internet', icon: Globe, color: 'green', to: '/online' },
 ]
 
 const presetCards = [

@@ -1,0 +1,18 @@
+{
+  "name": "chess-ai-multiplayer",
+  "version": "0.1.0",
+  "private": true,
+  "description": "PartyKit multiplayer server for Chess AI",
+  "scripts": {
+    "dev": "npx partykit dev",
+    "deploy": "npx partykit deploy",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "chess.js": "^1.0.0-beta.8",
+    "partykit": "^0.0.111"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0"
+  }
+}

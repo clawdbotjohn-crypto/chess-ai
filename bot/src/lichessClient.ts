@@ -62,13 +62,41 @@ export class LichessClient {
     };
   }
 
+  /** Safely extract response body text, returning fallback on failure */
+  private async safeText(res: Response): Promise<string> {
+    try {
+      return await res.text();
+    } catch {
+      return '(no body)';
+    }
+  }
+
+  /**
+   * Execute a fetch with rate-limit (429) retry.
+   * If the response is 429, waits for Retry-After (or 60s default) and retries once.
+   */
+  private async fetchWithRateLimit(
+    url: string,
+    init: RequestInit,
+  ): Promise<Response> {
+    let res = await fetch(url, init);
+    if (res.status === 429) {
+      const retryAfter = parseInt(res.headers.get('Retry-After') || '', 10);
+      const waitSec = Number.isFinite(retryAfter) && retryAfter > 0 ? retryAfter : 60;
+      console.log(`[lichess] Rate limited (429), waiting ${waitSec}s before retry...`);
+      await new Promise(resolve => setTimeout(resolve, waitSec * 1000));
+      res = await fetch(url, init);
+    }
+    return res;
+  }
+
   /** Get bot account info */
   async getAccount(): Promise<{ id: string; username: string }> {
-    const res = await fetch(`${BASE_URL}/api/account`, {
+    const res = await this.fetchWithRateLimit(`${BASE_URL}/api/account`, {
       headers: { 'Authorization': `Bearer ${this.token}` },
     });
     if (!res.ok) {
-      throw new Error(`Failed to get account: ${res.status} ${await res.text()}`);
+      throw new Error(`Failed to get account: ${res.status} ${await this.safeText(res)}`);
     }
     return res.json() as Promise<{ id: string; username: string }>;
   }
@@ -80,7 +108,7 @@ export class LichessClient {
       signal,
     });
     if (!res.ok) {
-      throw new Error(`Event stream failed: ${res.status} ${await res.text()}`);
+      throw new Error(`Event stream failed: ${res.status} ${await this.safeText(res)}`);
     }
     yield* this.parseNDJSON<LichessEvent>(res, signal);
   }
@@ -96,7 +124,7 @@ export class LichessClient {
         signal: controller.signal,
       });
       if (!res.ok) {
-        throw new Error(`Game stream failed: ${res.status} ${await res.text()}`);
+        throw new Error(`Game stream failed: ${res.status} ${await this.safeText(res)}`);
       }
       yield* this.parseNDJSON<LichessGameFull | LichessGameState>(res, controller.signal);
     } finally {
@@ -106,7 +134,7 @@ export class LichessClient {
 
   /** Accept a challenge */
   async acceptChallenge(challengeId: string): Promise<void> {
-    const res = await fetch(`${BASE_URL}/api/challenge/${challengeId}/accept`, {
+    const res = await this.fetchWithRateLimit(`${BASE_URL}/api/challenge/${challengeId}/accept`, {
       method: 'POST',
       headers: { 'Authorization': `Bearer ${this.token}` },
     });
@@ -117,7 +145,7 @@ export class LichessClient {
 
   /** Decline a challenge */
   async declineChallenge(challengeId: string, reason: string = 'generic'): Promise<void> {
-    const res = await fetch(`${BASE_URL}/api/challenge/${challengeId}/decline`, {
+    const res = await this.fetchWithRateLimit(`${BASE_URL}/api/challenge/${challengeId}/decline`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${this.token}`,
@@ -132,12 +160,12 @@ export class LichessClient {
 
   /** Make a move (UCI format, e.g., "e2e4") */
   async makeMove(gameId: string, move: string): Promise<boolean> {
-    const res = await fetch(`${BASE_URL}/api/bot/game/${gameId}/move/${move}`, {
+    const res = await this.fetchWithRateLimit(`${BASE_URL}/api/bot/game/${gameId}/move/${move}`, {
       method: 'POST',
       headers: { 'Authorization': `Bearer ${this.token}` },
     });
     if (!res.ok) {
-      console.error(`Failed to make move ${move} in game ${gameId}: ${res.status} ${await res.text()}`);
+      console.error(`Failed to make move ${move} in game ${gameId}: ${res.status} ${await this.safeText(res)}`);
       return false;
     }
     return true;
@@ -145,7 +173,7 @@ export class LichessClient {
 
   /** Resign a game */
   async resign(gameId: string): Promise<void> {
-    await fetch(`${BASE_URL}/api/bot/game/${gameId}/resign`, {
+    await this.fetchWithRateLimit(`${BASE_URL}/api/bot/game/${gameId}/resign`, {
       method: 'POST',
       headers: { 'Authorization': `Bearer ${this.token}` },
     });
@@ -153,7 +181,7 @@ export class LichessClient {
 
   /** Send a chat message */
   async chat(gameId: string, room: 'player' | 'spectator', text: string): Promise<void> {
-    await fetch(`${BASE_URL}/api/bot/game/${gameId}/chat`, {
+    await this.fetchWithRateLimit(`${BASE_URL}/api/bot/game/${gameId}/chat`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${this.token}`,

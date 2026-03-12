@@ -47,8 +47,9 @@ async function playGame(
           log(`Game ${gameId}: ended — ${state.status}${state.winner ? ` (${state.winner} wins)` : ''}`);
           break;
         }
-        // We need the initialFen from gameFull, but for standard games it's always startpos
-        await handleGameState(client, gameId, state, 'startpos', undefined, config);
+        // Use initialFen from gameContext (stored during gameFull), not hardcoded
+        const storedFen = gameContext.get(gameId)?.initialFen ?? 'startpos';
+        await handleGameState(client, gameId, state, storedFen, undefined, config);
       } else if ((event as any).type === 'chatLine') {
         // Ignore chat for now
       }
@@ -181,38 +182,55 @@ async function main(): Promise<void> {
     abortController.abort();
   });
 
-  try {
-    for await (const event of client.streamEvents(abortController.signal)) {
-      if (event.type === 'challenge') {
-        const challenge = event.challenge!;
-        const { accept, reason } = shouldAccept(challenge, config);
+  // Retry loop with exponential backoff for event stream
+  let retryDelay = 1000; // start at 1s
+  const MAX_RETRY_DELAY = 60000; // max 60s
 
-        if (accept) {
-          log(`Accepting challenge from ${challenge.challenger.name} (${challenge.challenger.rating}) — ${challenge.timeControl.type === 'unlimited' ? 'unlimited' : `${(challenge.timeControl.limit || 0) / 60}+${challenge.timeControl.increment || 0}`} ${challenge.rated ? 'rated' : 'casual'}`);
-          await client.acceptChallenge(challenge.id);
-        } else {
-          log(`Declining challenge from ${challenge.challenger.name} — reason: ${reason}`);
-          await client.declineChallenge(challenge.id, reason);
+  while (!abortController.signal.aborted) {
+    try {
+      for await (const event of client.streamEvents(abortController.signal)) {
+        // Reset backoff on successful connection/event
+        retryDelay = 1000;
+
+        if (event.type === 'challenge') {
+          const challenge = event.challenge!;
+          const { accept, reason } = shouldAccept(challenge, config);
+
+          if (accept) {
+            log(`Accepting challenge from ${challenge.challenger.name} (${challenge.challenger.rating}) — ${challenge.timeControl.type === 'unlimited' ? 'unlimited' : `${(challenge.timeControl.limit || 0) / 60}+${challenge.timeControl.increment || 0}`} ${challenge.rated ? 'rated' : 'casual'}`);
+            await client.acceptChallenge(challenge.id);
+          } else {
+            log(`Declining challenge from ${challenge.challenger.name} — reason: ${reason}`);
+            await client.declineChallenge(challenge.id, reason);
+          }
+        } else if (event.type === 'gameStart') {
+          const gameId = event.game!.id;
+          if (!activeGames.has(gameId)) {
+            // Play game in background — don't await
+            playGame(client, gameId, config).catch(err => {
+              log(`Game ${gameId}: unhandled error — ${err.message}`);
+              activeGames.delete(gameId);
+            });
+          }
+        } else if (event.type === 'gameFinish') {
+          // Game ended, cleanup handled by playGame
         }
-      } else if (event.type === 'gameStart') {
-        const gameId = event.game!.id;
-        if (!activeGames.has(gameId)) {
-          // Play game in background — don't await
-          playGame(client, gameId, config).catch(err => {
-            log(`Game ${gameId}: unhandled error — ${err.message}`);
-            activeGames.delete(gameId);
-          });
-        }
-      } else if (event.type === 'gameFinish') {
-        // Game ended, cleanup handled by playGame
       }
-    }
-  } catch (err: any) {
-    if (err.name === 'AbortError') {
-      log('Event stream closed');
-    } else {
-      log(`Event stream error: ${err.message}`);
-      process.exit(1);
+
+      // Stream ended cleanly (e.g., Lichess closed connection) — retry unless aborting
+      if (!abortController.signal.aborted) {
+        log(`Event stream ended, reconnecting in ${retryDelay / 1000}s...`);
+        await new Promise(resolve => setTimeout(resolve, retryDelay));
+        retryDelay = Math.min(retryDelay * 2, MAX_RETRY_DELAY);
+      }
+    } catch (err: any) {
+      if (err.name === 'AbortError' || abortController.signal.aborted) {
+        log('Event stream closed');
+        break;
+      }
+      log(`Event stream error: ${err.message} — retrying in ${retryDelay / 1000}s...`);
+      await new Promise(resolve => setTimeout(resolve, retryDelay));
+      retryDelay = Math.min(retryDelay * 2, MAX_RETRY_DELAY);
     }
   }
 

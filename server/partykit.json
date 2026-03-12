@@ -1,0 +1,7 @@
+{
+  "name": "chess-ai-multiplayer",
+  "main": "src/game-server.ts",
+  "parties": {
+    "lobby": "src/lobby-server.ts"
+  }
+}

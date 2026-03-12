@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react'
 import { Outlet, Link, useLocation } from 'react-router-dom'
-import { Home, PlusCircle, ScrollText, Settings, Sliders, CircleHelp, Trophy } from 'lucide-react'
+import { Home, PlusCircle, ScrollText, Settings, Sliders, CircleHelp, Trophy, Globe } from 'lucide-react'
 import KeyboardHelpModal from './KeyboardHelpModal'
 
 const navLinks = [
@@ -8,6 +8,7 @@ const navLinks = [
   { to: '/editor', label: 'AI Creator', mobileLabel: 'Create', icon: Sliders },
   { to: '/play', label: 'Play', mobileLabel: 'Play', icon: PlusCircle },
   { to: '/arena', label: 'Bot Arena', mobileLabel: 'Arena', icon: Trophy },
+  { to: '/online', label: 'Online Play', mobileLabel: 'Online', icon: Globe },
   { to: '/history', label: 'History', icon: ScrollText },
   { to: '/settings', label: 'Settings', icon: Settings },
 ]

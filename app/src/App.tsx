@@ -63,6 +63,7 @@ const EditorPage = lazy(() => import('./pages/EditorPage'))
 const AnalysisPage = lazy(() => import('./pages/AnalysisPage'))
 const PositionSetupPage = lazy(() => import('./pages/PositionSetupPage'))
 const BotArenaPage = lazy(() => import('./pages/BotArenaPage'))
+const OnlinePlayPage = lazy(() => import('./pages/OnlinePlayPage'))
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'))
 
 function App() {
@@ -85,6 +86,7 @@ function App() {
             <Route path="/analysis/:gameId" element={<AnalysisPage />} />
             <Route path="/setup" element={<PositionSetupPage />} />
             <Route path="/arena" element={<BotArenaPage />} />
+            <Route path="/online" element={<OnlinePlayPage />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Route>

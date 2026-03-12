@@ -39,16 +39,17 @@
 - [x] **Export bots to Lichess** — Full Lichess Bot MVP at `bot/`. Research doc at `docs/RESEARCH-bot-export.md`. Bot connects to Lichess streaming API, plays with custom personality presets, supports opening book, multiple concurrent games. Chess.com has no public bot API (dead end). Needs: Lichess BOT account + token to go live. (Mar 12)
 
 ### P3 — Big Features (post-launch)
-- [ ] **Online multiplayer** — Play against other people online
+- [ ] **Online multiplayer** — Play against other people online. Architecture research complete (`docs/RESEARCH-online-multiplayer.md`) — recommends PartyKit. **Phase 1 built:** Server (`server/` — game-server, types, validation) + Client (`OnlinePlayPage`, `useMultiplayer` hook, shared types, `/online` route, nav + HomePage card). Needs: PartyKit account, `VITE_PARTYKIT_HOST` env, deploy, and end-to-end testing with 2 players.
 - [x] **Bot vs Bot matchmaking + Elo system** — New `/arena` page (BotArenaPage.tsx) with round-robin tournaments, quick matches, Elo rating system (K=32 new, K=16 established), live game viewer, fast simulation mode. Ratings persist in localStorage. Leaderboard sorted by Elo. Trophy nav icon. (Mar 12)
 - [x] **Stockfish in AI-vs-AI mode** — Completed as part of "Consistent AI options" above. (Mar 9)
 
 ### Discovered — Mar 12
-- [ ] Lichess bot: Add retry/reconnect logic with exponential backoff when event stream drops
-- [ ] Lichess bot: Add rate limit (429) detection and backoff in API calls
-- [ ] Lichess bot: Handle `res.text()` secondary errors in error paths (catch and mask)
-- [ ] Bot Arena: Improve `handleGameState` to use actual `initialFen` from `gameFull` instead of hardcoding `'startpos'` for `gameState` events
-- [ ] Online multiplayer — Play against other people online (P3, needs architecture/backend planning)
+- [x] Lichess bot: Add retry/reconnect logic with exponential backoff when event stream drops (Mar 12)
+- [x] Lichess bot: Add rate limit (429) detection and backoff in API calls (Mar 12)
+- [x] Lichess bot: Handle `res.text()` secondary errors in error paths (catch and mask) (Mar 12)
+- [x] Lichess bot: Fix `handleGameState` to use actual `initialFen` from `gameFull` instead of hardcoding `'startpos'` (Mar 12)
+- [ ] GamePage.tsx component extraction — Large component (~500+ lines), could benefit from further splitting
+- [ ] Openings database compression — 232KB chunk, could be lazy-loaded or compressed further if bundle size becomes a concern
 
 ### Design Principles
 - **Mobile-first** — All UI must work on touch/mobile as the primary input. Keyboard shortcuts are OK as extras but NEVER the only way to do something. Every action needs a visible, tappable control.

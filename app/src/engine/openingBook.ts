@@ -1,13 +1,18 @@
 /**
  * Opening Book
  *
- * Builds a position → moves map from the openings data.
- * For each opening, replays its moves and records what move was played from each position.
+ * Builds a position → moves map from the trie-based openings data.
+ * For each opening path, replays its moves and records what move was played from each position.
  * During a game, if the current position is in the book, randomly picks a weighted book move.
  */
 
 import { Chess } from 'chess.js';
-import openingsData from '../data/openings.json';
+import trieData from '../data/openings-trie.json';
+
+interface TrieNode {
+  _?: number[];
+  [move: string]: TrieNode | number[] | undefined;
+}
 
 interface BookEntry {
   move: string;  // SAN notation
@@ -47,15 +52,38 @@ export function getBookMove(fen: string, randomnessThreshold: number = 0): strin
   return entries[0].move;
 }
 
+/**
+ * Recursively collect all move sequences from the trie.
+ * Each sequence is an array of SAN moves representing a path from root to a node.
+ */
+function collectSequences(node: TrieNode, currentPath: string[], sequences: string[][]): void {
+  // If this node has opening data, record the path
+  if (node._) {
+    sequences.push([...currentPath]);
+  }
+
+  // Recurse into children
+  for (const key of Object.keys(node)) {
+    if (key === '_') continue;
+    const child = node[key];
+    if (child && typeof child === 'object' && !Array.isArray(child)) {
+      currentPath.push(key);
+      collectSequences(child as TrieNode, currentPath, sequences);
+      currentPath.pop();
+    }
+  }
+}
+
 function buildBook(): BookMap {
   const map: BookMap = new Map();
+  const trie = (trieData as unknown as { t: TrieNode }).t;
 
-  // openingsData is a dict: { "e4 e5 Nf3": { eco: "C40", name: "..." }, ... }
-  const entries = Object.entries(openingsData) as [string, { eco: string; name: string }][];
+  // Collect all move sequences from the trie
+  const sequences: string[][] = [];
+  collectSequences(trie, [], sequences);
 
-  for (const [movesStr] of entries) {
+  for (const moves of sequences) {
     const chess = new Chess();
-    const moves = movesStr.split(/\s+/);
 
     for (const move of moves) {
       const key = chess.fen().split(' ').slice(0, 4).join(' ');

@@ -1,6 +1,6 @@
 /**
  * ECO Opening Name Lookup
- * Uses lazy-loaded Lichess chess-openings dataset (3600+ openings).
+ * Uses lazy-loaded trie-based Lichess chess-openings dataset (3600+ openings).
  */
 
 interface OpeningInfo {
@@ -8,18 +8,53 @@ interface OpeningInfo {
   name: string
 }
 
-let openingsCache: Record<string, OpeningInfo> | null = null
-let loadPromise: Promise<Record<string, OpeningInfo>> | null = null
+interface TrieData {
+  _e: string[]  // eco codes indexed
+  _s: string[]  // name segments indexed
+  t: TrieNode
+}
 
-async function loadOpenings(): Promise<Record<string, OpeningInfo>> {
-  if (openingsCache) return openingsCache
+interface TrieNode {
+  _?: number[]  // [ecoIndex, nameSegIdx1, nameSegIdx2, ...]
+  [move: string]: TrieNode | number[] | undefined
+}
+
+let trieData: TrieData | null = null
+let loadPromise: Promise<TrieData> | null = null
+
+async function loadOpenings(): Promise<TrieData> {
+  if (trieData) return trieData
   if (!loadPromise) {
-    loadPromise = import('../data/openings.json').then(mod => {
-      openingsCache = mod.default as Record<string, OpeningInfo>
-      return openingsCache
+    loadPromise = import('../data/openings-trie.json').then(mod => {
+      trieData = mod.default as unknown as TrieData
+      return trieData
     })
   }
   return loadPromise
+}
+
+function resolveOpening(data: TrieData, entry: number[]): OpeningInfo {
+  return {
+    eco: data._e[entry[0]],
+    name: entry.slice(1).map(i => data._s[i]).join(': ')
+  }
+}
+
+function walkTrie(data: TrieData, moves: string[]): OpeningInfo | null {
+  let node: TrieNode = data.t
+  let best: OpeningInfo | null = null
+
+  for (let i = 0; i < moves.length; i++) {
+    const child = node[moves[i]]
+    if (!child || Array.isArray(child)) break
+    node = child as TrieNode
+    if (node._) {
+      best = resolveOpening(data, node._)
+    }
+    // Early exit: most openings are defined within the first 20 moves
+    if (i > 20 && !best) break
+  }
+  return best
 }
 
 /**
@@ -27,23 +62,12 @@ async function loadOpenings(): Promise<Record<string, OpeningInfo>> {
  * Call ensureOpeningsLoaded() first if you need guaranteed results.
  */
 export function lookupOpening(moves: string[]): OpeningInfo | null {
-  if (!openingsCache) {
+  if (!trieData) {
     // Trigger load for next time
     loadOpenings()
     return null
   }
-
-  let best: OpeningInfo | null = null
-  let key = ''
-  for (let i = 0; i < moves.length; i++) {
-    if (i > 0) key += ' '
-    key += moves[i]
-    const match = openingsCache[key]
-    if (match) best = match
-    // Early exit: most openings are defined within the first 20 moves
-    if (i > 20 && !best) break
-  }
-  return best
+  return walkTrie(trieData, moves)
 }
 
 /**
@@ -51,18 +75,7 @@ export function lookupOpening(moves: string[]): OpeningInfo | null {
  */
 export async function lookupOpeningAsync(moves: string[]): Promise<OpeningInfo | null> {
   const data = await loadOpenings()
-
-  let best: OpeningInfo | null = null
-  let key = ''
-  for (let i = 0; i < moves.length; i++) {
-    if (i > 0) key += ' '
-    key += moves[i]
-    const match = data[key]
-    if (match) best = match
-    // Early exit: most openings are defined within the first 20 moves
-    if (i > 20 && !best) break
-  }
-  return best
+  return walkTrie(data, moves)
 }
 
 /**

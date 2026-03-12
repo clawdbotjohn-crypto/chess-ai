@@ -42,7 +42,7 @@
 
 **Performance:**
 - [x] **Add React.memo to key components** — Wrapped GameModeControls, PersonalitySelector, GameResultModal in React.memo (EvalBar already had it). (Mar 11)
-- [ ] **Openings trie optimization** — openings.json is 382KB with long string keys. Convert to trie structure to deduplicate shared prefixes → ~100-150KB.
+- [x] **Openings trie optimization** — Converted openings.json (390KB) to compact trie structure with indexed ECO codes and name segments → openings-trie.json (232KB, 40% reduction). Updated openings.ts and openingBook.ts consumers. Old file removed. (Mar 11)
 
 **Accessibility:**
 - [x] **Keyboard move input** — Text input for algebraic notation (e4, Nf3, O-O) on GamePage. Mobile + desktop layouts, auto-focus, error feedback, smart visibility. (Mar 11)
@@ -61,9 +61,9 @@
 - [x] **Settings save indicator** — "Saved ✓" emerald toast appears for 2s on any setting change. Debounced timer. (Mar 11)
 
 **Code Quality (lower priority):**
-- [ ] **GamePage decomposition** — 1773-line monolith. Extract useGameClock, useGameLogic hooks + PlayerBar, ActionButtons sub-components.
+- [x] **GamePage decomposition** — Extracted useGameState hook (state+refs+callbacks), useAIvsAI hook (AI vs AI match logic), PlayerBar, MoveHistoryPanel, and GameControls components. 1951 → 1009 lines (48% reduction). (Mar 11)
 - [x] **Remove `as any` casts** — Replaced 6 casts in evaluate.ts (proper keyof indexing) and 9 in PositionSetupPage.tsx (`as Square` from chess.js). (Mar 11)
-- [ ] **NewGameModal decomposition** — 669 lines. Extract TimeControlSelector, AIConfigSection, ModeSelector.
+- [x] **NewGameModal decomposition** — Extracted ModeSelector, TimeControlSelector, AIConfigSection, ColorSelector into src/components/newgame/. 730 → 335 lines (54% reduction). (Mar 11)
 
 ### P3 — Big Features (post-launch)
 - [ ] **Online multiplayer** — Play against other people online

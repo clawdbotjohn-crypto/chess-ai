@@ -10,7 +10,7 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          openings: ['./src/data/openings.json'],
+          openings: ['./src/data/openings-trie.json'],
         },
       },
     },

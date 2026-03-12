@@ -36,19 +36,26 @@
 - [x] **Bot icons/avatars** — Added emoji avatar picker (16 options) in AIEditorPanel. Avatars stored in localStorage, shown in gameplay player bars, history cards, and NewGameModal personality selector. Backward compatible. (Mar 10)
 - [x] **Opening book toggle** — Added openingBookEnabled setting in Settings page. Passes through to aiWorker. Default: enabled. Backward compatible. (Mar 9)
 - [x] **Piece value slider range → 0-1000** — All piece value sliders now max at 1000. (Mar 9)
-- [ ] **Export bots to Lichess/Chess.com** — Package custom AI personalities for use on external platforms (research needed on API/bot framework compatibility)
+- [x] **Export bots to Lichess** — Full Lichess Bot MVP at `bot/`. Research doc at `docs/RESEARCH-bot-export.md`. Bot connects to Lichess streaming API, plays with custom personality presets, supports opening book, multiple concurrent games. Chess.com has no public bot API (dead end). Needs: Lichess BOT account + token to go live. (Mar 12)
 
 ### P3 — Big Features (post-launch)
 - [ ] **Online multiplayer** — Play against other people online
-- [ ] **Bot vs Bot matchmaking + Elo system** — Users can pit their custom bots against others, with a rating system
+- [x] **Bot vs Bot matchmaking + Elo system** — New `/arena` page (BotArenaPage.tsx) with round-robin tournaments, quick matches, Elo rating system (K=32 new, K=16 established), live game viewer, fast simulation mode. Ratings persist in localStorage. Leaderboard sorted by Elo. Trophy nav icon. (Mar 12)
 - [x] **Stockfish in AI-vs-AI mode** — Completed as part of "Consistent AI options" above. (Mar 9)
+
+### Discovered — Mar 12
+- [ ] Lichess bot: Add retry/reconnect logic with exponential backoff when event stream drops
+- [ ] Lichess bot: Add rate limit (429) detection and backoff in API calls
+- [ ] Lichess bot: Handle `res.text()` secondary errors in error paths (catch and mask)
+- [ ] Bot Arena: Improve `handleGameState` to use actual `initialFen` from `gameFull` instead of hardcoding `'startpos'` for `gameState` events
+- [ ] Online multiplayer — Play against other people online (P3, needs architecture/backend planning)
 
 ### Design Principles
 - **Mobile-first** — All UI must work on touch/mobile as the primary input. Keyboard shortcuts are OK as extras but NEVER the only way to do something. Every action needs a visible, tappable control.
 - Current violations: GamePage keyboard shortcuts (F=flip, N=new game, U=undo) and AnalysisPage arrow key navigation need touch equivalents if not already present.
 
 ### Process
-- [ ] Auto-rebuild after work sessions — worker exit flow must `npm run build` + `systemctl --user restart chess-ai`
+- [x] Auto-rebuild after work sessions — Created `scripts/rebuild.sh` that runs `npm run build` + `systemctl --user restart chess-ai`. Workers should call this at session end. (Mar 12)
 
 ---
 

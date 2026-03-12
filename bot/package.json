@@ -1,0 +1,20 @@
+{
+  "name": "chess-ai-lichess-bot",
+  "version": "1.0.0",
+  "description": "Lichess bot powered by custom Chess AI engine with personality presets",
+  "type": "module",
+  "scripts": {
+    "start": "tsx src/bot.ts",
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "chess-movegen-js": "^1.0.4",
+    "chess.js": "^1.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}

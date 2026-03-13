@@ -38,18 +38,19 @@
 - [x] **Piece value slider range → 0-1000** — All piece value sliders now max at 1000. (Mar 9)
 - [x] **Export bots to Lichess** — Full Lichess Bot MVP at `bot/`. Research doc at `docs/RESEARCH-bot-export.md`. Bot connects to Lichess streaming API, plays with custom personality presets, supports opening book, multiple concurrent games. Chess.com has no public bot API (dead end). Needs: Lichess BOT account + token to go live. (Mar 12)
 
-### P3 — Big Features (post-launch)
-- [ ] **Online multiplayer** — Play against other people online. Architecture research complete (`docs/RESEARCH-online-multiplayer.md`) — recommends PartyKit. **Phase 1 built:** Server (`server/` — game-server, types, validation) + Client (`OnlinePlayPage`, `useMultiplayer` hook, shared types, `/online` route, nav + HomePage card). Needs: PartyKit account, `VITE_PARTYKIT_HOST` env, deploy, and end-to-end testing with 2 players.
+### P0 — John's Priority
+- [ ] **Online multiplayer** — Play against other people online. Architecture research complete (`docs/RESEARCH-online-multiplayer.md`) — recommends PartyKit. **Phase 1 built:** Server (`server/` — game-server, types, validation) + Client (`OnlinePlayPage`, `useMultiplayer` hook, shared types, `/online` route, nav + HomePage card). Needs: PartyKit account, `VITE_PARTYKIT_HOST` env, deploy, and end-to-end testing with 2 players. **BLOCKER: Need PartyKit account + API key.**
+- [ ] **Production readiness plan** — Once all features are done: create a plan for hosting/deploying/monitoring for public use + marketing strategy. Exact steps John needs to take to publish. (Only start this after multiplayer is working.)
 - [x] **Bot vs Bot matchmaking + Elo system** — New `/arena` page (BotArenaPage.tsx) with round-robin tournaments, quick matches, Elo rating system (K=32 new, K=16 established), live game viewer, fast simulation mode. Ratings persist in localStorage. Leaderboard sorted by Elo. Trophy nav icon. (Mar 12)
 - [x] **Stockfish in AI-vs-AI mode** — Completed as part of "Consistent AI options" above. (Mar 9)
 
-### Discovered — Mar 12
+### P3 — AI Discovered
 - [x] Lichess bot: Add retry/reconnect logic with exponential backoff when event stream drops (Mar 12)
 - [x] Lichess bot: Add rate limit (429) detection and backoff in API calls (Mar 12)
 - [x] Lichess bot: Handle `res.text()` secondary errors in error paths (catch and mask) (Mar 12)
 - [x] Lichess bot: Fix `handleGameState` to use actual `initialFen` from `gameFull` instead of hardcoding `'startpos'` (Mar 12)
-- [ ] GamePage.tsx component extraction — Large component (~500+ lines), could benefit from further splitting
-- [ ] Openings database compression — 232KB chunk, could be lazy-loaded or compressed further if bundle size becomes a concern
+- [x] GamePage.tsx component extraction — Extracted 4 modules: useGameLogic (491 lines), useKeyboardShortcuts (50 lines), useBoardConfig (131 lines), GameSidebar (182 lines). GamePage.tsx: 1009 → 453 lines. (Mar 13)
+- [x] Openings database compression — Deflate-compressed trie into base64, decoded at runtime via DecompressionStream. Pruned lines deeper than 20 moves. Openings chunk: 232KB → 62KB (73% reduction). (Mar 13)
 
 ### Design Principles
 - **Mobile-first** — All UI must work on touch/mobile as the primary input. Keyboard shortcuts are OK as extras but NEVER the only way to do something. Every action needs a visible, tappable control.

@@ -7,7 +7,7 @@
  */
 
 import { Chess } from 'chess.js';
-import trieData from '../data/openings-trie.json';
+import { getTrieData, getTrieDataAsync } from '../utils/openings';
 
 interface TrieNode {
   _?: number[];
@@ -25,10 +25,18 @@ let bookMap: BookMap | null = null;
 
 /**
  * Get a book move for the given FEN position, if one exists.
- * Returns null if position is not in the book.
+ * Returns null if position is not in the book or data hasn't loaded yet.
  */
 export function getBookMove(fen: string, randomnessThreshold: number = 0): string | null {
   if (!bookMap) {
+    const trieData = getTrieData();
+    if (!trieData) {
+      // Data not loaded yet — trigger load for next time
+      getTrieDataAsync().then(() => {
+        bookMap = buildBook();
+      });
+      return null;
+    }
     bookMap = buildBook();
   }
 
@@ -76,6 +84,9 @@ function collectSequences(node: TrieNode, currentPath: string[], sequences: stri
 
 function buildBook(): BookMap {
   const map: BookMap = new Map();
+  const trieData = getTrieData();
+  if (!trieData) return map;
+  
   const trie = (trieData as unknown as { t: TrieNode }).t;
 
   // Collect all move sequences from the trie

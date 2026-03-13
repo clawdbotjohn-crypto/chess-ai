@@ -1,6 +1,7 @@
 /**
  * ECO Opening Name Lookup
- * Uses lazy-loaded trie-based Lichess chess-openings dataset (3600+ openings).
+ * Uses compressed trie-based Lichess chess-openings dataset (3600+ openings).
+ * Data is deflate-compressed and decoded at runtime.
  */
 
 interface OpeningInfo {
@@ -22,11 +23,47 @@ interface TrieNode {
 let trieData: TrieData | null = null
 let loadPromise: Promise<TrieData> | null = null
 
+async function decompressData(): Promise<TrieData> {
+  const { COMPRESSED_OPENINGS } = await import('../data/openings-compressed')
+  
+  // Decode base64 to binary
+  const binaryStr = atob(COMPRESSED_OPENINGS)
+  const bytes = new Uint8Array(binaryStr.length)
+  for (let i = 0; i < binaryStr.length; i++) {
+    bytes[i] = binaryStr.charCodeAt(i)
+  }
+  
+  // Decompress using DecompressionStream (available in all modern browsers)
+  const ds = new DecompressionStream('deflate')
+  const writer = ds.writable.getWriter()
+  writer.write(bytes)
+  writer.close()
+  
+  const reader = ds.readable.getReader()
+  const chunks: Uint8Array[] = []
+  while (true) {
+    const { done, value } = await reader.read()
+    if (done) break
+    chunks.push(value)
+  }
+  
+  const totalLen = chunks.reduce((s, c) => s + c.length, 0)
+  const result = new Uint8Array(totalLen)
+  let offset = 0
+  for (const chunk of chunks) {
+    result.set(chunk, offset)
+    offset += chunk.length
+  }
+  
+  const jsonStr = new TextDecoder().decode(result)
+  return JSON.parse(jsonStr) as TrieData
+}
+
 async function loadOpenings(): Promise<TrieData> {
   if (trieData) return trieData
   if (!loadPromise) {
-    loadPromise = import('../data/openings-trie.json').then(mod => {
-      trieData = mod.default as unknown as TrieData
+    loadPromise = decompressData().then(data => {
+      trieData = data
       return trieData
     })
   }
@@ -83,4 +120,19 @@ export async function lookupOpeningAsync(moves: string[]): Promise<OpeningInfo |
  */
 export async function ensureOpeningsLoaded(): Promise<void> {
   await loadOpenings()
+}
+
+/**
+ * Get the raw trie data (for opening book).
+ * Returns null if not loaded yet.
+ */
+export function getTrieData(): TrieData | null {
+  return trieData
+}
+
+/**
+ * Async getter for raw trie data (for opening book).
+ */
+export async function getTrieDataAsync(): Promise<TrieData> {
+  return loadOpenings()
 }

@@ -6,11 +6,14 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   base: process.env.VITE_BASE_PATH || '/',
   plugins: [react(), tailwindcss()],
+  worker: {
+    format: 'es',
+  },
   build: {
     rollupOptions: {
       output: {
         manualChunks: {
-          openings: ['./src/data/openings-trie.json'],
+          openings: ['./src/data/openings-compressed.ts'],
         },
       },
     },

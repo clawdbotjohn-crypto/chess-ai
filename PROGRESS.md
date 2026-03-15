@@ -6,7 +6,11 @@
 
 ## Priority Tasks
 
-### P0 — Critical Bugs
+### P0 — Critical Bugs (John's Testing — Mar 13)
+- [ ] **BUG: History tab crashes on client-side navigation** — Navigating to History tab from Home shows "Something went wrong — corrupted game state" error. Works fine after a full page reload. Likely a state initialization issue where History expects data that isn't loaded during SPA navigation.
+- [ ] **BUG: Tab bar changes after reload** — Home page shows 5 tabs (Home, Create, Play, History, Settings). After reloading on History page, tab bar changes to 6 tabs (Home, Create, Play, Arena, Online, History) — Arena and Online appear, Settings disappears. Tabs must be consistent across all pages regardless of navigation path or reload state.
+
+### P0 — Critical Bugs (Resolved)
 - [x] **Mate-in-1 detection FIXED** — Added bulletproof mate-in-1 pre-check in findBestMove() that scans all legal moves before search. Also added hasMateIn1() guard in aiWorker to skip opening book when mate exists. Verified with scholar's mate, fool's mate, back-rank mate, smothered mate positions. (Mar 9)
 - [x] **Click-to-move broken on diagonal moves FIXED** — Root cause: react-chessboard v5 fires both onPieceClick and onSquareClick; on diagonal moves sub-pixel drift triggered dnd-kit drag sensor suppressing Piece onClick. Fix: consolidated all click logic in onSquareClick, checks legal moves first before piece selection. Added isDraggingRef to suppress post-drag clicks. (Mar 9)
 - [x] **Pre-moves not working FIXED** — Root cause: chess.js's game.moves({square}) only returns legal moves for side-to-move; during AI's turn it returned empty array making pre-move queuing unreachable. Fix: bypass legality check when it's AI's turn, queue pre-move immediately, validate at execution time. (Mar 9)
@@ -39,7 +43,7 @@
 - [x] **Export bots to Lichess** — Full Lichess Bot MVP at `bot/`. Research doc at `docs/RESEARCH-bot-export.md`. Bot connects to Lichess streaming API, plays with custom personality presets, supports opening book, multiple concurrent games. Chess.com has no public bot API (dead end). Needs: Lichess BOT account + token to go live. (Mar 12)
 
 ### P0 — John's Priority
-- [ ] **Online multiplayer** — Play against other people online. Architecture research complete (`docs/RESEARCH-online-multiplayer.md`) — recommends PartyKit. **Phase 1 built:** Server (`server/` — game-server, types, validation) + Client (`OnlinePlayPage`, `useMultiplayer` hook, shared types, `/online` route, nav + HomePage card). Needs: PartyKit account, `VITE_PARTYKIT_HOST` env, deploy, and end-to-end testing with 2 players. **BLOCKER: Need PartyKit account + API key.**
+- [ ] **Online multiplayer** — Play against other people online. Architecture research complete (`docs/RESEARCH-online-multiplayer.md`) — recommends PartyKit. **Phase 1 built:** Server (`server/` — game-server, types, validation) + Client (`OnlinePlayPage`, `useMultiplayer` hook, shared types, `/online` route, nav + HomePage card). **PartyKit deployed:** `chess-ai-multiplayer.JohnWattenbarger.partykit.dev`, env var baked into build. **NEEDS: End-to-end testing with 2 players (open /online in two browser tabs).**
 - [ ] **Production readiness plan** — Once all features are done: create a plan for hosting/deploying/monitoring for public use + marketing strategy. Exact steps John needs to take to publish. (Only start this after multiplayer is working.)
 - [x] **Bot vs Bot matchmaking + Elo system** — New `/arena` page (BotArenaPage.tsx) with round-robin tournaments, quick matches, Elo rating system (K=32 new, K=16 established), live game viewer, fast simulation mode. Ratings persist in localStorage. Leaderboard sorted by Elo. Trophy nav icon. (Mar 12)
 - [x] **Stockfish in AI-vs-AI mode** — Completed as part of "Consistent AI options" above. (Mar 9)
@@ -432,3 +436,20 @@
 - [x] **Draw detection & claim** — Checks threefold repetition and 50-move rule after each move. Amber notification + Handshake button when claimable. Stalemate/insufficient material auto-detected. (Mar 10)
 - [x] **Share game link** — Copy Link button on AnalysisPage + GameResultModal. Copies analysis URL to clipboard with "Copied!" feedback. (Mar 10)
 - [x] **HomePage feature highlights** — Hero section + 4-card feature grid (Custom AI, Deep Analysis, Multiple Engines, Opening Book). (Mar 10)
+
+---
+
+## Core Flows
+
+Test these at the live URL: `https://nice-desert-0df9bdf1e.4.azurestaticapps.net`
+
+1. **Start new game** — Home → select AI, click Play → board renders, can make moves
+2. **Play a game** — Make 3-4 moves → AI responds each time, no crashes, eval bar updates
+3. **Tab navigation** — Visit every tab (Home, Create, Play, History, Settings) → no errors, tabs stay consistent
+4. **History** — Navigate to History from another tab → loads without "Something went wrong", shows past games
+5. **Create AI personality** — Create → fill in name/settings → save → use in a game → works
+6. **Position setup** — Go to /setup → place pieces → start game from position → board shows custom position
+7. **Arena** — Open /arena → start a quick match → game runs and completes
+8. **Analysis** — Open analysis → import a PGN → analysis loads, can navigate moves
+9. **PGN import** — History → Import PGN → paste valid PGN → saves as game, opens in analysis
+10. **Settings** — Settings page loads, toggles work (theme, sounds, opening book)

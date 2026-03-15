@@ -13,6 +13,15 @@ const navLinks = [
   { to: '/settings', label: 'Settings', icon: Settings },
 ]
 
+// Mobile bottom nav: only 5 core tabs (Arena + Online accessible via Home cards & direct URL)
+const mobileNavLinks = [
+  { to: '/', label: 'Home', icon: Home },
+  { to: '/editor', label: 'Create', icon: Sliders },
+  { to: '/play', label: 'Play', icon: PlusCircle },
+  { to: '/history', label: 'History', icon: ScrollText },
+  { to: '/settings', label: 'Settings', icon: Settings },
+]
+
 export default function Layout() {
   const location = useLocation()
   const isPlayPage = location.pathname === '/play'
@@ -116,7 +125,7 @@ export default function Layout() {
       {/* Mobile Bottom Navigation — slim on play page */}
       <nav className={`lg:hidden fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-800 z-40 ${isPlayPage ? 'px-1 py-1' : 'px-2 py-2'}`}>
         <div className="flex justify-around items-center">
-          {navLinks.map(({ to, label, mobileLabel, icon: Icon }) => (
+          {mobileNavLinks.map(({ to, label, icon: Icon }) => (
             <Link
               key={to}
               to={to}
@@ -125,7 +134,7 @@ export default function Layout() {
               }`}
             >
               <Icon className={isPlayPage ? 'w-4 h-4' : 'w-5 h-5'} />
-              <span className={`font-medium ${isPlayPage ? 'text-[10px]' : 'text-xs'}`}>{mobileLabel ?? label}</span>
+              <span className={`font-medium ${isPlayPage ? 'text-[10px]' : 'text-xs'}`}>{label}</span>
             </Link>
           ))}
         </div>

@@ -94,7 +94,13 @@ function getIconBg(record: GameRecord): string {
 export default function HistoryPage() {
   usePageTitle('Game History')
   const navigate = useNavigate()
-  const [games] = useState<GameRecord[]>(getGames())
+  const [games] = useState<GameRecord[]>(() => {
+    try {
+      return getGames()
+    } catch {
+      return []
+    }
+  })
   const [filter, setFilter] = useState<Filter>('all')
   const [aiFilter, setAiFilter] = useState<string>('all')
   const [showImportModal, setShowImportModal] = useState(false)

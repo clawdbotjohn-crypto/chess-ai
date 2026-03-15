@@ -1,10 +1,10 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import { Suspense, lazy, Component } from 'react'
 import type { ReactNode, ErrorInfo } from 'react'
 import Layout from './components/Layout'
 
-class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean }> {
-  constructor(props: { children: ReactNode }) {
+class ErrorBoundary extends Component<{ children: ReactNode; resetKey?: string }, { hasError: boolean }> {
+  constructor(props: { children: ReactNode; resetKey?: string }) {
     super(props)
     this.state = { hasError: false }
   }
@@ -15,6 +15,13 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
 
   componentDidCatch(error: Error, info: ErrorInfo): void {
     if (import.meta.env.DEV) console.error('ErrorBoundary caught:', error, info)
+  }
+
+  componentDidUpdate(prevProps: { resetKey?: string }) {
+    // Reset error state when the route changes (resetKey changes)
+    if (this.state.hasError && prevProps.resetKey !== this.props.resetKey) {
+      this.setState({ hasError: false })
+    }
   }
 
   render() {
@@ -54,6 +61,12 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
   }
 }
 
+/** Wrapper that passes location as resetKey to ErrorBoundary */
+function RouteAwareErrorBoundary({ children }: { children: ReactNode }) {
+  const location = useLocation()
+  return <ErrorBoundary resetKey={location.pathname}>{children}</ErrorBoundary>
+}
+
 const HomePage = lazy(() => import('./pages/HomePage'))
 const GamePage = lazy(() => import('./pages/GamePage'))
 const LibraryPage = lazy(() => import('./pages/LibraryPage'))
@@ -68,8 +81,8 @@ const NotFoundPage = lazy(() => import('./pages/NotFoundPage'))
 
 function App() {
   return (
-    <ErrorBoundary>
     <BrowserRouter basename={(import.meta.env.VITE_BASE_PATH || "/").replace(/\/$/, "") || "/"}>
+      <RouteAwareErrorBoundary>
       <Suspense fallback={
         <div className="flex flex-col items-center justify-center min-h-[50vh] gap-3">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500" />
@@ -92,8 +105,8 @@ function App() {
           </Route>
         </Routes>
       </Suspense>
+      </RouteAwareErrorBoundary>
     </BrowserRouter>
-    </ErrorBoundary>
   )
 }
 

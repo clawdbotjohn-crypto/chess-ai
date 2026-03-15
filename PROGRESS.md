@@ -7,8 +7,8 @@
 ## Priority Tasks
 
 ### P0 — Critical Bugs (John's Testing — Mar 13)
-- [ ] **BUG: History tab crashes on client-side navigation** — Navigating to History tab from Home shows "Something went wrong — corrupted game state" error. Works fine after a full page reload. Likely a state initialization issue where History expects data that isn't loaded during SPA navigation.
-- [ ] **BUG: Tab bar changes after reload** — Home page shows 5 tabs (Home, Create, Play, History, Settings). After reloading on History page, tab bar changes to 6 tabs (Home, Create, Play, Arena, Online, History) — Arena and Online appear, Settings disappears. Tabs must be consistent across all pages regardless of navigation path or reload state.
+- [x] **BUG: History tab crashes on client-side navigation FIXED** — Root cause: ErrorBoundary was outside BrowserRouter, couldn't reset on route changes. Fix: Route-aware ErrorBoundary with resetKey prop + defensive getGames() try/catch. (Mar 15)
+- [x] **BUG: Tab bar changes after reload FIXED** — Root cause: 7 navLinks overflowed mobile bottom nav. Fix: Separate mobileNavLinks array with 5 core tabs (Home, Create, Play, History, Settings). Desktop nav unchanged. (Mar 15)
 
 ### P0 — Critical Bugs (Resolved)
 - [x] **Mate-in-1 detection FIXED** — Added bulletproof mate-in-1 pre-check in findBestMove() that scans all legal moves before search. Also added hasMateIn1() guard in aiWorker to skip opening book when mate exists. Verified with scholar's mate, fool's mate, back-rank mate, smothered mate positions. (Mar 9)

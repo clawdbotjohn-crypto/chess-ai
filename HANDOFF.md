@@ -1,27 +1,23 @@
 # Chess AI — Handoff
 
-## Last Session: Mar 13, 2026 (15:00 Afternoon)
+## Last Session: Mar 15, 2026 (15:00 Afternoon)
 
 ### Done
-- **GamePage.tsx component extraction** — Extracted 4 modules: `useGameLogic` (491 lines), `useKeyboardShortcuts` (50 lines), `useBoardConfig` (131 lines), `GameSidebar` (182 lines). GamePage.tsx reduced from 1009 → 453 lines. Much more maintainable.
-- **Openings database compression** — Deflate-compressed trie into base64, decoded at runtime via browser's native DecompressionStream API. Pruned deep lines (>20 moves). Openings chunk: 232KB → 62KB (73% reduction). Deleted old `openings-trie.json` (no longer imported).
-- **QA review** — All clean: 0 build errors, 0 type errors, no unused imports, no unguarded console logs, bundle sizes healthy.
+- **History tab crash on SPA navigation FIXED** — Root cause: ErrorBoundary was outside BrowserRouter, so it couldn't reset on route changes. Fix: Made ErrorBoundary route-aware with `resetKey` prop (resets on pathname change), moved inside BrowserRouter. Also added defensive try/catch around `getGames()` in HistoryPage.
+- **Tab bar inconsistency FIXED** — Root cause: Mobile bottom nav rendered all 7 navLinks (too many for mobile). Fix: Created separate `mobileNavLinks` array with 5 core tabs (Home, Create, Play, History, Settings). Desktop nav unchanged (all 7 links). Arena and Online still accessible via Home page cards and direct URLs.
+- **Full QA sweep** — All 10 core flows tested and passing on local build.
 
 ### Next
 - **Online multiplayer** — Code is fully built (server + client) but needs PartyKit account + `VITE_PARTYKIT_HOST` env to deploy and test. BLOCKED.
 - **Production readiness plan** — Depends on multiplayer working first. BLOCKED.
 
 ### Blockers
-- **PartyKit account needed** — Posted to #clawdbot-blockers. John needs to create a PartyKit account and provide the host URL.
+- **PartyKit account needed** — John needs to create a PartyKit account and provide the host URL.
 
 ### Build
-- ✅ `npm run build` — 0 errors (16.37s)
-- ✅ Pushed to master (commit ccc99da), auto-deploys to Azure SWA
-- Openings chunk: 62KB (was 232KB)
-- GamePage chunk: 74KB
+- ✅ `npm run build` — 0 errors (17.58s)
+- ✅ Pushed to master (commit 049ce77), auto-deploys to Azure SWA
+- 0 type errors
 
-### Workers Spawned: 4
-1. GamePage extraction — created 4 extraction modules (11 min)
-2. Openings compression — deflate + prune (15 min)
-3. GamePage rewrite — rewired GamePage to use extracted modules (3 min)
-4. QA review — build, types, code audit (2 min)
+### Workers Spawned: 1
+1. P0 bug fixes (History crash + tab bar) — 4 min

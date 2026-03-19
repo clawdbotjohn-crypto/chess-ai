@@ -44,7 +44,7 @@
 
 ### P0 — John's Priority
 - [x] **Online multiplayer — Phase 1 (room-based play)** — Play against other people online. Architecture research complete (`docs/RESEARCH-online-multiplayer.md`) — recommends PartyKit. **Phase 1 built:** Server (`server/` — game-server, types, validation) + Client (`OnlinePlayPage`, `useMultiplayer` hook, shared types, `/online` route, nav + HomePage card). **PartyKit deployed:** `chess-ai-multiplayer.JohnWattenbarger.partykit.dev`. **Fixed Mar 18:** PartyKit config was missing `parties.game` mapping — added to `partykit.json` and redeployed. **E2E tested:** 2-tab test confirmed: room creation, joining via code, WebSocket connection, player assignment (White/Black), board orientation, turn indicators, game controls (Offer Draw, Resign, Leave) all working. Piece interaction is correct (active player's pieces clickable, opponent's disabled). (Mar 18)
-- [ ] **Production readiness plan** — Once all features are done: create a plan for hosting/deploying/monitoring for public use + marketing strategy. Exact steps John needs to take to publish. (Only start this after multiplayer is working.)
+- [x] **Production readiness plan** — Comprehensive plan at `docs/PRODUCTION-PLAN.md` covering hosting, domain, performance, SEO, marketing, legal, and step-by-step launch checklist. Cost estimates at multiple traffic tiers. (Mar 19)
 - [x] **Bot vs Bot matchmaking + Elo system** — New `/arena` page (BotArenaPage.tsx) with round-robin tournaments, quick matches, Elo rating system (K=32 new, K=16 established), live game viewer, fast simulation mode. Ratings persist in localStorage. Leaderboard sorted by Elo. Trophy nav icon. (Mar 12)
 - [x] **Stockfish in AI-vs-AI mode** — Completed as part of "Consistent AI options" above. (Mar 9)
 

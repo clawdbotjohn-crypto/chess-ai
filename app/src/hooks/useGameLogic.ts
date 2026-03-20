@@ -56,6 +56,9 @@ export function useGameLogic({
   // User preferences from Settings page
   const [settings, setSettings] = useState(getSettings())
 
+  // AI display name for player bar (set from NewGameModal's resolved name)
+  const [aiDisplayName, setAiDisplayName] = useState<string | null>(null)
+
   // Keep AI vs AI game ref in sync
   useEffect(() => {
     aivsai.setGameRef(gs.game)
@@ -226,6 +229,7 @@ export function useGameLogic({
 
     if (newSettings.mode === 'human-vs-ai') {
       personality.setConfig(newSettings.aiConfig)
+      setAiDisplayName(newSettings.aiPresetName ?? null)
       setUseStockfishEngine(newSettings.useStockfish ?? false)
       setStockfishSkillLevel(newSettings.stockfishSkillLevel ?? 10)
       setStockfishDepth(newSettings.stockfishDepth ?? 10)
@@ -473,6 +477,7 @@ export function useGameLogic({
     settings,
     humanTurnChar,
     aiTurnChar,
+    aiDisplayName,
     onDrop,
     onPieceClick,
     onPieceDrag,

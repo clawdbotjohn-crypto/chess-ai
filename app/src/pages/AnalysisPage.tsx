@@ -282,12 +282,19 @@ export default function AnalysisPage() {
     }
   }, [goPrev, goNext])
 
-  // Auto-scroll move list
+  // Auto-scroll move list (container-relative to avoid page scroll jitter)
   useEffect(() => {
-    if (!moveListRef.current) return
-    const activeEl = moveListRef.current.querySelector('[data-active="true"]')
+    const container = moveListRef.current
+    if (!container) return
+    const activeEl = container.querySelector('[data-active="true"]') as HTMLElement
     if (activeEl) {
-      activeEl.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
+      const containerRect = container.getBoundingClientRect()
+      const elRect = activeEl.getBoundingClientRect()
+      if (elRect.bottom > containerRect.bottom) {
+        container.scrollTop += elRect.bottom - containerRect.bottom
+      } else if (elRect.top < containerRect.top) {
+        container.scrollTop -= containerRect.top - elRect.top
+      }
     }
   }, [moveIndex])
 

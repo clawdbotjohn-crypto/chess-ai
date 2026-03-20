@@ -2,29 +2,26 @@
 
 ## Last Session
 - **Date:** 2026-03-19
-- **Mode:** A (Development) → B (QA Sweep)
-- **Duration:** 8 min
+- **Mode:** Orchestrator (2 workers)
+- **Duration:** 7 min
 
 ## What Was Done
-- **Production readiness plan created** — Comprehensive 556-line doc at `docs/PRODUCTION-PLAN.md` covering domain, hosting, performance, SEO, marketing, legal, and step-by-step launch checklist with cost estimates
-- Ran full QA sweep of all 10 core flows — all passing
+- **Fixed P0 bug: AI name shows "Custom"** — Added `aiDisplayName` state in `useGameLogic.ts` set from `newSettings.aiPresetName`. GamePage now uses this instead of deriving from `personality.activePreset` (which gets cleared to null for custom AIs).
+- **Fixed P0 bug: Analysis Next button scroll jitter** — Replaced `scrollIntoView({ block: 'nearest' })` with container-relative scroll calculation using `getBoundingClientRect()`, so only the move list div scrolls, not the page.
 
-## QA Results (10/10 ✅)
-1. ✅ Start new game — Board renders, AI opponent, "Your turn" indicator
-2. ✅ Play a game — AI responds (Scandinavian Defense, 21K nodes, 1.5s), eval bar updates
-3. ✅ Tab navigation — Home, Create, Play, History, Settings all load without errors
-4. ✅ History — Stats card, filter tabs, game cards with opening names
-5. ✅ Create AI personality — Editor with all sliders, presets, avatars, game phases
-6. ✅ Position setup — Board, piece palette, FEN, side-to-move, Play/Analyze
-7. ✅ Arena — Bot Arena loads with leaderboard, quick match, tournament
-8. ✅ Analysis — Board, move list, eval bar, engine selector, navigation, move classification
-9. ✅ PGN import — Modal opens from History with textbox and Analyze/Cancel
-10. ✅ Settings — All toggles, themes, sound, AI settings, data management
+## Files Changed
+- `app/src/hooks/useGameLogic.ts` — Added `aiDisplayName` state, set from `newSettings.aiPresetName`, exposed in return
+- `app/src/pages/GamePage.tsx` — Uses `aiDisplayName` from useGameLogic for player bar name
+- `app/src/pages/AnalysisPage.tsx` — Container-relative scroll instead of scrollIntoView
+
+## Build
+- ✅ `npm run build` passes (0 errors)
+- ✅ Pushed to remote
 
 ## Next
-- All priority tasks complete — project is feature-complete
-- John should review `docs/PRODUCTION-PLAN.md` and decide on launch timing
-- Continue daily QA sweeps
+- All P0 bugs resolved
+- Project is feature-complete — ready for John's production launch review
+- `docs/PRODUCTION-PLAN.md` awaiting John's review
 
 ## Blockers
-- None currently
+- None

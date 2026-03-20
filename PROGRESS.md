@@ -6,6 +6,10 @@
 
 ## Priority Tasks
 
+### P0 — Bugs (John's Testing — Mar 19)
+- [x] **BUG: AI name shows "Custom" instead of personality name FIXED** — Root cause: `personality.setConfig()` cleared `activePreset` to null, and GamePage derived AI name from `activePreset`. Fix: Added `aiDisplayName` state in `useGameLogic` set from `newSettings.aiPresetName`, used in GamePage's `getPlayerBar()`. (Mar 19)
+- [x] **BUG: Analyze game — Next button scrolls page down FIXED** — Root cause: `scrollIntoView({ block: 'nearest' })` could scroll the page viewport. Fix: Replaced with container-relative scroll calculation using `getBoundingClientRect()` to only scroll the move list div. (Mar 19)
+
 ### P0 — Critical Bugs (John's Testing — Mar 13)
 - [x] **BUG: History tab crashes on client-side navigation FIXED** — Root cause: ErrorBoundary was outside BrowserRouter, couldn't reset on route changes. Fix: Route-aware ErrorBoundary with resetKey prop + defensive getGames() try/catch. (Mar 15)
 - [x] **BUG: Tab bar changes after reload FIXED** — Root cause: 7 navLinks overflowed mobile bottom nav. Fix: Separate mobileNavLinks array with 5 core tabs (Home, Create, Play, History, Settings). Desktop nav unchanged. (Mar 15)

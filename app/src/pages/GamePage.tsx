@@ -72,7 +72,7 @@ export default function GamePage() {
 
   // Core game logic hook (AI responses, move handling, clock, save, status, etc.)
   const {
-    settings, humanTurnChar,
+    settings, humanTurnChar, aiDisplayName,
     onDrop, onPieceClick, onPieceDrag, onSquareClick,
     isThinking, activeSearchDepth, lastMoveStats,
     getStatus, getGameResult, getSearchDepth,
@@ -151,9 +151,10 @@ export default function GamePage() {
   // Player bar info helper
   const getPlayerBar = (position: 'top' | 'bottom'): PlayerBarInfo => {
     const color = position === 'top' ? topColor : bottomColor
-    const aiPresetName = personality.activePreset
-      ? personality.activePreset.charAt(0).toUpperCase() + personality.activePreset.slice(1).toLowerCase()
-      : 'Custom'
+    const resolvedAiName = aiDisplayName
+      ?? (personality.activePreset
+        ? personality.activePreset.charAt(0).toUpperCase() + personality.activePreset.slice(1).toLowerCase()
+        : 'Custom')
 
     if (mode === 'human-vs-ai') {
       const isAI = color !== playerColor
@@ -161,7 +162,7 @@ export default function GamePage() {
         const isStockfish = useStockfishEngine
         return {
           icon: isStockfish ? 'cpu' : 'bot',
-          name: isStockfish ? 'Stockfish' : aiPresetName,
+          name: isStockfish ? 'Stockfish' : resolvedAiName,
           avatar: isStockfish ? null : personality.currentAvatar,
           badge: isStockfish ? `Skill ${stockfishSkillLevel}` : 'AI',
           badgeClass: isStockfish ? 'bg-orange-500/20 text-orange-300' : 'bg-purple-500/20 text-purple-300',

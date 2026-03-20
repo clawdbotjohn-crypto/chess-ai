@@ -123,7 +123,7 @@ export default function Layout() {
       </main>
 
       {/* Mobile Bottom Navigation — slim on play page */}
-      <nav className={`lg:hidden fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-800 z-40 ${isPlayPage ? 'px-1 py-1' : 'px-2 py-2'}`}>
+      <nav className={`lg:hidden fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-800 z-40 ${isPlayPage ? 'px-1 py-1' : 'px-2 py-2'}`} style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
         <div className="flex justify-around items-center">
           {mobileNavLinks.map(({ to, label, icon: Icon }) => (
             <Link

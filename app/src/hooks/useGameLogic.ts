@@ -71,8 +71,10 @@ export function useGameLogic({
     appliedUrlParams.current = true
     if (initialPreset && PRESETS[initialPreset]) {
       personality.loadPreset(initialPreset)
+      setAiDisplayName(PRESETS[initialPreset].label)
     } else if (initialLoadSaved) {
       personality.loadFromStorage(initialLoadSaved)
+      setAiDisplayName(initialLoadSaved)
     }
     if (searchParams.get('stockfish') === '1') {
       setUseStockfishEngine(true)

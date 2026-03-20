@@ -67,17 +67,32 @@ function RouteAwareErrorBoundary({ children }: { children: ReactNode }) {
   return <ErrorBoundary resetKey={location.pathname}>{children}</ErrorBoundary>
 }
 
-const HomePage = lazy(() => import('./pages/HomePage'))
-const GamePage = lazy(() => import('./pages/GamePage'))
-const LibraryPage = lazy(() => import('./pages/LibraryPage'))
-const HistoryPage = lazy(() => import('./pages/HistoryPage'))
-const SettingsPage = lazy(() => import('./pages/SettingsPage'))
-const EditorPage = lazy(() => import('./pages/EditorPage'))
-const AnalysisPage = lazy(() => import('./pages/AnalysisPage'))
-const PositionSetupPage = lazy(() => import('./pages/PositionSetupPage'))
-const BotArenaPage = lazy(() => import('./pages/BotArenaPage'))
-const OnlinePlayPage = lazy(() => import('./pages/OnlinePlayPage'))
-const NotFoundPage = lazy(() => import('./pages/NotFoundPage'))
+// Retry wrapper for lazy imports — handles chunk load failures on fresh deploys
+function lazyRetry<T extends { default: React.ComponentType<unknown> }>(
+  importFn: () => Promise<T>,
+  retries = 2
+): React.LazyExoticComponent<T['default']> {
+  return lazy(() =>
+    importFn().catch((err) => {
+      if (retries > 0) {
+        return new Promise<T>((resolve) => setTimeout(() => resolve(importFn()), 500))
+      }
+      throw err
+    })
+  )
+}
+
+const HomePage = lazyRetry(() => import('./pages/HomePage'))
+const GamePage = lazyRetry(() => import('./pages/GamePage'))
+const LibraryPage = lazyRetry(() => import('./pages/LibraryPage'))
+const HistoryPage = lazyRetry(() => import('./pages/HistoryPage'))
+const SettingsPage = lazyRetry(() => import('./pages/SettingsPage'))
+const EditorPage = lazyRetry(() => import('./pages/EditorPage'))
+const AnalysisPage = lazyRetry(() => import('./pages/AnalysisPage'))
+const PositionSetupPage = lazyRetry(() => import('./pages/PositionSetupPage'))
+const BotArenaPage = lazyRetry(() => import('./pages/BotArenaPage'))
+const OnlinePlayPage = lazyRetry(() => import('./pages/OnlinePlayPage'))
+const NotFoundPage = lazyRetry(() => import('./pages/NotFoundPage'))
 
 function App() {
   return (

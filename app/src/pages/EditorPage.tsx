@@ -21,12 +21,16 @@ export default function EditorPage() {
   const [importError, setImportError] = useState<string | null>(null)
   const [importSuccess, setImportSuccess] = useState(false)
 
+  const [lastSavedName, setLastSavedName] = useState<string | null>(null)
   const refreshSaved = () => setSavedNames(personality.getSavedNames())
 
   const handlePlayWithAI = () => {
     // Store current config in localStorage so GamePage can pick it up
     localStorage.setItem('chess-ai-editor-config', JSON.stringify(personality.currentConfig))
-    if (personality.activePreset) {
+    // If we have a saved name (user saved or loaded a personality), use it
+    if (lastSavedName) {
+      navigate(`/play?mode=human-vs-ai&loadSaved=${encodeURIComponent(lastSavedName)}`)
+    } else if (personality.activePreset) {
       navigate(`/play?mode=human-vs-ai&preset=${personality.activePreset}`)
     } else {
       const tempName = '__editor_temp__'
@@ -145,7 +149,7 @@ export default function EditorPage() {
 
         {/* Reset to Default */}
         <button
-          onClick={() => { personality.loadPreset('DEFAULT'); }}
+          onClick={() => { personality.loadPreset('DEFAULT'); setLastSavedName(null); }}
           className="w-full bg-slate-700/40 hover:bg-slate-700/70 text-slate-300 font-medium py-2.5 px-4 rounded-xl transition-all flex items-center justify-center gap-2 border border-slate-600/20"
         >
           <RotateCcw className="w-4 h-4" />
@@ -169,9 +173,9 @@ export default function EditorPage() {
         avatar={personality.currentAvatar}
         onAvatarChange={personality.setAvatar}
         onChange={personality.setConfig}
-        onLoadPreset={personality.loadPreset}
-        onSave={(name) => { personality.saveToStorage(name); refreshSaved(); }}
-        onLoadSaved={(name) => { personality.loadFromStorage(name); refreshSaved(); }}
+        onLoadPreset={(name) => { personality.loadPreset(name); setLastSavedName(null); }}
+        onSave={(name) => { personality.saveToStorage(name); setLastSavedName(name); refreshSaved(); }}
+        onLoadSaved={(name) => { personality.loadFromStorage(name); setLastSavedName(name); refreshSaved(); }}
         onDeleteSaved={(name) => { personality.deleteSaved(name); refreshSaved(); }}
       />
     </div>

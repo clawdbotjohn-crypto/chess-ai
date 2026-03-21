@@ -1,22 +1,29 @@
 # Chess AI — Handoff
 
 ## Last Session
-- **Date:** 2026-03-19
-- **Mode:** Orchestrator (2 workers)
-- **Duration:** 7 min
+- **Date:** 2026-03-21
+- **Mode:** QA Sweep (Mode B)
+- **Duration:** 2 min
 
 ## What Was Done
-- **Fixed P0 bug: AI name shows "Custom"** — Added `aiDisplayName` state in `useGameLogic.ts` set from `newSettings.aiPresetName`. GamePage now uses this instead of deriving from `personality.activePreset` (which gets cleared to null for custom AIs).
-- **Fixed P0 bug: Analysis Next button scroll jitter** — Replaced `scrollIntoView({ block: 'nearest' })` with container-relative scroll calculation using `getBoundingClientRect()`, so only the move list div scrolls, not the page.
+- Full QA sweep of all 10 core flows at the live URL
+- All flows passing — no bugs found
 
-## Files Changed
-- `app/src/hooks/useGameLogic.ts` — Added `aiDisplayName` state, set from `newSettings.aiPresetName`, exposed in return
-- `app/src/pages/GamePage.tsx` — Uses `aiDisplayName` from useGameLogic for player bar name
-- `app/src/pages/AnalysisPage.tsx` — Container-relative scroll instead of scrollIntoView
+## QA Results (10/10 flows pass)
+1. ✅ Start new game — Home → Play vs AI → board renders, "Your turn" shown
+2. ✅ Play a game — e4 played, AI responded (Scandinavian Defense), eval bar + opening name shown
+3. ✅ Tab navigation — All 5 tabs (Home, Create, Play, History, Settings) navigate without errors
+4. ✅ History — Loads with stats card, filters, opening names, game cards
+5. ✅ Create AI personality — Editor loads with all sliders, presets, avatar picker, save
+6. ✅ Position setup — Piece palette, FEN copy/paste, Play/Analyze buttons
+7. ✅ Arena — Leaderboard, Quick Match/Tournament/Match History buttons
+8. ✅ Analysis — Game opens with eval, move classifications, engine selector, transport controls, best move
+9. ✅ PGN import — Modal opens with textarea and Cancel/Analyze buttons
+10. ✅ Settings — All toggles, themes, data management, stats, about section
 
 ## Build
 - ✅ `npm run build` passes (0 errors)
-- ✅ Pushed to remote
+- ✅ Service restarted
 
 ## Next
 - All P0 bugs resolved

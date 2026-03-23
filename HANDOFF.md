@@ -1,17 +1,17 @@
 # Chess AI — Handoff
 
 ## Last Session
-- **Date:** 2026-03-21
+- **Date:** 2026-03-23
 - **Mode:** QA Sweep (Mode B)
-- **Duration:** 2 min
+- **Duration:** 3 min
 
 ## What Was Done
 - Full QA sweep of all 10 core flows at the live URL
 - All flows passing — no bugs found
 
 ## QA Results (10/10 flows pass)
-1. ✅ Start new game — Home → Play vs AI → board renders, "Your turn" shown
-2. ✅ Play a game — e4 played, AI responded (Scandinavian Defense), eval bar + opening name shown
+1. ✅ Start new game — Home → Play vs AI → board renders, move input works
+2. ✅ Play a game — e4 played via text input, AI responded (Scandinavian Defense), eval bar + opening name shown
 3. ✅ Tab navigation — All 5 tabs (Home, Create, Play, History, Settings) navigate without errors
 4. ✅ History — Loads with stats card, filters, opening names, game cards
 5. ✅ Create AI personality — Editor loads with all sliders, presets, avatar picker, save
@@ -23,7 +23,7 @@
 
 ## Build
 - ✅ `npm run build` passes (0 errors)
-- ✅ Service restarted
+- ✅ Service running
 
 ## Next
 - All P0 bugs resolved

@@ -1,7 +1,7 @@
 # Chess AI — Handoff
 
 ## Last Session
-- **Date:** 2026-03-23
+- **Date:** 2026-03-25
 - **Mode:** QA Sweep (Mode B)
 - **Duration:** 3 min
 
@@ -11,7 +11,7 @@
 
 ## QA Results (10/10 flows pass)
 1. ✅ Start new game — Home → Play vs AI → board renders, move input works
-2. ✅ Play a game — e4 played via text input, AI responded (Scandinavian Defense), eval bar + opening name shown
+2. ✅ Play a game — e4 played, AI responded (Scandinavian Defense), eval bar + opening name shown
 3. ✅ Tab navigation — All 5 tabs (Home, Create, Play, History, Settings) navigate without errors
 4. ✅ History — Loads with stats card, filters, opening names, game cards
 5. ✅ Create AI personality — Editor loads with all sliders, presets, avatar picker, save
@@ -29,6 +29,7 @@
 - All P0 bugs resolved
 - Project is feature-complete — ready for John's production launch review
 - `docs/PRODUCTION-PLAN.md` awaiting John's review
+- Only unchecked task: P2 "Share game link with position" (low priority)
 
 ## Blockers
 - None

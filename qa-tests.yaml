@@ -1,0 +1,111 @@
+# Chess AI — QA Tests
+
+project: chess-ai
+baseUrl: https://nice-desert-0df9bdf1e.4.azurestaticapps.net
+
+smokeTests:
+  - path: /
+    name: Home page loads
+    expect:
+      bodyContains: Chess
+      noJsErrors: true
+
+  - path: /play
+    name: Play page loads
+    expect:
+      bodyContains: ["Play", "chess"]
+
+  - path: /history
+    name: History page loads
+    expect:
+      status: 200
+
+  - path: /settings
+    name: Settings page loads
+    expect:
+      bodyContains: Settings
+
+flows:
+  - id: play-page-renders
+    name: Play Page Renders with Board
+    priority: P0
+    steps:
+      - Navigate to /play
+      - Wait for the page to load
+      - Verify a chess board is rendered (8x8 grid with pieces)
+      - Verify player bars/info areas are shown
+      - Verify the AI name is shown (not "Custom" or "undefined")
+      - Check that the board is interactive (pieces can be selected)
+      - Check console for errors
+    expect:
+      contains: [chess, board]
+      notContains: [Custom, undefined, Error]
+
+  - id: make-a-move
+    name: Player Can Make a Move
+    priority: P0
+    steps:
+      - Navigate to /play and start a new game
+      - Make a move (e.g., e2-e4 — click e2 pawn then e4)
+      - Wait for the AI to respond (up to 15s)
+      - Verify the board has updated (pieces moved)
+      - Verify AI thinking indicator appeared and resolved
+      - Verify no JS errors
+    expect:
+      aiResponded: true
+      noStuckLoading: true
+
+  - id: history-navigation
+    name: History Tab Works Without Crashes
+    priority: P0
+    tags: [regression]
+    steps:
+      - Navigate to /history
+      - Wait for page to load
+      - Verify the page renders without crashing
+      - If there are game entries, click on one
+      - Verify the game detail or analysis opens
+      - Navigate back to history
+      - Verify history page still renders correctly
+    expect:
+      noCrash: true
+      notContains: [Error, Something went wrong]
+
+  - id: settings-page-works
+    name: Settings Page Renders and Saves
+    priority: P1
+    steps:
+      - Navigate to /settings
+      - Verify settings options are displayed
+      - Change a setting (like AI difficulty or personality)
+      - Navigate away and back to /settings
+      - Verify the setting persisted
+    expect:
+      settingsPersisted: true
+
+  - id: position-setup
+    name: Position Setup Loads
+    priority: P1
+    steps:
+      - Navigate to /setup
+      - Verify the setup page renders with a board
+      - Verify there are controls for placing pieces
+      - Verify FEN input/output is available
+    expect:
+      contains: [position, FEN]
+
+  - id: tab-navigation-stable
+    name: Tab Navigation Doesn't Break
+    priority: P0
+    tags: [regression]
+    steps:
+      - Navigate to /play
+      - Click on History tab
+      - Click on Settings tab
+      - Click on Home tab
+      - Click on Play tab
+      - At each step, verify the page renders without crashing
+      - Verify the bottom tab bar is visible and has exactly 5 tabs
+    expect:
+      noCrash: true
+      tabsVisible: true

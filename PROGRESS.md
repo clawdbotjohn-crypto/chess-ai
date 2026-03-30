@@ -61,6 +61,9 @@
 - [x] GamePage.tsx component extraction — Extracted 4 modules: useGameLogic (491 lines), useKeyboardShortcuts (50 lines), useBoardConfig (131 lines), GameSidebar (182 lines). GamePage.tsx: 1009 → 453 lines. (Mar 13)
 - [x] Openings database compression — Deflate-compressed trie into base64, decoded at runtime via DecompressionStream. Pruned lines deeper than 20 moves. Openings chunk: 232KB → 62KB (73% reduction). (Mar 13)
 
+### QA Findings — 2026-03-30
+- [ ] **Light and System app themes disabled** — In Settings, only "Dark" theme is selectable. The "Light" and "System" buttons appear disabled/unclickable. Board themes (classic/green/ice/dark) work fine. Unclear if intentional or bug.
+
 ### Design Principles
 - **Mobile-first** — All UI must work on touch/mobile as the primary input. Keyboard shortcuts are OK as extras but NEVER the only way to do something. Every action needs a visible, tappable control.
 - Current violations: GamePage keyboard shortcuts (F=flip, N=new game, U=undo) and AnalysisPage arrow key navigation need touch equivalents if not already present.

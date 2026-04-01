@@ -6,6 +6,10 @@
 
 ## Priority Tasks
 
+### QA Findings — 2026-03-31
+- [ ] **UX: Light/System theme buttons disabled in Settings** — Only Dark theme is selectable. Light and System theme buttons appear disabled. Should either implement them or hide/label as "coming soon".
+- [ ] **UX: `__editor_temp__` bot visible in Arena leaderboard** — Debug/temp bot entry appears in Arena rankings. Should be filtered from display.
+
 ### P0 — Bugs (John's Testing — Mar 19)
 - [x] **BUG: AI name shows "Custom" instead of personality name FIXED** — Root cause: `personality.setConfig()` cleared `activePreset` to null, and GamePage derived AI name from `activePreset`. Fix: Added `aiDisplayName` state in `useGameLogic` set from `newSettings.aiPresetName`, used in GamePage's `getPlayerBar()`. (Mar 19)
 - [x] **BUG: Analyze game — Next button scrolls page down FIXED** — Root cause: `scrollIntoView({ block: 'nearest' })` could scroll the page viewport. Fix: Replaced with container-relative scroll calculation using `getBoundingClientRect()` to only scroll the move list div. (Mar 19)

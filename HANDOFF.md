@@ -1,7 +1,7 @@
 # Chess AI — Handoff
 
 ## Last Session
-- **Date:** 2026-04-01
+- **Date:** 2026-04-02
 - **Mode:** QA Sweep (Mode B)
 - **Duration:** 3 min
 
@@ -11,10 +11,10 @@
 
 ## QA Results (10/10 flows pass)
 1. ✅ Start new game — Home → Play vs AI → board renders, move input works
-2. ✅ Play a game — e4 played, AI responded (Scandinavian Defense), eval bar + opening name + thinking info shown, continued with d4 (Book move)
+2. ✅ Play a game — e4 played, AI responded (Scandinavian Defense), eval bar + opening name + thinking indicator shown
 3. ✅ Tab navigation — All tabs (Home, Create, Play, History, Settings, Arena, Setup, Analysis) navigate without errors
 4. ✅ History — Loads with stats card, filters, opening names, game cards
-5. ✅ Create AI personality — Editor loads with all sliders, presets, avatar picker, save
+5. ✅ Create AI personality — Editor loads with all sliders, presets, avatar picker, save button
 6. ✅ Position setup — Piece palette, FEN copy/paste, Play/Analyze buttons, side-to-move
 7. ✅ Arena — Leaderboard, Quick Match/Tournament/Match History buttons
 8. ✅ Analysis — Game opens with eval, move classifications, engine selector, transport controls, best move arrow

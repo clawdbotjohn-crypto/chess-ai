@@ -1,5 +1,50 @@
 @import "tailwindcss";
 
+/* Light theme overrides — the app hardcodes dark Tailwind classes,
+   so we remap them via CSS when .light is active on <html>. */
+html.light {
+  color-scheme: light;
+}
+
+html.light body {
+  background-color: #f8fafc; /* slate-50 */
+  color: #1e293b; /* slate-800 */
+}
+
+/* Background overrides */
+html.light .bg-slate-950 { background-color: #f8fafc !important; }
+html.light .bg-slate-900 { background-color: #f1f5f9 !important; }
+html.light .bg-slate-800 { background-color: #ffffff !important; }
+html.light .bg-slate-700 { background-color: #e2e8f0 !important; }
+html.light .bg-slate-600 { background-color: #cbd5e1 !important; }
+
+/* Text overrides */
+html.light .text-white { color: #0f172a !important; }
+html.light .text-slate-100 { color: #1e293b !important; }
+html.light .text-slate-200 { color: #334155 !important; }
+html.light .text-slate-300 { color: #475569 !important; }
+html.light .text-slate-400 { color: #64748b !important; }
+html.light .text-slate-500 { color: #64748b !important; }
+
+/* Border overrides */
+html.light .border-slate-700 { border-color: #e2e8f0 !important; }
+html.light .border-slate-800 { border-color: #e2e8f0 !important; }
+html.light .divide-slate-700 > :not(:first-child) { border-color: #e2e8f0 !important; }
+
+/* Keep accent colors readable */
+html.light .bg-blue-600 { background-color: #2563eb !important; }
+html.light .text-blue-400 { color: #2563eb !important; }
+html.light .text-green-400 { color: #16a34a !important; }
+html.light .text-red-400 { color: #dc2626 !important; }
+html.light .text-yellow-400 { color: #ca8a04 !important; }
+
+/* Ring / focus */
+html.light .ring-slate-700 { --tw-ring-color: #e2e8f0 !important; }
+
+/* Scrollbar & selection */
+html.light ::-webkit-scrollbar-track { background: #f1f5f9; }
+html.light ::-webkit-scrollbar-thumb { background: #cbd5e1; }
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;

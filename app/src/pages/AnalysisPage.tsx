@@ -93,7 +93,7 @@ export default function AnalysisPage() {
         } catch { /* skip invalid */ }
       }
     }
-    return result.sort((a, b) => a.name.localeCompare(b.name))
+    return result.filter(p => p.name !== '__editor_temp__').sort((a, b) => a.name.localeCompare(b.name))
   }, [])
 
   // Resolve the active analysis config from preset name or saved personality

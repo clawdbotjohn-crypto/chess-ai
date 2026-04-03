@@ -6,9 +6,12 @@
 
 ## Priority Tasks
 
+### QA Findings — 2026-04-03
+- [x] **BUG: "Play vs AI" card on Home page navigates to Settings instead of Play** — Could not reproduce (Apr 3). Code shows correct href `/play?mode=human-vs-ai`, browser test confirmed correct navigation. Likely was a transient/caching issue.
+
 ### QA Findings — 2026-03-31
-- [ ] **UX: Light/System theme buttons disabled in Settings** — Only Dark theme is selectable. Light and System theme buttons appear disabled. Should either implement them or hide/label as "coming soon".
-- [ ] **UX: `__editor_temp__` bot visible in Arena leaderboard** — Debug/temp bot entry appears in Arena rankings. Should be filtered from display.
+- [x] **UX: Light/System theme buttons disabled in Settings** — Implemented full theme system with `useTheme` hook. Dark/Light/System all work, System follows OS preference via matchMedia, persists to localStorage. Light mode CSS overrides added to index.css. (Apr 3)
+- [x] **UX: `__editor_temp__` bot visible in Arena leaderboard** — Filtered in `getAllBots()` (botArena.ts) and AnalysisPage engine selector. (Apr 3)
 
 ### P0 — Bugs (John's Testing — Mar 19)
 - [x] **BUG: AI name shows "Custom" instead of personality name FIXED** — Root cause: `personality.setConfig()` cleared `activePreset` to null, and GamePage derived AI name from `activePreset`. Fix: Added `aiDisplayName` state in `useGameLogic` set from `newSettings.aiPresetName`, used in GamePage's `getPlayerBar()`. (Mar 19)
@@ -66,7 +69,7 @@
 - [x] Openings database compression — Deflate-compressed trie into base64, decoded at runtime via DecompressionStream. Pruned lines deeper than 20 moves. Openings chunk: 232KB → 62KB (73% reduction). (Mar 13)
 
 ### QA Findings — 2026-03-30
-- [ ] **Light and System app themes disabled** — In Settings, only "Dark" theme is selectable. The "Light" and "System" buttons appear disabled/unclickable. Board themes (classic/green/ice/dark) work fine. Unclear if intentional or bug.
+- [x] **Light and System app themes disabled** — Fixed Apr 3, see QA Findings 2026-03-31.
 
 ### Design Principles
 - **Mobile-first** — All UI must work on touch/mobile as the primary input. Keyboard shortcuts are OK as extras but NEVER the only way to do something. Every action needs a visible, tappable control.

@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 import { usePageTitle } from '../hooks/usePageTitle'
+import { useTheme } from '../hooks/useTheme'
+import type { ThemeChoice } from '../hooks/useTheme'
 import {
   Layout,
   Palette,
@@ -49,6 +51,7 @@ function Toggle({ checked, onChange, label }: { checked: boolean; onChange: (v: 
 
 export default function SettingsPage() {
   usePageTitle('Settings')
+  const { theme: appTheme, setTheme: setAppTheme } = useTheme()
   const [settings, setSettings] = useState<AppSettings>(getSettings)
   const [stats, setStats] = useState<GameStats>(getStats)
   const [showSaved, setShowSaved] = useState(false)
@@ -206,15 +209,19 @@ export default function SettingsPage() {
           <div className="p-4">
             <p className="font-medium mb-3">App Theme</p>
             <div className="flex gap-2">
-              <button className="flex-1 bg-blue-600 text-white py-2 rounded-lg text-sm font-medium">
-                Dark
-              </button>
-              <button className="flex-1 bg-slate-700 text-slate-500 py-2 rounded-lg text-sm font-medium cursor-not-allowed opacity-50" disabled aria-disabled="true">
-                Light
-              </button>
-              <button className="flex-1 bg-slate-700 text-slate-500 py-2 rounded-lg text-sm font-medium cursor-not-allowed opacity-50" disabled aria-disabled="true">
-                System
-              </button>
+              {(['dark', 'light', 'system'] as ThemeChoice[]).map((t) => (
+                <button
+                  key={t}
+                  onClick={() => setAppTheme(t)}
+                  className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    appTheme === t
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+                  }`}
+                >
+                  {t.charAt(0).toUpperCase() + t.slice(1)}
+                </button>
+              ))}
             </div>
           </div>
         </div>

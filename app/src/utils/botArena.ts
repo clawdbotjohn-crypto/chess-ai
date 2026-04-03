@@ -43,6 +43,8 @@ export function getAllBots(): BotIdentity[] {
     const key = localStorage.key(i);
     if (key?.startsWith(PERSONALITY_PREFIX)) {
       const name = key.slice(PERSONALITY_PREFIX.length);
+      // Skip internal/temp personalities
+      if (name === '__editor_temp__') continue;
       try {
         const config = JSON.parse(localStorage.getItem(key)!) as EvaluationConfig;
         bots.push({

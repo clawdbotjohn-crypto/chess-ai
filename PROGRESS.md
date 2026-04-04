@@ -10,8 +10,8 @@
 - [x] **BUG: "Play vs AI" card on Home page navigates to Settings instead of Play** — Could not reproduce (Apr 3). Code shows correct href `/play?mode=human-vs-ai`, browser test confirmed correct navigation. Likely was a transient/caching issue.
 
 ### QA Findings — 2026-03-31
-- [x] **UX: Light/System theme buttons disabled in Settings** — Implemented full theme system with `useTheme` hook. Dark/Light/System all work, System follows OS preference via matchMedia, persists to localStorage. Light mode CSS overrides added to index.css. (Apr 3)
-- [x] **UX: `__editor_temp__` bot visible in Arena leaderboard** — Filtered in `getAllBots()` (botArena.ts) and AnalysisPage engine selector. (Apr 3)
+- [x] **UX: Light/System theme buttons disabled in Settings** — ROOT CAUSE: Service worker (sw.js) used cache-first strategy with static cache name `chess-ai-v1`, serving stale JS forever. Code fix from Apr 3 was correct but never reached users. Fix: Rewrote sw.js with network-first for HTML/navigation, cache-first only for hashed assets (immutable filenames). Bumped cache to v2 to purge stale entries. Added 30-min update check interval. (Apr 4)
+- [x] **UX: `__editor_temp__` bot visible in Arena leaderboard** — Same root cause as theme buttons: stale service worker cache. The `getBots()` filter was deployed correctly but the old cached JS didn't have it. Fixed by service worker rewrite. (Apr 4)
 
 ### P0 — Bugs (John's Testing — Mar 19)
 - [x] **BUG: AI name shows "Custom" instead of personality name FIXED** — Root cause: `personality.setConfig()` cleared `activePreset` to null, and GamePage derived AI name from `activePreset`. Fix: Added `aiDisplayName` state in `useGameLogic` set from `newSettings.aiPresetName`, used in GamePage's `getPlayerBar()`. (Mar 19)
@@ -69,7 +69,7 @@
 - [x] Openings database compression — Deflate-compressed trie into base64, decoded at runtime via DecompressionStream. Pruned lines deeper than 20 moves. Openings chunk: 232KB → 62KB (73% reduction). (Mar 13)
 
 ### QA Findings — 2026-03-30
-- [x] **Light and System app themes disabled** — Fixed Apr 3, see QA Findings 2026-03-31.
+- [x] **Light and System app themes disabled** — Fixed by service worker rewrite (Apr 4). See QA Findings 2026-03-31.
 
 ### Design Principles
 - **Mobile-first** — All UI must work on touch/mobile as the primary input. Keyboard shortcuts are OK as extras but NEVER the only way to do something. Every action needs a visible, tappable control.

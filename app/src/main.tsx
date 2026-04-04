@@ -12,6 +12,9 @@ createRoot(document.getElementById('root')!).render(
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').catch(() => {});
+    navigator.serviceWorker.register('/sw.js').then(reg => {
+      // Check for updates every 30 minutes
+      setInterval(() => reg.update(), 30 * 60 * 1000);
+    }).catch(() => {});
   });
 }

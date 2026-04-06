@@ -1,13 +1,14 @@
 # Chess AI — Handoff
 
-## Last Session: 2026-04-05
+## Last Session: 2026-04-06
 
 ### Done
+- Share game link with position (P2) — Copy Link now encodes full PGN in URL params, works without localStorage
 - QA sweep: all 10 core flows tested and passing
-- Verified service worker fix from Apr 4 is working (Light/System theme buttons functional, `__editor_temp__` not showing in Arena leaderboard)
 
 ### Next
-- Share game link with position (P2) — only remaining unchecked task
+- No unchecked tasks remain — all features complete
+- Consider adding new features or improvements if John requests
 
 ### Blockers
 - None

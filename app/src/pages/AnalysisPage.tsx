@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { usePageTitle } from '../hooks/usePageTitle'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
 import { Chess } from 'chess.js'
 import { Chessboard } from 'react-chessboard'
 import {
@@ -19,6 +19,7 @@ import {
   RotateCw,
 } from 'lucide-react'
 import { getGames } from '../utils/gameHistory'
+import type { GameRecord } from '../utils/gameHistory'
 import { lookupOpening, ensureOpeningsLoaded } from '../utils/openings'
 import { getSettings } from '../utils/settings'
 import { playSoundForMove } from '../utils/sounds'
@@ -35,12 +36,49 @@ import type { MoveClassification } from '../utils/moveClassification'
 export default function AnalysisPage() {
   usePageTitle('Analysis')
   const { gameId } = useParams<{ gameId: string }>()
+  const [searchParams] = useSearchParams()
   const navigate = useNavigate()
   const settings = getSettings()
 
   const record = useMemo(() => {
+    // Handle shared game links with encoded PGN
+    if (gameId === 'shared') {
+      const encodedPgn = searchParams.get('pgn')
+      if (encodedPgn) {
+        try {
+          const pgn = decodeURIComponent(atob(encodedPgn))
+          const game = new Chess()
+          game.loadPgn(pgn)
+          const history = game.history()
+          
+          // Extract metadata from additional params or PGN headers
+          const white = searchParams.get('w') || game.header().White || 'White'
+          const black = searchParams.get('b') || game.header().Black || 'Black'
+          const resultHeader = game.header().Result || '*'
+          let result: 'win' | 'loss' | 'draw' = 'draw'
+          if (resultHeader === '1-0') result = 'win'
+          else if (resultHeader === '0-1') result = 'loss'
+          
+          return {
+            id: 'shared',
+            date: new Date().toISOString(),
+            mode: 'human-vs-ai' as const,
+            result,
+            resultDetail: resultHeader === '1-0' ? 'White wins' : resultHeader === '0-1' ? 'Black wins' : resultHeader === '1/2-1/2' ? 'Draw' : 'Unknown',
+            pgn,
+            moves: history.length,
+            whiteLabel: white,
+            blackLabel: black,
+            playerColor: 'white' as const,
+          } satisfies GameRecord
+        } catch {
+          return null
+        }
+      }
+      return null
+    }
     return getGames().find(g => g.id === gameId) ?? null
-  }, [gameId])
+  }, [gameId, searchParams])
 
   // Parse moves from PGN
   const moves = useMemo(() => {
@@ -332,14 +370,18 @@ export default function AnalysisPage() {
   }, [record])
 
   const copyLink = useCallback(async () => {
-    if (!gameId) return
-    const url = `https://nice-desert-0df9bdf1e.4.azurestaticapps.net/analysis/${gameId}`
+    if (!record?.pgn) return
+    const encodedPgn = btoa(encodeURIComponent(record.pgn))
+    const params = new URLSearchParams({ pgn: encodedPgn })
+    if (record.whiteLabel) params.set('w', record.whiteLabel)
+    if (record.blackLabel) params.set('b', record.blackLabel)
+    const url = `https://nice-desert-0df9bdf1e.4.azurestaticapps.net/analysis/shared?${params.toString()}`
     try {
       await navigator.clipboard.writeText(url)
       setLinkCopied(true)
       setTimeout(() => setLinkCopied(false), 2000)
     } catch { /* ignore */ }
-  }, [gameId])
+  }, [record])
 
   if (!record) {
     return (

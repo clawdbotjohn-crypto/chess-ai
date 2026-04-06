@@ -48,7 +48,7 @@
 - [x] **Pre-move behavior: match Lichess** — New `pseudoLegalMoves.ts` utility generates all theoretically reachable squares per piece type (ignoring board state). Pre-moves now use pseudo-legal validation when queuing (any square the piece type could reach), with legality checked only at execution time. Click-to-premove captures, castling pre-moves, and pawn pre-moves all work. Silently discards illegal pre-moves on execution. (Mar 10)
 
 ### P2 — Important Features
-- [ ] **Share game link with position** — Generate a shareable link that includes the current board position/game state so the recipient can view the exact game. Currently "Copy Link" just shares the analysis URL. Should encode the PGN or FEN in the URL for full game sharing.
+- [x] **Share game link with position** — "Copy analysis link" now encodes the full PGN as base64 in URL params (`/analysis/shared?pgn=<base64>&w=<white>&b=<black>`). Recipients can view the full game without needing localStorage. Existing localStorage-based analysis URLs still work. (Apr 6)
 - [x] **Bot icons/avatars** — Added emoji avatar picker (16 options) in AIEditorPanel. Avatars stored in localStorage, shown in gameplay player bars, history cards, and NewGameModal personality selector. Backward compatible. (Mar 10)
 - [x] **Opening book toggle** — Added openingBookEnabled setting in Settings page. Passes through to aiWorker. Default: enabled. Backward compatible. (Mar 9)
 - [x] **Piece value slider range → 0-1000** — All piece value sliders now max at 1000. (Mar 9)

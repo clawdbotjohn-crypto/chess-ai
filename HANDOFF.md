@@ -1,9 +1,9 @@
 # Chess AI — Handoff
 
-## Last Session: 2026-04-10
+## Last Session: 2026-04-11
 
 ### Done
-- QA sweep: all 10 core flows tested and passing
+- QA sweep (Mode B): all 10 core flows tested and passing
 - No bugs found, no code changes needed
 
 ### Next

@@ -6,6 +6,10 @@
 
 ## Priority Tasks
 
+### QA Findings — 2026-04-15
+- [ ] **PERF: Play vs AI crashes tab on low-memory devices** — The play page crashes headless Chromium on Pi repeatedly (3 attempts). WASM/Stockfish + 7+ web workers too memory-intensive. May only affect constrained environments, but worth investigating worker count limits.
+- [ ] **UX: Service worker aggressively respawns pages and spawns 7+ workers** — Chess AI SW detected respawning even when not actively testing. Causes memory leaks on shared browser environments. Consider more conservative SW lifecycle.
+
 ### QA Findings — 2026-04-03
 - [x] **BUG: "Play vs AI" card on Home page navigates to Settings instead of Play** — Could not reproduce (Apr 3). Code shows correct href `/play?mode=human-vs-ai`, browser test confirmed correct navigation. Likely was a transient/caching issue.
 

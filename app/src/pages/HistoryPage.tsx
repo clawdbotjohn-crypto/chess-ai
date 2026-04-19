@@ -181,11 +181,11 @@ export default function HistoryPage() {
   const stats = useMemo(() => {
     if (!games.length) return null
 
-    const hvai = games.filter(g => g.mode === 'human-vs-ai')
-    const wins = hvai.filter(g => g.result === 'win').length
-    const losses = hvai.filter(g => g.result === 'loss').length
-    const draws = hvai.filter(g => g.result === 'draw').length
-    const winRate = hvai.length ? Math.round((wins / hvai.length) * 100) : 0
+    const humanPlayed = games.filter(g => g.mode === 'human-vs-ai' || g.mode === 'human-vs-human')
+    const wins = humanPlayed.filter(g => g.result === 'win').length
+    const losses = humanPlayed.filter(g => g.result === 'loss').length
+    const draws = humanPlayed.filter(g => g.result === 'draw').length
+    const winRate = humanPlayed.length ? Math.round((wins / humanPlayed.length) * 100) : 0
     const avgMoves = Math.round(games.reduce((sum, g) => sum + g.moves, 0) / games.length)
     const longestGame = Math.max(...games.map(g => g.moves))
 
@@ -209,7 +209,7 @@ export default function HistoryPage() {
       }
     }
 
-    return { total: games.length, wins, losses, draws, winRate, avgMoves, longestGame, topOpening, humanGames: hvai.length }
+    return { total: games.length, wins, losses, draws, winRate, avgMoves, longestGame, topOpening, humanGames: humanPlayed.length }
   }, [games, openingsReady, allGameOpenings])
 
   const filteredGames = games.filter(g => {

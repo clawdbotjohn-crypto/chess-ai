@@ -6,6 +6,9 @@
 
 ## Priority Tasks
 
+### QA Findings — 2026-04-19
+- [x] **BUG: Game History stats show 0-0-0 W-L-D despite having wins** — Root cause: stats useMemo only counted `human-vs-ai` games, not `human-vs-human` (Local 2P). Fix: changed to include both modes in W/L/D calculation, matching filter button logic. (Apr 19)
+
 ### QA Findings — 2026-04-15
 - [ ] **PERF: Play vs AI crashes tab on low-memory devices** — The play page crashes headless Chromium on Pi repeatedly (3 attempts). WASM/Stockfish + 7+ web workers too memory-intensive. May only affect constrained environments, but worth investigating worker count limits.
 - [ ] **UX: Service worker aggressively respawns pages and spawns 7+ workers** — Chess AI SW detected respawning even when not actively testing. Causes memory leaks on shared browser environments. Consider more conservative SW lifecycle.

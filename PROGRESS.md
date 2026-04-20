@@ -6,6 +6,9 @@
 
 ## Priority Tasks
 
+### QA Findings — 2026-04-20
+- [ ] **UX: Board squares lack accessible labels** — Chessboard square buttons only show positional refs (e.g. `e2`) without piece information. Screen readers can't convey what piece is on each square. Previous a11y pass covered icon buttons but missed board squares.
+
 ### QA Findings — 2026-04-19
 - [x] **BUG: Game History stats show 0-0-0 W-L-D despite having wins** — Root cause: stats useMemo only counted `human-vs-ai` games, not `human-vs-human` (Local 2P). Fix: changed to include both modes in W/L/D calculation, matching filter button logic. (Apr 19)
 

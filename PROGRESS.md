@@ -6,6 +6,12 @@
 
 ## Priority Tasks
 
+### QA Findings — 2026-04-21
+- [ ] **UX: Web Worker accumulation during navigation** — After navigating through multiple pages/game modes, 8 aiWorker instances and 6 stockfish worker instances accumulate. They clean up on tab close but could cause memory pressure during long sessions, especially on mobile. Consider terminating unused workers when navigating away from the play page.
+- [ ] **UX: "Report Issue" link points to "#"** — In Settings → About section, the "Report Issue" link href is just `"#"` — should point to the GitHub issues page.
+- [ ] **UX: Stats discrepancy between Settings and History** — Settings page shows "0 Games Played, 0% Win Rate" while History page shows 12 games with 83% win rate. Settings stats appear to only count the current session or use different tracking.
+- [ ] **UX: No difficulty selector on custom AI** — When starting "Play vs AI" (non-Stockfish), there's no upfront difficulty/depth selection — user must know to go to Editor or Settings to adjust. A pre-game difficulty picker would improve first-time experience.
+
 ### QA Findings — 2026-04-20
 - [ ] **UX: Board squares lack accessible labels** — Chessboard square buttons only show positional refs (e.g. `e2`) without piece information. Screen readers can't convey what piece is on each square. Previous a11y pass covered icon buttons but missed board squares.
 

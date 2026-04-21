@@ -1,6 +1,6 @@
 # Chess AI — Handoff
 
-## Last Session: 2026-04-20
+## Last Session: 2026-04-21
 
 ### Done
 - QA sweep (Mode B): all 10 core flows tested and passing
@@ -8,8 +8,7 @@
 
 ### Next
 - No unchecked tasks remain — all features complete
-- Two low-priority environment-specific items from Apr 15 remain (PERF: low-memory device crashes, UX: service worker respawning) — not actionable in normal QA
-- One a11y item from Apr 20 (board squares lack accessible labels) — low priority
+- Low-priority QA items remain (web worker accumulation, Report Issue link, stats discrepancy, no custom AI difficulty selector, board square a11y labels, low-memory crashes, service worker respawning)
 
 ### Blockers
 - None

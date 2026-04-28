@@ -3,6 +3,7 @@ import type { Square } from 'chess.js'
 import type { Chess } from 'chess.js'
 import { BOARD_THEME_COLORS } from '../utils/boardThemes'
 import { getPseudoLegalSquares } from '../utils/pseudoLegalMoves'
+import { BLINDFOLD_PIECES } from '../utils/blindfoldPieces'
 
 // UseBoardConfigParams interface removed - was unused
 
@@ -93,6 +94,7 @@ export function useBoardOptions({
   displayFen, effectiveOrientation, isReviewing, isGameOver,
   mode, isRunning, customSquareStyles, settings,
   onDrop, onPieceClick, onPieceDrag, onSquareClick,
+  blindfoldMode,
 }: {
   displayFen: string
   effectiveOrientation: 'white' | 'black'
@@ -106,6 +108,7 @@ export function useBoardOptions({
   onPieceClick: () => void
   onPieceDrag: (args: { isSparePiece: boolean; piece: { pieceType: string }; square: string | null }) => void
   onSquareClick: (args: { piece: { pieceType: string } | null; square: string }) => void
+  blindfoldMode?: boolean
 }) {
   return useMemo(() => ({
     id: 'chess-board',
@@ -118,14 +121,25 @@ export function useBoardOptions({
     onSquareClick: onSquareClick,
     allowDragging: !isReviewing && !isGameOver && (mode === 'human-vs-human' || mode === 'human-vs-ai' || !isRunning),
     squareStyles: customSquareStyles,
-    darkSquareStyle: { backgroundColor: (BOARD_THEME_COLORS as Record<string, { light: string; dark: string }>)[settings.boardTheme].dark },
-    lightSquareStyle: { backgroundColor: (BOARD_THEME_COLORS as Record<string, { light: string; dark: string }>)[settings.boardTheme].light },
+    darkSquareStyle: blindfoldMode
+      ? { backgroundColor: 'rgba(30, 30, 30, 0.95)' }
+      : { backgroundColor: (BOARD_THEME_COLORS as Record<string, { light: string; dark: string }>)[settings.boardTheme].dark },
+    lightSquareStyle: blindfoldMode
+      ? { backgroundColor: 'rgba(50, 50, 50, 0.9)' }
+      : { backgroundColor: (BOARD_THEME_COLORS as Record<string, { light: string; dark: string }>)[settings.boardTheme].light },
     showNotation: settings.showCoordinates,
     showAnimations: settings.pieceAnimation,
+    ...(blindfoldMode ? {
+      pieces: BLINDFOLD_PIECES,
+      draggingPieceStyle: { opacity: 0 },
+      draggingPieceGhostStyle: { opacity: 0 },
+      darkSquareNotationStyle: { color: 'rgba(120, 120, 120, 0.6)', fontSize: '0.7em' },
+      lightSquareNotationStyle: { color: 'rgba(120, 120, 120, 0.6)', fontSize: '0.7em' },
+    } : {}),
     boardStyle: {
       borderRadius: '8px',
       boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5)',
       ...(isReviewing ? { opacity: 0.85 } : {}),
     }
-  }), [displayFen, effectiveOrientation, onDrop, onPieceClick, onPieceDrag, onSquareClick, isReviewing, isGameOver, mode, isRunning, customSquareStyles, settings.boardTheme, settings.showCoordinates, settings.pieceAnimation])
+  }), [displayFen, effectiveOrientation, onDrop, onPieceClick, onPieceDrag, onSquareClick, isReviewing, isGameOver, mode, isRunning, customSquareStyles, settings.boardTheme, settings.showCoordinates, settings.pieceAnimation, blindfoldMode])
 }

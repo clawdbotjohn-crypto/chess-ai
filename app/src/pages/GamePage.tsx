@@ -24,6 +24,7 @@ import { useGameLogic } from '../hooks/useGameLogic'
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts'
 import { useCustomSquareStyles, useBoardOptions } from '../hooks/useBoardConfig'
 import { GameSidebar } from '../components/GameSidebar'
+import { BlindfoldMoveLog } from '../components/BlindfoldMoveLog'
 
 export default function GamePage() {
   usePageTitle('Play')
@@ -48,6 +49,9 @@ export default function GamePage() {
 
   // Game mode
   const [mode, setMode] = useState<GameMode>(initialMode)
+
+  // Blindfold mode — resets on new game
+  const [blindfoldMode, setBlindfoldMode] = useState(false)
 
   // Player color for human-vs-ai
   const [playerColor, setPlayerColor] = useState<'white' | 'black'>('white')
@@ -140,6 +144,7 @@ export default function GamePage() {
     onPieceClick,
     onPieceDrag,
     onSquareClick,
+    blindfoldMode,
   })
 
   const cardGlass = 'rounded-xl p-4 border border-white/[0.08]'
@@ -333,6 +338,13 @@ export default function GamePage() {
           {/* Bottom player bar */}
           <div className="w-full max-w-xl shrink-0">{renderPlayerBar('bottom')}</div>
 
+          {/* Blindfold move log — mobile */}
+          {blindfoldMode && (
+            <div className="w-full max-w-xl shrink-0 lg:hidden">
+              <BlindfoldMoveLog moveHistory={gs.moveHistory} maxMoves={6} />
+            </div>
+          )}
+
           {/* Keyboard move input — mobile */}
           {renderMoveInput('mobile')}
 
@@ -347,12 +359,14 @@ export default function GamePage() {
             drawAvailable={gs.drawAvailable}
             drawReason={gs.drawReason}
             showMoveHistory={gs.showMoveHistory}
+            blindfoldMode={blindfoldMode}
             onNewGame={() => gs.setShowNewGameModal(true)}
             onFlip={() => gs.setFlipped(f => !f)}
             onUndo={() => gs.undoLastMove(mode, aivsai.isRunning)}
             onResign={() => gs.handleResign(mode, playerColor)}
             onClaimDraw={gs.handleClaimDraw}
             onToggleMoveHistory={() => gs.setShowMoveHistory(h => !h)}
+            onToggleBlindfold={() => setBlindfoldMode(b => !b)}
             onStartAI={aivsai.startAIvsAI}
             onPauseAI={aivsai.pauseAIvsAI}
             onResumeAI={aivsai.resumeAIvsAI}
@@ -424,13 +438,15 @@ export default function GamePage() {
           totalHalfMoves={gs.totalHalfMoves}
           cardGlass={cardGlass}
           cardGlassStyle={cardGlassStyle}
+          blindfoldMode={blindfoldMode}
+          onToggleBlindfold={() => setBlindfoldMode(b => !b)}
         />
       </div>
 
       {/* New Game Modal */}
       {gs.showNewGameModal && (
         <NewGameModal
-          onStart={handleNewGameStart}
+          onStart={(settings) => { setBlindfoldMode(false); handleNewGameStart(settings) }}
           onClose={() => gs.setShowNewGameModal(false)}
         />
       )}

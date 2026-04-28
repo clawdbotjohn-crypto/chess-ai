@@ -1,5 +1,6 @@
-import { Bot, Flag, FlipVertical, Handshake, HelpCircle, Undo2 } from 'lucide-react'
+import { Bot, Eye, EyeOff, Flag, FlipVertical, Handshake, HelpCircle, Undo2 } from 'lucide-react'
 import { MoveHistoryPanel } from './MoveHistoryPanel'
+import { BlindfoldMoveLog } from './BlindfoldMoveLog'
 import type { GameMode } from '../hooks/useGameState'
 
 interface GameSidebarProps {
@@ -50,6 +51,8 @@ interface GameSidebarProps {
   totalHalfMoves: number
   cardGlass: string
   cardGlassStyle: React.CSSProperties
+  blindfoldMode: boolean
+  onToggleBlindfold: () => void
 }
 
 export function GameSidebar({
@@ -63,6 +66,7 @@ export function GameSidebar({
   moveHistory, viewIndex, setViewIndex, copied, fenCopied,
   handleCopyPGN, handleCopyFEN, navToStart, navBack, navForward, navToLive,
   isAtStart, isLive, totalHalfMoves, cardGlass, cardGlassStyle,
+  blindfoldMode, onToggleBlindfold,
 }: GameSidebarProps) {
   return (
     <div className="hidden lg:flex w-72 flex-col gap-3 p-3 overflow-y-auto shrink-0">
@@ -90,6 +94,18 @@ export function GameSidebar({
           <button onClick={() => setShowNewGameModal(true)} className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-3 rounded-lg transition-colors text-sm">New Game</button>
           <button onClick={() => setFlipped(f => !f)} className="p-2 hover:bg-slate-700 rounded-lg transition text-slate-400 hover:text-white border border-slate-700" title="Flip board (F)" aria-label="Flip board">
             <FlipVertical className="w-4 h-4" />
+          </button>
+          <button
+            onClick={onToggleBlindfold}
+            className={`p-2 rounded-lg transition border ${
+              blindfoldMode
+                ? 'bg-purple-500/20 text-purple-300 border-purple-500/30 hover:bg-purple-500/30'
+                : 'hover:bg-slate-700 text-slate-400 hover:text-white border-slate-700'
+            }`}
+            title={blindfoldMode ? 'Disable blindfold mode' : 'Enable blindfold mode'}
+            aria-label={blindfoldMode ? 'Disable blindfold mode' : 'Enable blindfold mode'}
+          >
+            {blindfoldMode ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
           </button>
           <div className="relative group">
             <button className="p-2 hover:bg-slate-700 rounded-lg transition text-slate-400 hover:text-white border border-slate-700" title="Keyboard shortcuts" aria-label="Keyboard shortcuts">
@@ -156,6 +172,11 @@ export function GameSidebar({
 
       {/* Keyboard move input — desktop */}
       {renderMoveInput('desktop')}
+
+      {/* Blindfold move log — desktop */}
+      {blindfoldMode && (
+        <BlindfoldMoveLog moveHistory={moveHistory} maxMoves={6} />
+      )}
 
       {/* Move History — desktop sidebar */}
       <MoveHistoryPanel

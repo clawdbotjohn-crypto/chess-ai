@@ -6,6 +6,9 @@
 
 ## Priority Tasks
 
+### Feature Requests (John)
+- [ ] **Blindfold Mode** — Board blacked out with eye icon toggle to show/hide. Moves announced (TTS or text). Player speaks moves via voice input. App validates legality and announces issues. Works vs AI and potentially vs human. Training tool for visualization skills.
+
 ### QA Findings — 2026-04-21
 - [ ] **UX: Web Worker accumulation during navigation** — After navigating through multiple pages/game modes, 8 aiWorker instances and 6 stockfish worker instances accumulate. They clean up on tab close but could cause memory pressure during long sessions, especially on mobile. Consider terminating unused workers when navigating away from the play page.
 - [ ] **UX: "Report Issue" link points to "#"** — In Settings → About section, the "Report Issue" link href is just `"#"` — should point to the GitHub issues page.

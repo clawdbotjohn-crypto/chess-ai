@@ -1,5 +1,5 @@
 import React from 'react'
-import { ChevronDown, ChevronUp, Flag, FlipVertical, Handshake, Plus, ScrollText, Undo2 } from 'lucide-react'
+import { ChevronDown, ChevronUp, Eye, EyeOff, Flag, FlipVertical, Handshake, Plus, ScrollText, Undo2 } from 'lucide-react'
 import type { GameMode } from '../hooks/useGameState'
 
 interface GameControlsProps {
@@ -12,6 +12,7 @@ interface GameControlsProps {
   drawAvailable: boolean
   drawReason: string | null
   showMoveHistory: boolean
+  blindfoldMode: boolean
   // Callbacks
   onNewGame: () => void
   onFlip: () => void
@@ -19,6 +20,7 @@ interface GameControlsProps {
   onResign: () => void
   onClaimDraw: () => void
   onToggleMoveHistory: () => void
+  onToggleBlindfold: () => void
   // AI vs AI
   onStartAI: () => void
   onPauseAI: () => void
@@ -35,12 +37,14 @@ export const GameControls = React.memo(function GameControls({
   drawAvailable,
   drawReason,
   showMoveHistory,
+  blindfoldMode,
   onNewGame,
   onFlip,
   onUndo,
   onResign,
   onClaimDraw,
   onToggleMoveHistory,
+  onToggleBlindfold,
   onStartAI,
   onPauseAI,
   onResumeAI,
@@ -61,6 +65,16 @@ export const GameControls = React.memo(function GameControls({
         aria-label="Flip board"
       >
         <FlipVertical className="w-3.5 h-3.5" />
+      </button>
+      <button
+        onClick={onToggleBlindfold}
+        className={`flex items-center justify-center gap-1 font-medium min-h-[44px] min-w-[44px] px-2 rounded-lg transition-colors text-xs ${
+          blindfoldMode ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30' : 'bg-slate-700 hover:bg-slate-600 text-slate-200'
+        }`}
+        aria-label={blindfoldMode ? 'Disable blindfold mode' : 'Enable blindfold mode'}
+        title={blindfoldMode ? 'Disable blindfold mode' : 'Enable blindfold mode'}
+      >
+        {blindfoldMode ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
       </button>
       {mode === 'human-vs-ai' && (
         <button

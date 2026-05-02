@@ -9,6 +9,12 @@
 ### Feature Requests (John)
 - [x] **Blindfold Mode (Phase 1 — Visual)** — Eye/EyeOff toggle on mobile action row + desktop sidebar. Board pieces become invisible (custom piece renderers), squares darken to near-black with faint grid. Move announcement log shows last 6 half-moves in algebraic notation. Player can still make moves via click/drag or text input. Toggles on/off (peek mode). Resets on new game. Works in human-vs-AI mode. Phase 2 (TTS + voice input) remains for future. (Apr 28)
 
+### QA Findings — 2026-05-02
+- [ ] **BUG: Game state lost on navigation** — Starting a game vs AI (e.g., play e4 d5 Nf3 Nf6), then navigating away (Settings, History, etc.) and returning to Play starts a fresh game. The in-progress game is completely lost with no warning. Expected: game resumes or user is warned before losing progress.
+- [ ] **BUG: `__editor_temp__` visible in AI Personality Editor** ⚠️ QA REOPEN 2026-05-02 — A debug entry named `__editor_temp__` appears in the "Saved" section of the personality editor. Previously fixed for Arena leaderboard (Apr 4) but the filter doesn't apply to the editor's saved list.
+- [ ] **UX: Analysis result text contradiction** — After importing a PGN with result "1-0", the analysis footer shows "0-1 White wins" — the result code and text description conflict with each other.
+- [ ] **UX: Invalid move gives no feedback** — Typing an invalid algebraic move (e.g., "Qx99") and clicking Submit does nothing. No error toast, no visual indicator. User has no idea why their move wasn't accepted.
+
 ### QA Findings — 2026-04-21
 - [ ] **UX: Web Worker accumulation during navigation** — After navigating through multiple pages/game modes, 8 aiWorker instances and 6 stockfish worker instances accumulate. They clean up on tab close but could cause memory pressure during long sessions, especially on mobile. Consider terminating unused workers when navigating away from the play page.
 - [ ] **UX: "Report Issue" link points to "#"** — In Settings → About section, the "Report Issue" link href is just `"#"` — should point to the GitHub issues page.
@@ -30,7 +36,7 @@
 
 ### QA Findings — 2026-03-31
 - [x] **UX: Light/System theme buttons disabled in Settings** — ROOT CAUSE: Service worker (sw.js) used cache-first strategy with static cache name `chess-ai-v1`, serving stale JS forever. Code fix from Apr 3 was correct but never reached users. Fix: Rewrote sw.js with network-first for HTML/navigation, cache-first only for hashed assets (immutable filenames). Bumped cache to v2 to purge stale entries. Added 30-min update check interval. (Apr 4)
-- [x] **UX: `__editor_temp__` bot visible in Arena leaderboard** — Same root cause as theme buttons: stale service worker cache. The `getBots()` filter was deployed correctly but the old cached JS didn't have it. Fixed by service worker rewrite. (Apr 4)
+- [ ] **UX: `__editor_temp__` bot visible in Arena leaderboard** — Same root cause as theme buttons: stale service worker cache. The `getBots()` filter was deployed correctly but the old cached JS didn't have it. Fixed by service worker rewrite. (Apr 4) ⚠️ QA REOPEN 2026-05-02: Still visible in AI Personality Editor "Saved" section — filter only applied to Arena, not editor.
 
 ### P0 — Bugs (John's Testing — Mar 19)
 - [x] **BUG: AI name shows "Custom" instead of personality name FIXED** — Root cause: `personality.setConfig()` cleared `activePreset` to null, and GamePage derived AI name from `activePreset`. Fix: Added `aiDisplayName` state in `useGameLogic` set from `newSettings.aiPresetName`, used in GamePage's `getPlayerBar()`. (Mar 19)

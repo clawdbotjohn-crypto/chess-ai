@@ -9,9 +9,12 @@
 ### Feature Requests (John)
 - [x] **Blindfold Mode (Phase 1 — Visual)** — Eye/EyeOff toggle on mobile action row + desktop sidebar. Board pieces become invisible (custom piece renderers), squares darken to near-black with faint grid. Move announcement log shows last 6 half-moves in algebraic notation. Player can still make moves via click/drag or text input. Toggles on/off (peek mode). Resets on new game. Works in human-vs-AI mode. Phase 2 (TTS + voice input) remains for future. (Apr 28)
 
+### QA Findings — 2026-05-04
+- [ ] **BUG: Settings "Your Stats" shows 0 games despite History showing 18** — Stats on Settings page are out of sync with actual game history. Settings shows "0 games played / 0% win rate" but History correctly displays 18 games with 83% win rate. The stats source appears to be different from the history data.
+
 ### QA Findings — 2026-05-02
 - [ ] **BUG: Game state lost on navigation** — Starting a game vs AI (e.g., play e4 d5 Nf3 Nf6), then navigating away (Settings, History, etc.) and returning to Play starts a fresh game. The in-progress game is completely lost with no warning. Expected: game resumes or user is warned before losing progress.
-- [ ] **BUG: `__editor_temp__` visible in AI Personality Editor** ⚠️ QA REOPEN 2026-05-02 — A debug entry named `__editor_temp__` appears in the "Saved" section of the personality editor. Previously fixed for Arena leaderboard (Apr 4) but the filter doesn't apply to the editor's saved list.
+- [ ] **BUG: `__editor_temp__` visible in AI Personality Editor** ⚠️ QA REOPEN 2026-05-02, confirmed still broken 2026-05-04 — A debug entry named `__editor_temp__` appears in the "Saved" section of the personality editor. Previously fixed for Arena leaderboard (Apr 4) but the filter doesn't apply to the editor's saved list.
 - [ ] **UX: Analysis result text contradiction** — After importing a PGN with result "1-0", the analysis footer shows "0-1 White wins" — the result code and text description conflict with each other.
 - [ ] **UX: Invalid move gives no feedback** — Typing an invalid algebraic move (e.g., "Qx99") and clicking Submit does nothing. No error toast, no visual indicator. User has no idea why their move wasn't accepted.
 

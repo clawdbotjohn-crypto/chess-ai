@@ -1,9 +1,9 @@
 # Chess AI — Handoff
 
-## Last Session: 2026-05-04
+## Last Session: 2026-05-06
 
 ### Done
-- **Full QA sweep** — tested all 10 core flows on live Azure SWA site. All passing.
+- **Full QA sweep (Mode B)** — tested all 10 core flows on live Azure SWA site. All passing.
 
 ### QA Results (10/10 flows pass)
 1. ✅ Start new game — Home → Play vs AI → board renders, "Your turn" shown

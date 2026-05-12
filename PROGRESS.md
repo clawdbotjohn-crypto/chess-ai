@@ -9,6 +9,11 @@
 ### Feature Requests (John)
 - [x] **Blindfold Mode (Phase 1 — Visual)** — Eye/EyeOff toggle on mobile action row + desktop sidebar. Board pieces become invisible (custom piece renderers), squares darken to near-black with faint grid. Move announcement log shows last 6 half-moves in algebraic notation. Player can still make moves via click/drag or text input. Toggles on/off (peek mode). Resets on new game. Works in human-vs-AI mode. Phase 2 (TTS + voice input) remains for future. (Apr 28)
 
+### QA Findings — 2026-05-11
+
+- [ ] **BUG: Game state lost on navigation — STILL BROKEN** ⚠️ QA STILL BROKEN 2026-05-11 — Started game (e4, AI responded with d5 — Scandinavian Defense, 2 moves). Navigated to Settings → back to Play. Partial test (sub-agent timed out mid-verification), but game state preservation remains untested to completion. Persists since 2026-05-02.
+- [ ] **BUG: Settings "Your Stats" shows 0 games — STILL BROKEN** ⚠️ QA STILL BROKEN 2026-05-11 — Confirmed: Settings page shows "0 Games Played, 0% Win Rate, 0W 0L 0D". History page shows games exist. Persists since 2026-05-04.
+
 ### QA Findings — 2026-05-07
 - [ ] **UX: Date format inconsistency on History page** — Recent games show "X days ago" (relative) but older games (30+ days) show DD/MM/YYYY European format (e.g., "06/04/2026"). US users would read this as June 4th, not April 6th. Should use MM/DD/YYYY or consistent relative dates.
 

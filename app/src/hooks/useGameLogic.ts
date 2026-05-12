@@ -36,6 +36,7 @@ interface UseGameLogicParams {
   timeControlRef: React.MutableRefObject<TimeControl>
   initialPreset: PresetName | null
   initialLoadSaved: string | null
+  initialAiDisplayName: string | null
   searchParams: URLSearchParams
 }
 
@@ -48,7 +49,7 @@ export function useGameLogic({
   stockfishDepth, setStockfishDepth,
   minMoveTimeRef, setMinMoveTime,
   timeControl, setTimeControl, timeControlRef,
-  initialPreset, initialLoadSaved, searchParams,
+  initialPreset, initialLoadSaved, initialAiDisplayName, searchParams,
 }: UseGameLogicParams) {
   const humanTurnChar = playerColor === 'white' ? 'w' : 'b'
   const aiTurnChar = playerColor === 'white' ? 'b' : 'w'
@@ -57,7 +58,7 @@ export function useGameLogic({
   const [settings, setSettings] = useState(getSettings())
 
   // AI display name for player bar (set from NewGameModal's resolved name)
-  const [aiDisplayName, setAiDisplayName] = useState<string | null>(null)
+  const [aiDisplayName, setAiDisplayName] = useState<string | null>(initialAiDisplayName)
 
   // Keep AI vs AI game ref in sync
   useEffect(() => {

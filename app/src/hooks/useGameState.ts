@@ -3,9 +3,32 @@ import { Chess, type Square } from 'chess.js'
 import { lookupOpening } from '../utils/openings'
 import { playSoundForMove } from '../utils/sounds'
 import { saveGame, type GameRecord } from '../utils/gameHistory'
-import { recordGame } from '../utils/gameStats'
 
 export type GameMode = 'human-vs-ai' | 'human-vs-human' | 'ai-vs-ai'
+
+export const SESSION_GAME_KEY = 'chess-ai-current-game'
+
+interface SessionGameState {
+  pgn: string
+  moveHistory: string[]
+  flipped: boolean
+}
+
+function loadSessionGame(): SessionGameState | null {
+  try {
+    const raw = sessionStorage.getItem(SESSION_GAME_KEY)
+    if (!raw) return null
+    const parsed = JSON.parse(raw)
+    if (parsed && typeof parsed.pgn === 'string' && Array.isArray(parsed.moveHistory)) {
+      return parsed as SessionGameState
+    }
+  } catch { /* ignore */ }
+  return null
+}
+
+export function clearSessionGame() {
+  try { sessionStorage.removeItem(SESSION_GAME_KEY) } catch { /* ignore */ }
+}
 
 interface UseGameStateOptions {
   initialFen: string | null
@@ -13,12 +36,26 @@ interface UseGameStateOptions {
 
 export function useGameState({ initialFen }: UseGameStateOptions) {
   const [game, setGame] = useState(() => {
+    // If there's an explicit initialFen (from URL), use that (don't restore session)
     if (initialFen) {
       try { return new Chess(initialFen) } catch { return new Chess() }
     }
+    // Try to restore from sessionStorage
+    const saved = loadSessionGame()
+    if (saved && saved.pgn) {
+      try {
+        const restored = new Chess()
+        restored.loadPgn(saved.pgn)
+        return restored
+      } catch { /* fall through to fresh game */ }
+    }
     return new Chess()
   })
-  const [moveHistory, setMoveHistory] = useState<string[]>([])
+  const [moveHistory, setMoveHistory] = useState<string[]>(() => {
+    if (initialFen) return []
+    const saved = loadSessionGame()
+    return saved?.moveHistory ?? []
+  })
   const [viewIndex, setViewIndex] = useState<number | null>(null)
   const [copied, setCopied] = useState(false)
   const [fenCopied, setFenCopied] = useState(false)
@@ -29,7 +66,11 @@ export function useGameState({ initialFen }: UseGameStateOptions) {
   const [moveInputError, setMoveInputError] = useState(false)
   const [showResultModal, setShowResultModal] = useState(false)
   const [showNewGameModal, setShowNewGameModal] = useState(false)
-  const [flipped, setFlipped] = useState(false)
+  const [flipped, setFlipped] = useState(() => {
+    if (initialFen) return false
+    const saved = loadSessionGame()
+    return saved?.flipped ?? false
+  })
   const [showMoveHistory, setShowMoveHistory] = useState(false)
   const [currentEval, setCurrentEval] = useState(0)
   const [resignedColor, setResignedColor] = useState<'white' | 'black' | null>(null)
@@ -258,6 +299,20 @@ export function useGameState({ initialFen }: UseGameStateOptions) {
     }
   }, [game, moveHistory.length, isGameOver])
 
+  // Persist game state to sessionStorage on each move
+  useEffect(() => {
+    // Don't persist if game is over or no moves made
+    if (isGameOver || moveHistory.length === 0) return
+    try {
+      const state: SessionGameState = {
+        pgn: game.pgn(),
+        moveHistory,
+        flipped,
+      }
+      sessionStorage.setItem(SESSION_GAME_KEY, JSON.stringify(state))
+    } catch { /* ignore quota errors */ }
+  }, [game, moveHistory, flipped, isGameOver])
+
   // Computed: displayed FEN based on viewIndex
   const displayFen = useMemo(() => {
     if (viewIndex === null) return game.fen()
@@ -315,6 +370,7 @@ export function useGameState({ initialFen }: UseGameStateOptions) {
 
   // Reset game state (called by handleNewGameStart in component)
   const resetGame = useCallback(() => {
+    clearSessionGame()
     const fresh = new Chess()
     setGame(fresh)
     gameRef.current = fresh
@@ -353,6 +409,7 @@ export function useGameState({ initialFen }: UseGameStateOptions) {
   }) => {
     if (!isGameOver || gameSavedRef.current) return
     gameSavedRef.current = true
+    clearSessionGame()
     setShowResultModal(true)
     params.clock.pause()
 
@@ -421,10 +478,6 @@ export function useGameState({ initialFen }: UseGameStateOptions) {
     }
     saveGame(record)
     savedGameIdRef.current = record.id
-
-    if (params.mode === 'human-vs-ai') {
-      recordGame(result, params.mode)
-    }
   }, [isGameOver, game, drawClaimed, resignedColor, timeoutLoser, moveHistory.length])
 
   // Reset saved flag when game is no longer over (new game)

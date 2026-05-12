@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { usePageTitle } from '../hooks/usePageTitle'
 import { Chessboard } from 'react-chessboard'
 import { useSearchParams, useNavigate } from 'react-router-dom'
@@ -13,7 +13,7 @@ import type { TimeControl } from '../engine/types'
 import { TIME_CONTROLS } from '../engine/types'
 import type { PresetName } from '../engine/presets'
 import { useChessClock } from '../hooks/useChessClock'
-import { useGameState } from '../hooks/useGameState'
+import { useGameState, SESSION_GAME_KEY } from '../hooks/useGameState'
 import type { GameMode } from '../hooks/useGameState'
 import { useAIvsAI } from '../hooks/useAIvsAI'
 import { PlayerBar } from '../components/PlayerBar'
@@ -25,6 +25,29 @@ import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts'
 import { useCustomSquareStyles, useBoardOptions } from '../hooks/useBoardConfig'
 import { GameSidebar } from '../components/GameSidebar'
 import { BlindfoldMoveLog } from '../components/BlindfoldMoveLog'
+
+const SESSION_SETTINGS_KEY = 'chess-ai-current-settings'
+
+interface SessionSettings {
+  mode: GameMode
+  playerColor: 'white' | 'black'
+  useStockfishEngine: boolean
+  stockfishSkillLevel: number
+  stockfishDepth: number
+  aiDisplayName: string | null
+}
+
+function loadSessionSettings(): SessionSettings | null {
+  try {
+    const raw = sessionStorage.getItem(SESSION_SETTINGS_KEY)
+    if (!raw) return null
+    return JSON.parse(raw) as SessionSettings
+  } catch { return null }
+}
+
+function hasActiveSessionGame(): boolean {
+  try { return sessionStorage.getItem(SESSION_GAME_KEY) !== null } catch { return false }
+}
 
 export default function GamePage() {
   usePageTitle('Play')
@@ -47,14 +70,17 @@ export default function GamePage() {
   const [minMoveTime, setMinMoveTime] = useState(500)
   const minMoveTimeRef = useRef(500)
 
+  // Restore session settings if there's an active game in sessionStorage
+  const savedSettings = hasActiveSessionGame() ? loadSessionSettings() : null
+
   // Game mode
-  const [mode, setMode] = useState<GameMode>(initialMode)
+  const [mode, setMode] = useState<GameMode>(savedSettings?.mode ?? initialMode)
 
   // Blindfold mode — resets on new game
   const [blindfoldMode, setBlindfoldMode] = useState(false)
 
   // Player color for human-vs-ai
-  const [playerColor, setPlayerColor] = useState<'white' | 'black'>('white')
+  const [playerColor, setPlayerColor] = useState<'white' | 'black'>(savedSettings?.playerColor ?? 'white')
 
   // AI instances for human-vs-ai
   const humanAI_white = useChessAI()
@@ -62,9 +88,9 @@ export default function GamePage() {
   const humanStockfish = useStockfish()
 
   // Stockfish mode state (human-vs-ai)
-  const [useStockfishEngine, setUseStockfishEngine] = useState(false)
-  const [stockfishSkillLevel, setStockfishSkillLevel] = useState(10)
-  const [stockfishDepth, setStockfishDepth] = useState(10)
+  const [useStockfishEngine, setUseStockfishEngine] = useState(savedSettings?.useStockfishEngine ?? false)
+  const [stockfishSkillLevel, setStockfishSkillLevel] = useState(savedSettings?.stockfishSkillLevel ?? 10)
+  const [stockfishDepth, setStockfishDepth] = useState(savedSettings?.stockfishDepth ?? 10)
 
   // AI vs AI hook
   const aivsai = useAIvsAI(gs.applyMove, gs.setCurrentEval)
@@ -90,8 +116,31 @@ export default function GamePage() {
     stockfishDepth, setStockfishDepth,
     minMoveTimeRef, setMinMoveTime,
     timeControl, setTimeControl, timeControlRef,
-    initialPreset, initialLoadSaved, searchParams,
+    initialPreset, initialLoadSaved, initialAiDisplayName: savedSettings?.aiDisplayName ?? null, searchParams,
   })
+
+  // Persist game settings to sessionStorage whenever they change
+  useEffect(() => {
+    if (gs.isGameOver || gs.moveHistory.length === 0) return
+    try {
+      const settings: SessionSettings = {
+        mode,
+        playerColor,
+        useStockfishEngine,
+        stockfishSkillLevel,
+        stockfishDepth,
+        aiDisplayName,
+      }
+      sessionStorage.setItem(SESSION_SETTINGS_KEY, JSON.stringify(settings))
+    } catch { /* ignore */ }
+  }, [mode, playerColor, useStockfishEngine, stockfishSkillLevel, stockfishDepth, aiDisplayName, gs.moveHistory.length, gs.isGameOver])
+
+  // Clear settings session when game ends or is reset
+  useEffect(() => {
+    if (gs.isGameOver) {
+      try { sessionStorage.removeItem(SESSION_SETTINGS_KEY) } catch { /* ignore */ }
+    }
+  }, [gs.isGameOver])
 
   // Keyboard shortcuts
   useKeyboardShortcuts({

@@ -18,11 +18,10 @@ import {
   Keyboard,
   Bug,
   BarChart3,
-  RotateCcw,
 } from 'lucide-react'
 import { getSettings, updateSettings, type AppSettings } from '../utils/settings'
 import { BOARD_THEMES } from '../utils/boardThemes'
-import { getStats, resetStats, getWinRate, type GameStats } from '../utils/gameStats'
+import { getStats, getWinRate, type GameStats } from '../utils/gameStats'
 
 function Toggle({ checked, onChange, label }: { checked: boolean; onChange: (v: boolean) => void; label?: string }) {
   return (
@@ -122,16 +121,10 @@ export default function SettingsPage() {
   }
 
   function handleClearHistory() {
-    if (window.confirm('Are you sure you want to delete all saved games? This cannot be undone.')) {
+    if (window.confirm('Are you sure you want to delete all saved games? This will also reset your stats. This cannot be undone.')) {
       localStorage.removeItem('chess-ai-game-history')
-      alert('Game history cleared.')
-    }
-  }
-
-  function handleResetStats() {
-    if (window.confirm('Reset all your game statistics? This cannot be undone.')) {
-      resetStats()
       setStats(getStats())
+      alert('Game history cleared.')
     }
   }
 
@@ -402,19 +395,6 @@ export default function SettingsPage() {
               </div>
             </div>
           )}
-          <button
-            onClick={handleResetStats}
-            className="flex items-center justify-between p-4 w-full text-left hover:bg-slate-700/50 transition"
-          >
-            <div className="flex items-center gap-3">
-              <RotateCcw className="w-5 h-5 text-red-400" />
-              <div>
-                <p className="font-medium text-red-400">Reset Stats</p>
-                <p className="text-sm text-slate-400">Clear all game statistics</p>
-              </div>
-            </div>
-            <ChevronRight className="w-5 h-5 text-slate-600" />
-          </button>
         </div>
       </section>
 

@@ -11,17 +11,17 @@
 
 ### QA Findings — 2026-05-11
 
-- [ ] **BUG: Game state lost on navigation — STILL BROKEN** ⚠️ QA STILL BROKEN 2026-05-11 — Started game (e4, AI responded with d5 — Scandinavian Defense, 2 moves). Navigated to Settings → back to Play. Partial test (sub-agent timed out mid-verification), but game state preservation remains untested to completion. Persists since 2026-05-02.
-- [ ] **BUG: Settings "Your Stats" shows 0 games — STILL BROKEN** ⚠️ QA STILL BROKEN 2026-05-11 — Confirmed: Settings page shows "0 Games Played, 0% Win Rate, 0W 0L 0D". History page shows games exist. Persists since 2026-05-04.
+- [x] **BUG: Game state lost on navigation** ✅ FIXED 2026-05-12 — Game state now persisted to sessionStorage (PGN, moveHistory, mode, playerColor, AI settings). Navigating away and back restores the in-progress game. Cleared on game end or new game. Browser QA verified: played e4, AI responded d5, navigated to History, came back — game fully restored with opening name, move count, and turn state intact.
+- [x] **BUG: Settings "Your Stats" shows 0 games** ✅ FIXED 2026-05-12 — Stats now derived from game history (getGames()) instead of separate localStorage counter. Eliminated sync discrepancy. Removed redundant "Reset Stats" button. Browser QA verified on local build.
 
 ### QA Findings — 2026-05-07
 - [ ] **UX: Date format inconsistency on History page** — Recent games show "X days ago" (relative) but older games (30+ days) show DD/MM/YYYY European format (e.g., "06/04/2026"). US users would read this as June 4th, not April 6th. Should use MM/DD/YYYY or consistent relative dates.
 
 ### QA Findings — 2026-05-04
-- [ ] **BUG: Settings "Your Stats" shows 0 games despite History showing 18** — Stats on Settings page are out of sync with actual game history. Settings shows "0 games played / 0% win rate" but History correctly displays 18 games with 83% win rate. The stats source appears to be different from the history data.
+- [x] **BUG: Settings "Your Stats" shows 0 games despite History showing 18** ✅ FIXED 2026-05-12 — See QA Findings 2026-05-11 entry.
 
 ### QA Findings — 2026-05-02
-- [ ] **BUG: Game state lost on navigation** — Starting a game vs AI (e.g., play e4 d5 Nf3 Nf6), then navigating away (Settings, History, etc.) and returning to Play starts a fresh game. The in-progress game is completely lost with no warning. Expected: game resumes or user is warned before losing progress. ⚠️ QA STILL BROKEN 2026-05-10
+- [x] **BUG: Game state lost on navigation** ✅ FIXED 2026-05-12 — See QA Findings 2026-05-11 entry.
 - [x] **BUG: `__editor_temp__` visible in AI Personality Editor** ⚠️ QA REOPEN 2026-05-02, confirmed still broken 2026-05-04 — A debug entry named `__editor_temp__` appears in the "Saved" section of the personality editor. Previously fixed for Arena leaderboard (Apr 4) but the filter doesn't apply to the editor's saved list. ✅ QA VERIFIED FIXED 2026-05-10
 - [ ] **UX: Analysis result text contradiction** — After importing a PGN with result "1-0", the analysis footer shows "0-1 White wins" — the result code and text description conflict with each other.
 - [ ] **UX: Invalid move gives no feedback** — Typing an invalid algebraic move (e.g., "Qx99") and clicking Submit does nothing. No error toast, no visual indicator. User has no idea why their move wasn't accepted.
@@ -29,7 +29,7 @@
 ### QA Findings — 2026-04-21
 - [ ] **UX: Web Worker accumulation during navigation** — After navigating through multiple pages/game modes, 8 aiWorker instances and 6 stockfish worker instances accumulate. They clean up on tab close but could cause memory pressure during long sessions, especially on mobile. Consider terminating unused workers when navigating away from the play page.
 - [ ] **UX: "Report Issue" link points to "#"** — In Settings → About section, the "Report Issue" link href is just `"#"` — should point to the GitHub issues page.
-- [ ] **UX: Stats discrepancy between Settings and History** — Settings page shows "0 Games Played, 0% Win Rate" while History page shows 12 games with 83% win rate. Settings stats appear to only count the current session or use different tracking.
+- [x] **UX: Stats discrepancy between Settings and History** ✅ FIXED 2026-05-12 — Stats now derived from game history. See QA Findings 2026-05-11.
 - [ ] **UX: No difficulty selector on custom AI** — When starting "Play vs AI" (non-Stockfish), there's no upfront difficulty/depth selection — user must know to go to Editor or Settings to adjust. A pre-game difficulty picker would improve first-time experience.
 
 ### QA Findings — 2026-04-20

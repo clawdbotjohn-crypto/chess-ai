@@ -1,20 +1,37 @@
 # Chess AI — Handoff
 
-## Last Session: 2026-05-12
+## Last Session: 2026-05-13
 
 ### Done
-- ✅ **Game state persistence on navigation** (P0 bug since May 2) — Game state now persisted to sessionStorage during play. PGN, moveHistory, flipped state saved in `useGameState.ts`; mode, playerColor, stockfish settings, aiDisplayName saved in `GamePage.tsx`. Navigating away and back restores the in-progress game. Cleared on game end or new game start.
-- ✅ **Settings "Your Stats" shows 0 games** (P0 bug since May 4) — Stats now derived from actual game history (`getGames()`) instead of separate `chess-ai-game-stats` localStorage counter. Removed `recordGame()` calls (now no-op). Removed "Reset Stats" button from Settings.
+- ✅ **Full QA Sweep (Mode B)** — All 10 core flows tested and passing on live site
+  - Start new game ✅
+  - Play a game (text input, AI responds, eval updates, opening name) ✅
+  - Tab navigation (Home, Create, Play, History, Settings) ✅
+  - History page (loads, shows stats, game list) ✅
+  - Create AI personality (editor loads, sliders, presets, save) ✅
+  - Position setup (piece palette, FEN, play/analyze) ✅
+  - Arena (leaderboard, quick match/tournament buttons) ✅
+  - Analysis (move navigation, eval, engine selector) ✅
+  - PGN import (paste PGN → opens in analysis) ✅
+  - Settings (toggles, stats, themes) ✅
 
 ### Azure SWA Deployment
-- Git pushed to master (`61cba5c`)
-- First deployment timed out (Azure SWA upload timeout — not a build error)
-- **Re-triggered** via `gh run rerun` — check status before next session
-- Local build and service restart working fine on port 8090
+- Latest deployment succeeded (commit from earlier today)
+- All 3 recent GitHub Actions runs passing
+
+### Known Open Bugs (all pre-existing, documented in PROGRESS.md)
+- UX: Date format inconsistency (DD/MM/YYYY vs US format)
+- UX: Analysis result text contradiction ("0-1 White wins") — confirmed still present
+- UX: Invalid move gives no feedback — confirmed still present
+- UX: "Report Issue" link points to "#" — confirmed still present
+- UX: Web worker accumulation during navigation
+- UX: Board squares lack accessible labels
+- UX: No difficulty selector on custom AI
+- PERF: Tab crash on low-memory devices
 
 ### Next
-- Verify Azure SWA deployment succeeded (check GitHub Actions)
-- Remaining open bugs: UX date format inconsistency, analysis result text contradiction, invalid move feedback, web worker accumulation, accessibility labels, etc. (see PROGRESS.md QA findings)
+- Fix remaining open UX bugs (analysis result contradiction, invalid move feedback, report issue link are easiest wins)
+- Date format inconsistency fix
 
 ### Blockers
 - None

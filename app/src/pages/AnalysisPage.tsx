@@ -814,6 +814,10 @@ export default function AnalysisPage() {
                       return record.result === 'win' ? '1-0' : '0-1'
                     }
                     // Human modes: result is relative to the player
+                    if (!record.playerColor) {
+                      // Legacy imported games without playerColor — use resultDetail directly
+                      return record.resultDetail === 'White wins' ? '1-0' : record.resultDetail === 'Black wins' ? '0-1' : record.resultDetail === 'Draw' ? '½-½' : '*'
+                    }
                     const playerIsWhite = record.playerColor === 'white'
                     if (record.result === 'win') return playerIsWhite ? '1-0' : '0-1'
                     if (record.result === 'loss') return playerIsWhite ? '0-1' : '1-0'

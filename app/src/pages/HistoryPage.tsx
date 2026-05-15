@@ -130,8 +130,8 @@ export default function HistoryPage() {
       const headers = chess.header()
       if (headers.White) gameRecord.whiteLabel = headers.White
       if (headers.Black) gameRecord.blackLabel = headers.Black
-      if (headers.Result === '1-0') { gameRecord.result = 'win'; gameRecord.resultDetail = 'White wins' }
-      else if (headers.Result === '0-1') { gameRecord.result = 'loss'; gameRecord.resultDetail = 'Black wins' }
+      if (headers.Result === '1-0') { gameRecord.result = 'win'; gameRecord.resultDetail = 'White wins'; gameRecord.playerColor = 'white' }
+      else if (headers.Result === '0-1') { gameRecord.result = 'loss'; gameRecord.resultDetail = 'Black wins'; gameRecord.playerColor = 'white' }
       else if (headers.Result === '1/2-1/2') { gameRecord.result = 'draw'; gameRecord.resultDetail = 'Draw' }
       saveGame(gameRecord)
       navigate(`/analysis/${gameRecord.id}`)

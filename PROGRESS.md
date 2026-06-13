@@ -9,6 +9,12 @@
 ### Feature Requests (John)
 - [x] **Blindfold Mode (Phase 1 — Visual)** — Eye/EyeOff toggle on mobile action row + desktop sidebar. Board pieces become invisible (custom piece renderers), squares darken to near-black with faint grid. Move announcement log shows last 6 half-moves in algebraic notation. Player can still make moves via click/drag or text input. Toggles on/off (peek mode). Resets on new game. Works in human-vs-AI mode. Phase 2 (TTS + voice input) remains for future. (Apr 28)
 
+### QA Findings — 2026-06-13
+- [ ] **BUG: Resign button non-functional** — ⚠️ QA STILL BROKEN 2026-06-13. Played e4 (AI responded d5), played d4 (AI responded). Clicked Resign button (flag icon) — no confirmation dialog, no game-over state, still shows "Your turn." 7th day open.
+- [ ] **UX: Invalid move gives no feedback** — ⚠️ QA STILL BROKEN 2026-06-13. Typed "Qx99" and clicked Submit — input silently cleared, no error toast or visual feedback.
+- [ ] **UX: "Report Issue" link points to "#"** — ⚠️ QA STILL BROKEN 2026-06-13. Settings → About → "Report Issue" link has href="#". GitHub and Documentation links work correctly.
+- [x] **User walkthrough** — ✅ PASS. All core flows functional — game play responsive, AI responds ~1-2s, opening detection working, navigation smooth, Settings/History/Create all functional. No new issues found.
+
 ### QA Findings — 2026-06-12
 - [ ] **BUG: Resign button non-functional** — ⚠️ QA STILL BROKEN 2026-06-12. Started game vs AI, played e4 (AI responded), played d4 (AI responded). Clicked Resign button (flag icon) — no confirmation dialog, no game-over state, still shows "Your turn." 6th day open.
 - [ ] **UX: Invalid move gives no feedback** — ⚠️ QA STILL BROKEN 2026-06-12. Typed "Qx99" and clicked Submit — no error toast, no visual feedback. Input silently cleared.

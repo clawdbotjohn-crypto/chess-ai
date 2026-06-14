@@ -9,6 +9,12 @@
 ### Feature Requests (John)
 - [x] **Blindfold Mode (Phase 1 — Visual)** — Eye/EyeOff toggle on mobile action row + desktop sidebar. Board pieces become invisible (custom piece renderers), squares darken to near-black with faint grid. Move announcement log shows last 6 half-moves in algebraic notation. Player can still make moves via click/drag or text input. Toggles on/off (peek mode). Resets on new game. Works in human-vs-AI mode. Phase 2 (TTS + voice input) remains for future. (Apr 28)
 
+### QA Findings — 2026-06-14
+- [ ] **BUG: Resign button non-functional** — ⚠️ QA STILL BROKEN 2026-06-14. Played e4 (AI responded Scandinavian Defense), played d4 (AI responded). Clicked Resign button (flag icon) — no confirmation dialog, no game-over state, still shows "Your turn." Button gets focus/active styling but does nothing. 8th day open.
+- [ ] **UX: Invalid move gives no feedback** — ⚠️ QA STILL BROKEN 2026-06-14. Typed "Qx99" and clicked Submit — input silently cleared, no error toast, no shake animation, no visual feedback. Still shows "Your turn" as if nothing happened.
+- [ ] **UX: "Report Issue" link points to "#"** — ⚠️ QA STILL BROKEN 2026-06-14. Settings → About → "Report Issue" link has href="#". GitHub and Documentation links work correctly but Report Issue is still a placeholder.
+- [x] **User walkthrough** — ✅ PASS. Core flows functional — gameplay works (e4/exd5 processed, AI responds with valid moves), navigation smooth, settings comprehensive, AI Personality Editor praised as standout feature. Game History and Create pages functional. Board rendering may crop in narrow viewports (headless browser artifact — not confirmed as real-user issue).
+
 ### QA Findings — 2026-06-13
 - [ ] **BUG: Resign button non-functional** — ⚠️ QA STILL BROKEN 2026-06-13. Played e4 (AI responded d5), played d4 (AI responded). Clicked Resign button (flag icon) — no confirmation dialog, no game-over state, still shows "Your turn." 7th day open.
 - [ ] **UX: Invalid move gives no feedback** — ⚠️ QA STILL BROKEN 2026-06-13. Typed "Qx99" and clicked Submit — input silently cleared, no error toast or visual feedback.
